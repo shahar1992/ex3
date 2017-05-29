@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #include "list_mtm1.h"
- //avivi is your hero
+ //avivi is your her
 
 #define NULL_CHECK(condition) \
     if(condition) { \
