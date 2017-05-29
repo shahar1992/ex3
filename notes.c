@@ -1,5 +1,5 @@
 /*
- * system:
+ * system:g
  *      @functions:
  *          create system.
  *          destroy system.
