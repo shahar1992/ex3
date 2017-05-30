@@ -6,7 +6,7 @@
 #include "list.h"
 #include "set.h"
 #include "company.h"
-#include "rooms.h"
+#include "Room.h"
 #include "order.h"
 
 #endif //EX3_ESCAPETECHNION_H

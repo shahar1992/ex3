@@ -42,32 +42,28 @@ int compareRooms(Room room1 , Room room2);
  *      False if one or more of the parameters is not legal.
  *      True otherwise.
  */
-bool checkIsRoomParameters(int id,int price,int num_ppl,char* working_hrs,
-                           int difficulty);
+bool checkIsRoomParametersLegal(int id,int price,int num_ppl,int open_hour,
+                                int close_hour ,int difficulty);
 
 /**
- *
- * @param email The mail of the company ownes the room.
+ * This function creates new room and reset all the room's parameters.
  * @param id The room's id.
  * @param price The price for a men for enter the room.
  * @param num_ppl Number of people to enter the room together.
- * @param working_hrs The working hours for the room.
+ * @param open_hour Room's opening hour.
+ * @param close_hour Room's closing hour.
  * @param difficulty The difficulty level for the room.
+ * @param room The new room's pointer.
  * @return
- *      ROOM_SUCCESS if create succeed.
- *      ROOM_OUT_OF_MEMORY if memory allocate failed.
+ *      return the new room if create succeed.
+ *      NULL if memory allocate failed.
  */
-Room createRoom(char* email, int id, int price, int num_ppl, char* working_hrs,
-                int difficulty);
-/**
- * This function remove a room from the system and release all the resources.
- * @param room The room to destroy.
- */
-void destroyRoom(Room room);
+RoomResult createRoom(int id, int price, int num_ppl, int open_hour, int close_hour,
+                int difficulty, Room* room);
 
 /**
  *
- * @param room The room to enter.
+ * @param room Room to enter.
  * @param days_to_order Number of days to the order's day.
  * @param order_hour The hour in the day for the order.
  * @return
@@ -79,9 +75,11 @@ RoomResult roomAvailability(Room room, int days_to_order, int order_hour);
 
 /**
  *
- * @param room The releavant room.
- * @param id
+ * @param room The relevant room.
+ * @param id A pointer to a integer to save the id value.
  * @return
+ *      ROOM_NULL_ARGUMENT if 'room' or 'id' are NULL
+ *      ROOM_SUCCESS otherwise.
  */
 RoomResult roomGetId(Room room, int* id);
 
