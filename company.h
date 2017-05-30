@@ -75,6 +75,6 @@ CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
  *      COMPANY_NULL_ARGUMENT if 'company' or 'email' are NULL.
  *      COMPANY_SUCCESS otherwise.
  */
-CompanyResult companyGetFaculty(Company company, char** email);
+CompanyResult companyGetEmail(Company company, char** email);
 
 #endif //EX3_COMPANY_H
