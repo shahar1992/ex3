@@ -1,4 +1,4 @@
-/*
+/**
  * system:
  *      @functions:
  *          create system.
@@ -10,7 +10,7 @@
  *          printing functions.
  *
  *
- * Company:
+ * Company: Shahar
  *      @functions:
  *          check validate.
  *          create company.
@@ -23,21 +23,21 @@
  *          is any order exist.
  *          get faculty.
  *
- * Rooms:
+ * Rooms: Shahar
  *      @functions:
- *          check.
- *          create.
- *          cmp.
- *          free.
- *          check availability.
- *          add order.
- *          remove order.
- *          get id.
- *          is any order exist.
+ *          check.  - complete in header
+ *          create. - complete in header
+ *          cmp. - complete in header
+ *          free. - complete in header
+ *          check availability. - complete in header
+ *          add order. - Not necessarily needed.
+ *          remove order. - Not necessarily needed.
+ *          get id. -
+ *          is any order exist. - Not necessarily needed.
  *          get faculty.
  *
  *
- * Orders:
+ * Orders: Amir
  *      @functions:
  *          check.
  *          create.
@@ -45,7 +45,7 @@
  *          copy.
  *          get faculty.
  *
- * Escaper:
+ * Escaper: Amir
  *      @functions:
  *          check.
  *          create.
@@ -57,33 +57,5 @@
  *          remove all orders.
  *          get faculty.
  *          check availability.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
  *
  */
