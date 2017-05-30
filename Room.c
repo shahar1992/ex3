@@ -25,38 +25,38 @@ struct room_t {
     int difficulty;
 };
 
-Room copyRoom(Room room){
+Room roomCopy(Room room){
     assert(room != NULL);
     Room new_room;
-    if(createRoom(room->id,room->price,room->num_ppl, room->open_hour,
-               room->open_hour, room->difficulty, &new_room) != ROOM_SUCCESS) {
+    if(roomCreate(room->id, room->price, room->num_ppl, room->open_hour,
+                  room->open_hour, room->difficulty, &new_room) != ROOM_SUCCESS) {
         return NULL;
     }
     return new_room;
 }
 
 
-void freeRoom(Room room){
+void roomFree(Room room){
     if(room != NULL) {
         free(room);
     }
     return;
 }
 
-int compareRooms(Room room1 , Room room2){
+int roomCompare(Room room1, Room room2){
     assert((room1 !== NULL) && (room2!=NULL));
-    return room1->id - room2->id;
+    return roomGetId(room1) - roomGetId(room2);
 }
 
-bool checkIsRoomParametersLegal(int id,int price,int num_ppl,int open_hour,
-                                int close_hour ,int difficulty){
+bool roomCheckIfParametersLegal(int id, int price, int num_ppl, int open_hour,
+                                int close_hour, int difficulty){
     return (id > 0 && price > 0 && price%4 == 0 && num_ppl > 0 && open_hour < 0
     && open_hour <24 && close_hour > open_hour && close_hour < 24 &&
     difficulty >= 1 && difficulty <= 10);
 }
 
-RoomResult createRoom(int id, int price, int num_ppl, int open_hour,
-                      int close_hour, int difficulty, Room* room){
+RoomResult roomCreate(int id, int price, int num_ppl, int open_hour,
+                      int close_hour, int difficulty, Room *room){
     NULL_PARAMETER_CHECK(room);
     *room = malloc(sizeof(**room));
     MEMORY_CHECK_NULL((*room));
@@ -73,8 +73,9 @@ RoomResult roomAvailability(Room room, int days_to_order, int order_hour){
 }
 
 RoomResult roomGetId(Room room, int* id){
-    NULL_PARAMETER_CHECK(room);
-    NULL_PARAMETER_CHECK(id);
+    if(!room){
+        return ROOM_NULL_ARGUMENT;
+    }
     *id = room->id;
     return ROOM_SUCCESS;
 }

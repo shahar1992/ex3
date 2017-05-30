@@ -12,16 +12,16 @@
  *
  * Company: Shahar
  *      @functions:
- *          check validate.  - complete in header.
- *          create company. - complete in header.
- *          cmp company. - complete in header.
- *          free company. - complete in header.
- *          add room. - complete in header.
- *          remove room. - complete in header.
- *          get mail. - complete in header.
- *          find room. -complete in header.
+ *          check validate.  - Not necessarily needed.
+ *          create company. - complete.
+ *          cmp company. - complete.
+ *          free company. - complete.
+ *          add room. - complete.
+ *          remove room. - complete.
+ *          get mail. - complete.
+ *          find room. - completed.
  *          is any order exist.- Not necessarily needed.
- *          get faculty.  - complete in header.
+ *          get faculty. - complete.
  *
  * Rooms: Shahar
  *      @functions:

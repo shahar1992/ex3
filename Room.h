@@ -10,18 +10,14 @@ typedef struct room_t *Room;
 typedef enum RoomResult_t {
     ROOM_SUCCESS,
     ROOM_OUT_OF_MEMORY,
-    ROOM_NULL_ARGUMENT,
-    ROOM_EMAIL_ALREADY_EXISTS,
-    ROOM_DOES_NOT_EXIST,
-    ROOM_ILLEGAL_PARAMETER,
-    ROOM_IS_NOT_AVAILABLE
+    ROOM_NULL_ARGUMENT
 } RoomResult;
 
 /** This function copying a room */
-Room copyRoom(Room room);
+Room roomCopy(Room room);
 
 /** Type of function for deallocating an element of the set */
-void freeRoom(Room room);
+void roomFree(Room room);
 
 /**
 * This function used by the Room to identify equal Rooms by id.
@@ -30,7 +26,7 @@ void freeRoom(Room room);
 * 		0 if they're equal;
 *		A negative integer if the second Room's id is greater.
 */
-int compareRooms(Room room1 , Room room2);
+int roomCompare(Room room1, Room room2);
 
 /**
  * This function checks if the input parameters are legal room parameters.
@@ -42,8 +38,8 @@ int compareRooms(Room room1 , Room room2);
  *      False if one or more of the parameters is not legal.
  *      True otherwise.
  */
-bool checkIsRoomParametersLegal(int id,int price,int num_ppl,int open_hour,
-                                int close_hour ,int difficulty);
+bool roomCheckIfParametersLegal(int id, int price, int num_ppl, int open_hour,
+                                int close_hour, int difficulty);
 
 /**
  * This function creates new room and reset all the room's parameters.
@@ -58,8 +54,8 @@ bool checkIsRoomParametersLegal(int id,int price,int num_ppl,int open_hour,
  *      return the new room if create succeed.
  *      NULL if memory allocate failed.
  */
-RoomResult createRoom(int id, int price, int num_ppl, int open_hour, int close_hour,
-                int difficulty, Room* room);
+RoomResult roomCreate(int id, int price, int num_ppl, int open_hour,
+                      int close_hour, int difficulty, Room *room);
 
 /**
  *

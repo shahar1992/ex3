@@ -18,13 +18,12 @@ typedef enum CompanyResult_t {
     COMPANY_SUCCESS,
     COMPANY_OUT_OF_MEMORY,
     COMPANY_NULL_ARGUMENT,
-    COMPANY_EMAIL_ALREADY_EXISTS,
-    COMPANY_DOES_NOT_EXIST,
-    COMPANY_ILLEGAL_PARAMETER
+    COMPANY_ROOM_ALREADY_EXISTS,
+    COMPANY_ROOM_DOES_NOT_EXIST
 } CompanyResult;
 
 /** This function copying a company */
-Company copyCompany(Company company);
+Company companyCopy(Company company);
 
 /** This function deallocating a company and all of it resources*/
 void freeCompany(Company company);
@@ -36,7 +35,7 @@ void freeCompany(Company company);
 * 		0 if they're equal;
 *		A negative integer if 'company2' email is lexicographicaly greater.
 */
-int compareCompanies(Company company1 , Company company2);
+int companyCompare(Company company1, Company company2);
 
 /**
  * This function checks if the input parameters are legal company parameters.
@@ -46,7 +45,7 @@ int compareCompanies(Company company1 , Company company2);
  *      False if one or more of the parameters is not legal.
  *      True otherwise.
  */
-bool checkIfCompanyParametersLegal(char* email, int faculty);
+//bool checkIfCompanyParametersLegal(char* email, int faculty);
 
 /**
  * This function creates new room and reset all the room's parameters.
@@ -57,8 +56,8 @@ bool checkIfCompanyParametersLegal(char* email, int faculty);
  *     return the new company if create succeed.
  *     NULL if memory allocate failed.
  */
-CompanyResult createCompany
-        (char* email, TechnionFaculty faculty, Company *company);
+Company createCompany
+        (char* email, TechnionFaculty faculty);
 
 /**
  *  This function return in parameter the faculty that ownes the company.
