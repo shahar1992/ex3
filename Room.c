@@ -28,8 +28,9 @@ struct room_t {
 Room roomCopy(Room room){
     assert(room != NULL);
     Room new_room;
-    if(roomCreate(room->id, room->price, room->num_ppl, room->open_hour,
-                  room->open_hour, room->difficulty, &new_room) != ROOM_SUCCESS) {
+    if(roomCreate(room->id, room->price, room->num_ppl,
+                  room->open_hour, room->open_hour,
+                  room->difficulty, &new_room) != ROOM_SUCCESS) {
         return NULL;
     }
     return new_room;
@@ -44,8 +45,11 @@ void roomFree(Room room){
 }
 
 int roomCompare(Room room1, Room room2){
-    assert((room1 !== NULL) && (room2!=NULL));
-    return roomGetId(room1) - roomGetId(room2);
+    assert((room1 != NULL) && (room2 != NULL));
+    int id1,id2;
+    roomGetId((Room)room1,&id1);
+    roomGetId((Room)room2,&id2);
+    return id1 - id2;
 }
 
 bool roomCheckIfParametersLegal(int id, int price, int num_ppl, int open_hour,

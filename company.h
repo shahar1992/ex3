@@ -7,13 +7,29 @@
 #include "Room.h"
 #include "mtm_ex3.h"
 
+/**
+ *  Abstract company.
+ *
+ * Implements a Company data type.
+ *
+ * The following functions are available:
+ *   companyCreate	   - Creates a new empty set
+ *   companyFree	   - Deletes an existing company and frees all resources.
+ *   companyCopy	   - Copies an existing company.
+ *   companyCompare    - Compares two companies with email as compare key.
+ *   companyAddRoom    - Adds a new room to the company.
+ *   companyRemoveRoom - Removes a room from the company.
+ *   companyGetFaculty - Gets the Faculty who owns the company.
+ *   companyGetEmail   - Gets the email of the company.
+ *   companyFindRoom   - Find a room in the company rooms set by its id.
+*/
 
-/** Type for defining the set */
+/** Type for defining the Company */
 typedef struct company_t *Company;
 
 typedef Set RoomSet;
 
-/** Type used for returning error codes from room functions */
+/** Type used for returning error codes from company functions */
 typedef enum CompanyResult_t {
     COMPANY_SUCCESS,
     COMPANY_OUT_OF_MEMORY,
@@ -21,31 +37,6 @@ typedef enum CompanyResult_t {
     COMPANY_ROOM_ALREADY_EXISTS,
     COMPANY_ROOM_DOES_NOT_EXIST
 } CompanyResult;
-
-/** This function copying a company */
-Company companyCopy(Company company);
-
-/** This function deallocating a company and all of it resources*/
-void freeCompany(Company company);
-
-/**
-* This function used by the Company to identify equal companies by email.
-* This function should return:
-* 		A positive integer if 'company1' email is lexicographicaly greater.
-* 		0 if they're equal;
-*		A negative integer if 'company2' email is lexicographicaly greater.
-*/
-int companyCompare(Company company1, Company company2);
-
-/**
- * This function checks if the input parameters are legal company parameters.
- * @param email Company email address to check.
- * @param faculty Faculty to check.
- * @return
- *      False if one or more of the parameters is not legal.
- *      True otherwise.
- */
-//bool checkIfCompanyParametersLegal(char* email, int faculty);
 
 /**
  * This function creates new room and reset all the room's parameters.
@@ -56,28 +47,22 @@ int companyCompare(Company company1, Company company2);
  *     return the new company if create succeed.
  *     NULL if memory allocate failed.
  */
-Company createCompany
-        (char* email, TechnionFaculty faculty);
+Company companyCreate(char *email, TechnionFaculty faculty);
+
+/** This function deallocating a company and all of it resources*/
+void companyFree(Company company);
+
+/** This function copying a company */
+Company companyCopy(Company company);
 
 /**
- *  This function return in parameter the faculty that ownes the company.
- * @param company The relevant company.
- * @param faculty A pointer to a integer to save the id value.
- * @return
- *      COMPANY_NULL_ARGUMENT if 'company' or 'faculty' are NULL.
- *      COMPANY_SUCCESS otherwise.
- */
-
-CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
-/**
- *  This function return in parameter the faculty that ownes the company.
- * @param company The relevant company.
- * @param email A pointer to a string to save the email to.
- * @return
- *      COMPANY_NULL_ARGUMENT if 'company' or 'email' are NULL.
- *      COMPANY_SUCCESS otherwise.
- */
-CompanyResult companyGetEmail(Company company, char** email);
+* This function used by the Company to identify equal companies by email.
+* This function should return:
+* 		A positive integer if 'company1' email is lexicographicaly greater.
+* 		0 if they're equal;
+*		A negative integer if 'company2' email is lexicographicaly greater.
+*/
+int companyCompare(Company company1, Company company2);
 
 /**
  * This function add a room to the company rooms list.
@@ -101,6 +86,28 @@ CompanyResult companyAddRoom(Company company, Room room);
 CompanyResult companyRemoveRoom(Company company, Room room);
 
 /**
+ *  This function return in parameter the faculty that ownes the company.
+ * @param company The relevant company.
+ * @param faculty A pointer to a integer to save the id value.
+ * @return
+ *      COMPANY_NULL_ARGUMENT if 'company' or 'faculty' are NULL.
+ *      COMPANY_SUCCESS otherwise.
+ */
+
+CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
+/**
+ *  This function return in parameter the faculty that ownes the company.
+ * @param company The relevant company.
+ * @param email A pointer to a string to save the email to.
+ * @return
+ *      COMPANY_NULL_ARGUMENT if 'company' or 'email' are NULL.
+ *      COMPANY_SUCCESS otherwise.
+ */
+CompanyResult companyGetEmail(Company company, char** email);
+
+
+
+/**
  * This function finds a room in company rooms list by id.
  * @param company The relevant company.
  * @param id The id of wanted room.
@@ -111,6 +118,17 @@ CompanyResult companyRemoveRoom(Company company, Room room);
  *      COMPNY_SUCCESS otherwise.
  */
 CompanyResult companyFindRoom(Company company, int id, Room* room);
+
+
+/**
+ * This function checks if the input parameters are legal company parameters.
+ * @param email Company email address to check.
+ * @param faculty Faculty to check.
+ * @return
+ *      False if one or more of the parameters is not legal.
+ *      True otherwise.
+ */
+//bool checkIfCompanyParametersLegal(char* email, int faculty);
 
 
 #endif //EX3_COMPANY_H
