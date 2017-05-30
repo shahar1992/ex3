@@ -4,11 +4,14 @@
 #include "stdbool.h"
 
 #include "set.h"
+#include "Room.h"
 #include "mtm_ex3.h"
 
 
 /** Type for defining the set */
 typedef struct company_t *Company;
+
+typedef Set RoomSet;
 
 /** Type used for returning error codes from room functions */
 typedef enum CompanyResult_t {
@@ -43,7 +46,7 @@ int compareCompanies(Company company1 , Company company2);
  *      False if one or more of the parameters is not legal.
  *      True otherwise.
  */
-bool checkIfCompanyParametersLegal(char* email, TechnionFaculty faculty);
+bool checkIfCompanyParametersLegal(char* email, int faculty);
 
 /**
  * This function creates new room and reset all the room's parameters.
@@ -76,5 +79,39 @@ CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
  *      COMPANY_SUCCESS otherwise.
  */
 CompanyResult companyGetEmail(Company company, char** email);
+
+/**
+ * This function add a room to the company rooms list.
+ * @param company The relevant company.
+ * @param room The room to add.
+ * @return
+ *      COMPANY_NULL_ARGUMENT if 'company' or 'room' are null.
+ *      COMPANY_OUT_OF_MEMORY if allocate failed.
+ *      COMPANY_SUCCESS otherwise.
+ */
+CompanyResult companyAddRoom(Company company, Room room);
+
+/**
+ * This function remove a room from the company rooms list.
+ * @param company The relevant company.
+ * @param room The room to remove.
+ * @return
+ *      COMPANY_NULL_ARGUMENT if 'company' or 'room' are null.
+ *      COMPANY_SUCCESS otherwise.
+ */
+CompanyResult companyRemoveRoom(Company company, Room room);
+
+/**
+ * This function finds a room in company rooms list by id.
+ * @param company The relevant company.
+ * @param id The id of wanted room.
+ * @param room Paramete to save the wanted room if found.
+ * @return
+ *      COMPANY_NULL_PARAMETER if 'company' is null.
+ *      COMPANY_ROOM_NOT_EXIST if no room founds.
+ *      COMPNY_SUCCESS otherwise.
+ */
+CompanyResult companyFindRoom(Company company, int id, Room* room);
+
 
 #endif //EX3_COMPANY_H
