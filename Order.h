@@ -33,9 +33,9 @@ typedef struct Order_t* Order;
 typedef enum OrderResult_t {
     Order_SUCCESS,
     Order_OUT_OF_MEMORY,
-    Order_NULL_ARGUMENT
-    Orders_ARE_EQUAL
-    Orders_NOT_EQUAL
+    Order_NULL_ARGUMENT,
+    Orders_ARE_EQUAL,
+    Orders_NOT_EQUAL,
 } OrderResult;
 
 /** Allocates a new Order */
