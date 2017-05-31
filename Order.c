@@ -9,7 +9,7 @@
 #include <string.h>
 /**================================================================*/
 
-/**====================Main entity decleration==============================*/
+/**====================Main entity decleration================================*/
 struct Order_t{
     char * Email;
     TechnionFaculty faculty;

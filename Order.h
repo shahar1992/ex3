@@ -1,7 +1,3 @@
-//
-// Created by Amir on 31/05/2017.
-//
-
 #ifndef EX3_ORDER_H
 #define EX3_ORDER_H
 
