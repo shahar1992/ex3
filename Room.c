@@ -25,31 +25,31 @@ struct room_t {
     int difficulty;
 };
 
-Room roomCopy(Room room){
+SetElement roomCopy(SetElement room){
     assert(room != NULL);
-    Room new_room;
-    if(roomCreate(room->id, room->price, room->num_ppl,
-                  room->open_hour, room->open_hour,
-                  room->difficulty, &new_room) != ROOM_SUCCESS) {
+    Room new_room = roomCreate(((Room)room)->id, ((Room)room)->price,
+                               ((Room)room)->num_ppl, ((Room)room)->open_hour,
+                               ((Room)room)->close_hour,
+                               ((Room)room)->difficulty);
+    if(!new_room){
         return NULL;
     }
     return new_room;
 }
 
 
-void roomFree(Room room){
+void roomFree(SetElement room){
     if(room != NULL) {
         free(room);
     }
     return;
 }
 
-int roomCompare(Room room1, Room room2){
+int roomCompare(SetElement room1, SetElement room2){
     assert((room1 != NULL) && (room2 != NULL));
-    int id1,id2;
-    roomGetId((Room)room1,&id1);
-    roomGetId((Room)room2,&id2);
-    return id1 - id2;
+    assert(roomGetId(room1) > 0 );
+    assert(roomGetId(room2) > 0 );
+    return roomGetId((Room)room1) - roomGetId((Room)room2) ;
 }
 
 bool roomCheckIfParametersLegal(int id, int price, int num_ppl, int open_hour,
@@ -59,27 +59,25 @@ bool roomCheckIfParametersLegal(int id, int price, int num_ppl, int open_hour,
     difficulty >= 1 && difficulty <= 10);
 }
 
-RoomResult roomCreate(int id, int price, int num_ppl, int open_hour,
-                      int close_hour, int difficulty, Room *room){
-    NULL_PARAMETER_CHECK(room);
-    *room = malloc(sizeof(**room));
-    MEMORY_CHECK_NULL((*room));
-    (*room)->id = id;
-    (*room)->difficulty = difficulty;
-    (*room)->open_hour = open_hour;
-    (*room)->close_hour = close_hour;
-    (*room)->num_ppl = num_ppl;
-    (*room)->price = price;
-    return ROOM_SUCCESS;
+Room roomCreate(int id, int price, int num_ppl, int open_hour,
+                      int close_hour, int difficulty){
+    Room  room = malloc(sizeof(*room));
+    MEMORY_CHECK_NULL(room);
+    room->id = id;
+    room->difficulty = difficulty;
+    room->open_hour = open_hour;
+    room->close_hour = close_hour;
+    room->num_ppl = num_ppl;
+    room->price = price;
+    return room;
 }
 
-RoomResult roomAvailability(Room room, int days_to_order, int order_hour){
-}
-
-RoomResult roomGetId(Room room, int* id){
+int roomGetId(Room room){
     if(!room){
-        return ROOM_NULL_ARGUMENT;
+        return 0;
     }
-    *id = room->id;
-    return ROOM_SUCCESS;
+    return room->id;
 }
+
+/*RoomResult roomAvailability(Room room, int days_to_order, int order_hour){
+}*/

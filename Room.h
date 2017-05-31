@@ -14,10 +14,10 @@ typedef enum RoomResult_t {
 } RoomResult;
 
 /** This function copying a room */
-Room roomCopy(Room room);
+SetElement roomCopy(SetElement room);
 
 /** Type of function for deallocating an element of the set */
-void roomFree(Room room);
+void roomFree(SetElement room);
 
 /**
 * This function used by the Room to identify equal Rooms by id.
@@ -26,7 +26,7 @@ void roomFree(Room room);
 * 		0 if they're equal;
 *		A negative integer if the second Room's id is greater.
 */
-int roomCompare(Room room1, Room room2);
+int roomCompare(SetElement room1, SetElement room2);
 
 /**
  * This function checks if the input parameters are legal room parameters.
@@ -49,13 +49,12 @@ bool roomCheckIfParametersLegal(int id, int price, int num_ppl, int open_hour,
  * @param open_hour Room's opening hour.
  * @param close_hour Room's closing hour.
  * @param difficulty The difficulty level for the room.
- * @param room The new room's pointer.
  * @return
  *      return the new room if create succeed.
  *      NULL if memory allocate failed.
  */
-RoomResult roomCreate(int id, int price, int num_ppl, int open_hour,
-                      int close_hour, int difficulty, Room *room);
+Room roomCreate(int id, int price, int num_ppl, int open_hour,
+                      int close_hour, int difficulty);
 
 /**
  *

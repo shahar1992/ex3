@@ -73,8 +73,7 @@ void companyFree(SetElement company){
 
 SetElement companyCopy(SetElement company){
     assert(company != NULL);
-    Company new_company;
-    new_company = companyCreate(((Company)company)->email,
+    Company new_company = companyCreate(((Company)company)->email,
                                 ((Company)company)->faculty);
     if(!new_company) {
         return NULL;
