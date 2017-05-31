@@ -20,7 +20,7 @@
 *   EscaperCreate               - Creates a new Escaper
 *   EscaperDestroy              - Deletes an existing Escaper and frees all resources
 *   EscaperCopy                 - Copies an existing Escaper
-*   EscaperCmp                  -checks if 2 escapers are identical
+*   EscaperCmp                  -checks if 2 escapers are identical(0=identical)
 *   EscaperGetEmail             -Returns a copy of the escaper mail.
 *   EscaperGetFaculty           -Return enum faculty of the escaper
 *   EscaperGetOrder             -adds an order to the escaper.
@@ -56,7 +56,7 @@ bool EscaperCmp(Escaper escaper1,Escaper escaper2);
 
 /** Gets an escaper and a pointer to char[] and returns a copy of the mail in it
  * */
-void EscaperGetEmail(Escaper escaper,str mail);
+EscaperResult EscaperGetEmail(Escaper escaper,char* mail);
 
 /** Connect order to Given escaper* */
 EscaperResult EscaperGetOrder(Escaper escaper,Order order);
