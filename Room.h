@@ -69,13 +69,12 @@ Room roomCreate(int id, int price, int num_ppl, int open_hour,
 RoomResult roomAvailability(Room room, int days_to_order, int order_hour);
 
 /**
- *
+ * Function to get id of specific room.
  * @param room The relevant room.
- * @param id A pointer to a integer to save the id value.
  * @return
- *      ROOM_NULL_ARGUMENT if 'room' or 'id' are NULL
- *      ROOM_SUCCESS otherwise.
+ *      0 if 'room' is NULL
+ *      id of 'room' otherwise.
  */
-RoomResult roomGetId(Room room, int* id);
+int roomGetId(Room room);
 
 #endif //EX3_ROOMS_H
