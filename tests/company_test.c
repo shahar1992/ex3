@@ -27,8 +27,7 @@ static bool testCompanyCreate() {
 
 static bool testCompanyCopy() {
     Company company = companyCreate("shahar92@campux.technion.ac.il",ELECTRICAL_ENGINEERING);
-    Room room;
-    RoomResult result = roomCreate(1,4,3,12,19,1,&room);
+    Room room = roomCreate(1,4,3,12,19,1);
     companyAddRoom(company,room);
     Company new_company = companyCopy(company);
     ASSERT_TEST(companyCompare(company,new_company)==0);

@@ -62,7 +62,6 @@ bool roomCheckIfParametersLegal(int id, int price, int num_ppl, int open_hour,
 Room roomCreate(int id, int price, int num_ppl, int open_hour,
                       int close_hour, int difficulty){
     Room  room = malloc(sizeof(*room));
-    MEMORY_CHECK_NULL(room);
     room->id = id;
     room->difficulty = difficulty;
     room->open_hour = open_hour;
