@@ -50,10 +50,10 @@ typedef enum CompanyResult_t {
 Company companyCreate(char *email, TechnionFaculty faculty);
 
 /** This function deallocating a company and all of it resources*/
-void companyFree(Company company);
+void companyFree(SetElement company);
 
 /** This function copying a company */
-Company companyCopy(Company company);
+SetElement companyCopy(SetElement company);
 
 /**
 * This function used by the Company to identify equal companies by email.
@@ -62,7 +62,7 @@ Company companyCopy(Company company);
 * 		0 if they're equal;
 *		A negative integer if 'company2' email is lexicographicaly greater.
 */
-int companyCompare(Company company1, Company company2);
+int companyCompare(SetElement company1, SetElement company2);
 
 /**
  * This function add a room to the company rooms list.

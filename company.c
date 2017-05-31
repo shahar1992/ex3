@@ -60,25 +60,26 @@ Company companyCreate(char *email, TechnionFaculty faculty){
     return company;
 }
 
-void companyFree(Company company){
+void companyFree(SetElement company){
     if(company != NULL){
-        setDestroy(company->Rooms);
-        if(company->email != NULL) {
-            free(company->email);
+        setDestroy(((Company)company)->Rooms);
+        if(((Company)company)->email != NULL) {
+            free(((Company)company)->email);
         }
         free(company);
     }
     return;
 }
 
-Company companyCopy(Company company){
+SetElement companyCopy(SetElement company){
     assert(company != NULL);
     Company new_company;
-    new_company = companyCreate(company->email, company->faculty);
+    new_company = companyCreate(((Company)company)->email,
+                                ((Company)company)->faculty);
     if(!new_company) {
         return NULL;
     }
-    new_company->Rooms = setCopy(company->Rooms);
+    new_company->Rooms = setCopy(((Company)company)->Rooms);
     if(!new_company){
         companyFree(new_company);
         return NULL;
@@ -88,9 +89,9 @@ Company companyCopy(Company company){
 
 
 
-int companyCompare(Company company1, Company company2){
+int companyCompare(SetElement company1, SetElement company2){
     assert((company1 != NULL ) && (company2 != NULL));
-    return strcmp(company1->email, company2->email);
+    return strcmp(((Company)company1)->email, ((Company)company2)->email);
 }
 
 CompanyResult companyAddRoom(Company company, Room room){
