@@ -39,18 +39,18 @@
  *
  * Orders: Amir
  *      @functions:
- *          create.
- *          free.
- *          copy.
- *          get faculty.
+ *          create.-complete
+ *          copy.-complete
+ *          destroy-complete
+ *          get faculty.-complete
  *
  * Escaper: Amir
  *      @functions:
- *          create.
- *          free.
- *          copy.
- *          cmp.
- *          get mail.
+ *          create.-complete
+ *          destroy-complete
+ *          copy.-complete
+ *          cmp.-complete
+ *          get mail.-complete
  *          add order.
  *          remove order.
  *          remove all orders.
