@@ -117,7 +117,6 @@ static bool MailCheck(char* mail){
         if(*ptr=='@') counter++;
     }
     return (counter==1)?TRUE:FALSE;//return true if only 1 @;
-
 }
 static bool FacultyCheck(TechnionFaculty faculty){
 
