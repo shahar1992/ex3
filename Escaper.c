@@ -1,10 +1,12 @@
 //
 // Created by Amir on 31/05/2017.
 //
-#include "Escaper.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+
+
+#include "Escaper.h"
 
 
 /** List of static functions and its usage
@@ -61,7 +63,7 @@ void EscaperDestroy(Escaper escaper){
 
 Escaper EscaperCopy(Escaper escaper){
     assert(escaper);
-    Escaper  new_escaper=malloc(sizeof(*new_escaper));
+    Escaper new_escaper = malloc(sizeof(*new_escaper));
     Escaper_OUT_OF_MEMORY(new_escaper);
     new_escaper->Email=malloc(sizeof(char)*(strlen(escaper->Email)+1) );
     Escaper_OUT_OF_MEMORY(new_escaper);

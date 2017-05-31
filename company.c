@@ -132,10 +132,8 @@ CompanyResult companyFindRoom(Company company, int id, Room* room){
         return COMPANY_NULL_ARGUMENT;
     }
     SET_FOREACH(Room,current_room,company->Rooms){
-        int current_id;
         assert(current_room != NULL);
-        roomGetId(current_room,&current_id);
-        if(current_id == id){
+        if(roomGetId(current_room) == id){
             *room = current_room;
             return COMPANY_SUCCESS;
         }
