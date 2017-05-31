@@ -32,8 +32,12 @@ struct Order_t{
 /** List of static functions and its usage
  * GetTime          -gets time in time format and returns both wanted hour and
  *                   number of days left in pointers;
+ *  MailCheck        -checks if a mail is valid (only 1 @)
+ *  TimeCheck         - checks if time is valid (betwenn 0 and 23 including)
  */
 static OrderResult GetTime(char *time_format,long* hour,long* days_left);
+static bool MailCheck(char* mail);
+static bool TimeCheck(long time);
 
 /**===================End of static function declarations.====================*/
 
@@ -43,7 +47,12 @@ static OrderResult GetTime(char *time_format,long* hour,long* days_left);
 /**============OrderCreate===========================*/
 
 Order OrderCreate(char* email, TechnionFaculty faculty, int id,char* time,int num_of_ppl){
-    assert(mail!=NULL && time!=NULL);
+    assert(email!=NULL && time!=NULL);
+    long days_left,hour;
+    GetTime(time,&hour,&days_left);
+    if( (MailCheck(email)!=true) || (TimeCheck(hour)!=true) ){
+        return  NULL;
+    }
     Order order=malloc(sizeof(*order));
     if(order==NULL) {
         return NULL;
@@ -56,7 +65,9 @@ Order OrderCreate(char* email, TechnionFaculty faculty, int id,char* time,int nu
     strcpy(order->Email,email);
     order->faculty=faculty;
     order->ID=id;
-    GetTime(time,&order->start_hour,&order->days_left);
+    order->days_left=days_left;
+    order->start_hour=hour;
+    order->num_ppl=num_of_ppl;
     return order;
 }
 
@@ -65,6 +76,8 @@ Order OrderCreate(char* email, TechnionFaculty faculty, int id,char* time,int nu
 OrderResult OrderDestroy(Order order){
     assert(order!=NULL);
     free(order->Email);
+    free(order);
+    order=NULL;
     return Order_SUCCESS;
 
 }
@@ -116,13 +129,13 @@ int OrderCmpByTime_Faculty_ID(Order order1,Order order2){
 /**============OrderPrint===========================*/
 void OrderPrint(Order order){
     assert(order!=NULL);
-    printf("----------Printing order---------------/n");
-    printf("Order's order email: %s/n",order->Email);
-    printf("Order's room id : %d/n",order->ID);
-    printf("Order's room faculty : %d/n",order->faculty);
-    printf("Days until order: %ld/n",order->days_left);
-    printf("Order's wanted hour: %ld/n",order->start_hour);
-    printf("Number of peoples in order: %d/n",order->num_ppl);
+    printf("----------Printing order---------------\n");
+    printf("Order's order email: %s\n",order->Email);
+    printf("Order's room id : %d\n",order->ID);
+    printf("Order's room faculty : %d\n",order->faculty);
+    printf("Days until order: %ld\n",order->days_left);
+    printf("Order's wanted hour: %ld\n",order->start_hour);
+    printf("Number of peoples in order: %d\n",order->num_ppl);
 }
 /** ===============Static functions implementaion==========================*/
 
@@ -135,4 +148,19 @@ static OrderResult GetTime(char *time_format,long* hour,long* days_left){
     ret=strtol(ptr+1,&ptr,10);
     *hour=ret;
     return  Order_SUCCESS;
+}
+
+static bool MailCheck(char* mail){
+    char* ptr=mail;
+    int counter =0;
+    while(*ptr!=0){
+        if(*ptr=='@') counter++;
+        ptr++;
+    }
+    return (counter==1)?true:false;//return true if only 1 @;
+
+}
+static bool TimeCheck(long time){
+    if( time<0 || time> 23) return false;
+    return true;
 }
