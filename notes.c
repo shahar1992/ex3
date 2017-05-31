@@ -39,7 +39,6 @@
  *
  * Orders: Amir
  *      @functions:
- *          check.
  *          create.
  *          free.
  *          copy.
@@ -47,10 +46,10 @@
  *
  * Escaper: Amir
  *      @functions:
- *          check.
  *          create.
  *          free.
  *          copy.
+ *          cmp.
  *          get mail.
  *          add order.
  *          remove order.
