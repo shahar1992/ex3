@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include "mtm_ex3.h"
 #include "Order.h"
+#include "set.h"
 /**
 *  Escaper ADT
 *
@@ -23,7 +24,7 @@
 *   EscaperCmp                  -checks if 2 escapers are identical(0=identical)
 *   EscaperGetEmail             -Returns a copy of the escaper mail.
 *   EscaperGetFaculty           -Return enum faculty of the escaper
-*   EscaperGetOrder             -adds an order to the escaper.
+*   EscaperAddOrder             -adds an order to the escaper.
 *   EscaperRemoveOrder          -Remove an order of the escaper
 *   EscaperRemoveAllOrders      -Remove all orders of the escaper
 *   EscaperCheckAvailabilty     -Checks if the escaper is available in given time
@@ -59,19 +60,19 @@ bool EscaperCmp(Escaper escaper1,Escaper escaper2);
 EscaperResult EscaperGetEmail(Escaper escaper,char* mail);
 
 /** Connect order to Given escaper* */
-EscaperResult EscaperGetOrder(Escaper escaper,Order order);
+SetResult EscaperAddOrder(Escaper escaper,Order order);
 
 /** Remove order from Given escaper* */
-EscaperResult EscaperRemoveOrder(Escaper escaper,Order order);
+SetResult EscaperRemoveOrder(Escaper escaper,Order order);
 
 /** Remove all orders from Given escaper* */
-EscaperResult EscaperRemoveAllOrders(Escaper escaper);
+void EscaperRemoveAllOrders(Escaper escaper);
 
 /**Returns the faculty of the escaper*/
 TechnionFaculty EscaperGetFaculty(Escaper escaper);
 
 /**Check availabilty**/
-bool EscaperCheckAvailabilty(Escaper,char* time);
+SetResult EscaperCheckAvailabilty(Escaper,char* time);
 
 
 
