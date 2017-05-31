@@ -5,7 +5,8 @@
 #ifndef EX3_ORDER_H
 #define EX3_ORDER_H
 
-include <stdbool.h>
+#include <stdbool.h>
+
 #include "mtm_ex3.h"
 
 /**

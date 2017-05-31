@@ -89,6 +89,7 @@ bool EscaperCmp(Escaper escaper1,Escaper escaper2){
     /**strcmp returns 0 if both string are equal which differs
      * escapers*/
 }
+
 /**=====EscaperGetEmail==================================*/
 EscaperResult EscaperGetEmail(Escaper escaper,char* mail){
     assert(escaper&&mail);
