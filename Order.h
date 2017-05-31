@@ -22,6 +22,7 @@
 *   OrderGetFaculty           -return the faculty enum for a given order
  *  OrderCmpByTime            -cmp 2 orders by time
  *  OrderCmpByTime_Faculty_ID   -cmp 2 orders by time,faculty,id
+ *  OrderPrint                 -Print A given order
 *
 */
 
@@ -54,6 +55,10 @@ int OrderCmpByTime(Order order1,Order order2);
 
 /**Compare 2 orders by room faculty,id and time */
 int OrderCmpByTime_Faculty_ID(Order order1,Order order2);
+
+
+/**Print A GIVEN ORDER*/
+void OrderPrint(Order order);
 
 
 

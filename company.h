@@ -2,7 +2,6 @@
 #define EX3_COMPANY_H
 
 #include "stdbool.h"
-
 #include "set.h"
 #include "Room.h"
 #include "mtm_ex3.h"

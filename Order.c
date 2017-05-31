@@ -113,6 +113,17 @@ int OrderCmpByTime_Faculty_ID(Order order1,Order order2){
     return 0;
 
 }
+/**============OrderPrint===========================*/
+void OrderPrint(Order order){
+    assert(order!=NULL);
+    printf("----------Printing order---------------/n");
+    printf("Order's order email: %s/n",order->Email);
+    printf("Order's room id : %d/n",order->ID);
+    printf("Order's room faculty : %d/n",order->faculty);
+    printf("Days until order: %ld/n",order->days_left);
+    printf("Order's wanted hour: %ld/n",order->start_hour);
+    printf("Number of peoples in order: %d/n",order->num_ppl);
+}
 /** ===============Static functions implementaion==========================*/
 
 static OrderResult GetTime(char *time_format,long* hour,long* days_left){
