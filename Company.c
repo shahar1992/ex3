@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "company.h"
+#include "Company.h"
 
 /**======================Macros and structs===================================*/
 #define NULL_PARAMETER_CHECK(ptr) \

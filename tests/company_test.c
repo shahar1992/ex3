@@ -1,5 +1,5 @@
 #include "list_mtm/test_utilities.h"
-#include "../company.h"
+#include "../Company.h"
 #include <stdio.h>
 #include <assert.h>
 #include <stdbool.h>

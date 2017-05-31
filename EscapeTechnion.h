@@ -5,7 +5,7 @@
 
 #include "list.h"
 #include "set.h"
-#include "company.h"
+#include "Company.h"
 #include "Room.h"
 #include "order.h"
 
