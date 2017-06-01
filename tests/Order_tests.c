@@ -28,20 +28,22 @@ static bool testOrderCopy() {
     OrderDestroy(order);
     return true;
 }
-/*
-static bool testCompanyCompare(){
-    Company company2 = companyCreate("shahar92@campus.technion.ac.il",ELECTRICAL_ENGINEERING);
-    Company  company1 = companyCreate("1@2",ELECTRICAL_ENGINEERING);
-    ASSERT_TEST(companyCompare(company1,company2) != 0);
-    companyFree(company2);
-    companyFree(company1);
+
+static bool testOrderCmp(){
+    Order order1 = OrderCreate("shahar92@campus.technion.ac.il",ELECTRICAL_ENGINEERING,23,"01-11",8);
+    Order  order2 = OrderCreate("1@2",ELECTRICAL_ENGINEERING,44,"00-9",3);
+    OrderPrint(order1);
+    OrderPrint(order2);
+    printf("The orders are %s",OrderCmpByTime(order1,order2)?"DIFFRENT":"SAME");
+    OrderDestroy(order1);
+    OrderDestroy(order2);
     return true;
 }
-*/
+
 int main (int argv, char** arc){
     RUN_TEST(testOrderCreate);
     RUN_TEST(testOrderCopy);
-    //RUN_TEST(testCompanyCompare);
+    RUN_TEST(testOrderCmp);
     //RUN_TEST(testCompanyAddRoom);
     //RUN_TEST(testCompanyRemoveRoom);
     //RUN_TEST(testCompanyGetFaculty);
