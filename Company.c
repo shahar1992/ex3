@@ -57,7 +57,6 @@ Company companyCreate(char *email, TechnionFaculty faculty){
         companyFree(company);
         return NULL;
     }
-    return company;
 }
 
 void companyFree(SetElement company){

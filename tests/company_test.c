@@ -49,10 +49,10 @@ static bool testCompanyCompare(){
     return true;
 }
 
-//int main (int argv, char** arc){
-    //testCompanyCreate();
-   // RUN_TEST(testCompanyCreate);
-    //RUN_TEST(testCompanyCopy);
+int main (int argv, char** arc){
+    RUN_TEST(testCompanyCreate);
+    RUN_TEST(testCompanyCreate);
+    RUN_TEST(testCompanyCopy);
     //RUN_TEST(testCompanyCompare);
     //RUN_TEST(testCompanyAddRoom);
     //RUN_TEST(testCompanyRemoveRoom);
@@ -60,4 +60,4 @@ static bool testCompanyCompare(){
     //RUN_TEST(testCompanyGetEmail);
     //RUN_TEST(testCompanyFindRoom);
     //return 0;
-//}
+}

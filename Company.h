@@ -95,7 +95,7 @@ CompanyResult companyRemoveRoom(Company company, Room room);
 
 CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
 /**
- *  This function return in parameter the faculty that ownes the company.
+ * This function return in parameter the faculty that ownes the company.
  * @param company The relevant company.
  * @param email A pointer to a string to save the email to.
  * @return

@@ -1,5 +1,5 @@
 #include "tests/list_mtm/test_utilities.h"
-#include "list_mtm1.h"
+#include "list_mtm1/list_mtm1.h"
 #include <stdio.h>
 #include <assert.h>
 #include <stdbool.h>
