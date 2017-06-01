@@ -38,10 +38,9 @@ typedef enum CompanyResult_t {
 } CompanyResult;
 
 /**
- * This function creates new room and reset all the room's parameters.
+ * This function creates new company and reset all the company's parameters.
  * @param email The new company email address.
  * @param faculty The faculty that the new company belongs to.
- * @param company The new company's pointer.
  * @return
  *     return the new company if create succeed.
  *     NULL if memory allocate failed.
@@ -49,7 +48,7 @@ typedef enum CompanyResult_t {
 Company companyCreate(char *email, TechnionFaculty faculty);
 
 /** This function deallocating a company and all of it resources*/
-void companyFree(SetElement company);
+void companyDestroy(SetElement company);
 
 /** This function copying a company */
 SetElement companyCopy(SetElement company);

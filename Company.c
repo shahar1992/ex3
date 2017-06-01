@@ -40,26 +40,26 @@ static  CompanyResult convertReturnType(SetResult result);
 
 Company companyCreate(char *email, TechnionFaculty faculty){
     assert(email != NULL);
-    Company  company = malloc(sizeof(*company));
+    Company company = malloc(sizeof(*company));
     if(!company){
         return NULL;
     }
     (company)->email = malloc(sizeof(char)*(strlen(email)+1));
     if(!company->email){
-        companyFree(company);
+        companyDestroy(company);
         return NULL;
     }
     strcpy(company->email, email);
     company->faculty = faculty;
-    company->Rooms =
-            (RoomSet)setCreate((SetElement)roomCopy, roomFree, roomCompare);
+    company->Rooms = setCreate(roomCopy, roomDestroy, roomCompare);
     if(!company->Rooms){
-        companyFree(company);
+        companyDestroy(company);
         return NULL;
     }
+    return company;
 }
 
-void companyFree(SetElement company){
+void companyDestroy(SetElement company){
     if(company != NULL){
         setDestroy(((Company)company)->Rooms);
         if(((Company)company)->email != NULL) {
@@ -78,8 +78,8 @@ SetElement companyCopy(SetElement company){
         return NULL;
     }
     new_company->Rooms = setCopy(((Company)company)->Rooms);
-    if(!new_company){
-        companyFree(new_company);
+    if(!new_company->Rooms){
+        companyDestroy(new_company);
         return NULL;
     }
     return new_company;
@@ -96,7 +96,7 @@ CompanyResult companyAddRoom(Company company, Room room){
     if(!company || !room){
         return COMPANY_NULL_ARGUMENT;
     }
-    CompanyResult result = convertReturnType(setAdd(company->Rooms,room));
+    CompanyResult result = convertReturnType(setAdd(company->Rooms, room));
     return result;
 }
 

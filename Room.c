@@ -38,7 +38,7 @@ SetElement roomCopy(SetElement room){
 }
 
 
-void roomFree(SetElement room){
+void roomDestroy(SetElement room){
     if(room != NULL) {
         free(room);
     }

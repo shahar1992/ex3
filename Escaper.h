@@ -49,7 +49,7 @@ Escaper EscaperCopy(Escaper escaper);
 
 /** checks if 2 escapers are identical. return true if dentical or false if
  * not */
-bool EscaperCmp(Escaper escaper1,Escaper escaper2);
+bool EscaperCompare(Escaper escaper1, Escaper escaper2);
 
 /** Gets an escaper and a pointer to char[] and returns a copy of the mail in it
  * */

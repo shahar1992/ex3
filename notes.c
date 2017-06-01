@@ -2,17 +2,17 @@
  * system:
  *      @functions:
  *          main!
- *          create system.
- *          destroy system.
- *          static check input validate for room.
- *          static check input validate for company.
- *          static check input validate for order.
- *          static check input validate for escaper.
- *          static check mail.
- *          static check faculty.
+ *          create system - completed.
+ *          destroy system - done.
+ *          static check input  for room.
+ *          static check input  for company - done.
+ *          static check input  for order.
+ *          static check input  for escaper.
+ *          static check mail - done.
+ *          static check faculty - done.
  *          static check time.
  *
- *          add company
+ *          add company - in progress.
  *          remove company
  *          add room
  *          remove room
