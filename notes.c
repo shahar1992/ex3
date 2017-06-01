@@ -1,10 +1,29 @@
 /**
  * system:
  *      @functions:
+ *          main!
  *          create system.
  *          destroy system.
- *          check validate.
- *          check mail.
+ *          static check input validate for room.
+ *          static check input validate for company.
+ *          static check input validate for order.
+ *          static check input validate for escaper.
+ *          static check mail.
+ *          static check faculty.
+ *          static check time.
+ *
+ *          add company
+ *          remove company
+ *          add room
+ *          remove room
+ *          add escaper
+ *          remove escaper
+ *          add order
+ *          remove order
+ *          static find recommended room
+ *
+ *          end of day
+ *
  *          find company (by mail).
  *          find recommended room.
  *          printing functions.
