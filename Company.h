@@ -112,18 +112,17 @@ char* companyGetEmail(Company company);
  *      COMPANY_ROOM_NOT_EXIST if no room founds.
  *      COMPNY_SUCCESS otherwise.
  */
-CompanyResult companyFindRoom(Company company, int id, Room* room);
-
+Room companyFindRoom(Company company, long id);
 
 /**
- * This function checks if the input parameters are legal company parameters.
- * @param email Company email address to check.
- * @param faculty Faculty to check.
+ * This function checks if a id exist in the company's set of rooms.
+ * @param company The relevant company.
+ * @param id The id to check.
  * @return
- *      False if one or more of the parameters is not legal.
- *      True otherwise.
+ *      true if room with same id has found.
+ *      false otherwise.
  */
-//bool checkIfCompanyParametersLegal(char* email, int faculty);
+bool companyIsIdIn(Company company, long id)
 
 
 #endif //EX3_COMPANY_H

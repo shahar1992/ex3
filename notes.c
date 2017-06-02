@@ -4,27 +4,26 @@
  *          main!
  *          create system - completed.
  *          destroy system - completed.
- *          static check input  for room.
- *          static check input  for company - completed.
- *          static check input  for order.
- *          static check input  for escaper.
- *          static check mail - completed.
+ *          static check input for room - completed.
+ *          static check input for company - completed.
+ *          static check input for order -
+ *          static check input for escaper -
+ *          static check mail - completed
  *          static check faculty - completed.
- *          static check time.
+ *          static check time -
  *
  *          add company  - completed.
- *          remove company - in progress.
- *          add room
- *          remove room
- *          add escaper
- *          remove escaper
- *          add order
- *          remove order
- *          static find recommended room
+ *          remove company - completed.
+ *          add room - completed.
+ *          remove room - completed.
+ *          add escaper -
+ *          remove escaper -
+ *          add order -
+ *          remove order -
  *
  *          end of day
  *
- *          find company (by mail).
+ *          find company (by mail) - completed.
  *          find recommended room.
  *          printing functions.
  *

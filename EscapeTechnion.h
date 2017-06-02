@@ -98,14 +98,15 @@ MtmErrorCode systemAddRoom(System system, char* email, long id, long price,
                             int difficulty);
 
 /**
- * This function remove a room from the company rooms list.
- * @param company The relevant company.
- * @param room The room to remove.
+ * This function remove a room from the system.
+ * @param system The relevant system.
+ * @param faculty The room to remove.
  * @return
  *      COMPANY_NULL_ARGUMENT if 'company' or 'room' are null.
- *      COMPANY_SUCCESS otherwise.
+ *      MTM_RESERVATION_EXISTS if a reservation exist to the relevant room.
+ *      MTM_SUCCESS otherwise.
  */
-MtmErrorCode systemRemoveRoom(System system, TechnionFaculty, long id);
+MtmErrorCode systemRemoveRoom(System system, TechnionFaculty faculty, long id);
 
 
 /**
@@ -118,7 +119,7 @@ MtmErrorCode systemRemoveRoom(System system, TechnionFaculty, long id);
  *      COMPANY_ROOM_NOT_EXIST if no room founds.
  *      COMPNY_SUCCESS otherwise.
  */
-CompanyResult companyFindRoom(Company company, int id, Room* room);
+Room companyFindRoom(Company company, long id);
 
 
 

@@ -108,31 +108,34 @@ CompanyResult companyRemoveRoom(Company company, Room room){
     return result;
 }
 
-CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty){
-    if(!company) {
-        return COMPANY_NULL_ARGUMENT;
-    }
-    *faculty = company->faculty;
-    return COMPANY_SUCCESS;
+TechnionFaculty companyGetFaculty(Company company){
+    assert(company);
+    return  company->faculty;
 }
 
 char* companyGetEmail(Company company){
-    assert(company && email);
+    assert(company);
     return company->email;
 }
 
-CompanyResult companyFindRoom(Company company, int id, Room* room){
-    if(!company || !room){
-        return COMPANY_NULL_ARGUMENT;
-    }
+Room companyFindRoom(Company company, long id){
+    assert(company);
     SET_FOREACH(Room,current_room,company->rooms){
         assert(current_room != NULL);
         if(roomGetId(current_room) == id){
-            *room = current_room;
-            return COMPANY_SUCCESS;
+            return current_room;
         }
     }
-    return COMPANY_ROOM_DOES_NOT_EXIST;
+    return NULL;
+}
+
+bool companyIsIdIn(Company company, long id){
+    SET_FOREACH(Room,current_room, company->rooms){
+        if(roomGetId(current_room) == id){
+            return true;
+        }
+    }
+    return false;
 }
 
 /**==================END of company ADT functions implementation==============*/

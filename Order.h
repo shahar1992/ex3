@@ -20,6 +20,7 @@
  *  OrderCmpByTime_Faculty_ID   - cmp 2 orders by time,faculty,id
  *  OrderPrint                  - Print A given order
  *  orderGetEmail               - Get the company email of an order.
+ *  orderGetId                  - Get the id of the ordered room.
  */
 
 /** Type for defining an Order*/
@@ -54,6 +55,9 @@ int OrderCmpByTime_Faculty_ID(Order order1,Order order2);
 
 /**Get the company email of an order.*/
 char* orderGetEmail(Order order);
+
+/**Get the id of the ordered room.*/
+long orderGetId(Order order);
 
 /**Print A GIVEN ORDER*/
 void OrderPrint(Order order);

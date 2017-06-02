@@ -169,3 +169,8 @@ char* orderGetEmail(Order order){
     assert(order);
     return order->Email;
 }
+
+long orderGetId(Order order){
+    assert(order);
+    return order->ID;
+}

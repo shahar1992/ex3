@@ -49,14 +49,9 @@ int roomCompare(SetElement room1, SetElement room2){
     assert((room1 != NULL) && (room2 != NULL));
     assert(roomGetId(room1) > 0 );
     assert(roomGetId(room2) > 0 );
-    return roomGetId((Room)room1) - roomGetId((Room)room2) ;
+    return roomGetId(room1) - roomGetId(room2) ;
 }
 
-bool roomCheckIfParametersLegal(int id, int price, int num_ppl, int open_hour,
-                                int close_hour, int difficulty){
-    return (id > 0 && price > 0 && price%4 == 0 && num_ppl > 0 && open_hour < 0
-    && open_hour <24 && close_hour > open_hour && close_hour < 24 &&
-    difficulty >= 1 && difficulty <= 10);
 }
 
 Room roomCreate(int id, int price, int num_ppl, int open_hour,
