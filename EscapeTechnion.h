@@ -32,6 +32,8 @@ typedef List OrdersList;
 
 typedef Set EscaperSet;
 
+typedef Set RoomsSet;
+
 /**
  * This function creates new system and reset all the system's parameters.
  * @param system The parameter to save a pointer to the new system.

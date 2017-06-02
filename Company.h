@@ -84,24 +84,21 @@ CompanyResult companyAddRoom(Company company, Room room);
 CompanyResult companyRemoveRoom(Company company, Room room);
 
 /**
- *  This function return in parameter the faculty that ownes the company.
+ *  This function return in parameter the faculty that owns the company.
  * @param company The relevant company.
- * @param faculty A pointer to a integer to save the id value.
  * @return
- *      COMPANY_NULL_ARGUMENT if 'company' or 'faculty' are NULL.
- *      COMPANY_SUCCESS otherwise.
+ *      The faculty of current company.
  */
 
-CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
+TechnionFaculty companyGetFaculty(Company company);
 /**
- * This function return in parameter the faculty that ownes the company.
+ * This function return the email of a company.
  * @param company The relevant company.
- * @param email A pointer to a string to save the email to.
  * @return
- *      COMPANY_NULL_ARGUMENT if 'company' or 'email' are NULL.
- *      COMPANY_SUCCESS otherwise.
+ *      NULL if company mail is null.
+ *      pointer to company mail otherwise.
  */
-CompanyResult companyGetEmail(Company company, char** email);
+char* companyGetEmail(Company company);
 
 
 

@@ -18,7 +18,7 @@
 struct company_t{
     char* email;
     TechnionFaculty faculty;
-    RoomSet Rooms;
+    RoomSet rooms;
 };
 
 /**====================End of macros and structs==============================*/
@@ -51,8 +51,8 @@ Company companyCreate(char *email, TechnionFaculty faculty){
     }
     strcpy(company->email, email);
     company->faculty = faculty;
-    company->Rooms = setCreate(roomCopy, roomDestroy, roomCompare);
-    if(!company->Rooms){
+    company->rooms = setCreate(roomCopy, roomDestroy, roomCompare);
+    if(!company->rooms){
         companyDestroy(company);
         return NULL;
     }
@@ -61,7 +61,7 @@ Company companyCreate(char *email, TechnionFaculty faculty){
 
 void companyDestroy(SetElement company){
     if(company != NULL){
-        setDestroy(((Company)company)->Rooms);
+        setDestroy(((Company)company)->rooms);
         if(((Company)company)->email != NULL) {
             free(((Company)company)->email);
         }
@@ -77,8 +77,8 @@ SetElement companyCopy(SetElement company){
     if(!new_company) {
         return NULL;
     }
-    new_company->Rooms = setCopy(((Company)company)->Rooms);
-    if(!new_company->Rooms){
+    new_company->rooms = setCopy(((Company)company)->rooms);
+    if(!new_company->rooms){
         companyDestroy(new_company);
         return NULL;
     }
@@ -96,7 +96,7 @@ CompanyResult companyAddRoom(Company company, Room room){
     if(!company || !room){
         return COMPANY_NULL_ARGUMENT;
     }
-    CompanyResult result = convertReturnType(setAdd(company->Rooms, room));
+    CompanyResult result = convertReturnType(setAdd(company->rooms, room));
     return result;
 }
 
@@ -104,7 +104,7 @@ CompanyResult companyRemoveRoom(Company company, Room room){
     if(!company || !room){
         return COMPANY_NULL_ARGUMENT;
     }
-    CompanyResult result = convertReturnType(setRemove(company->Rooms,room));
+    CompanyResult result = convertReturnType(setRemove(company->rooms,room));
     return result;
 }
 
@@ -116,21 +116,16 @@ CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty){
     return COMPANY_SUCCESS;
 }
 
-CompanyResult companyGetEmail(Company company, char** email){
-    if(!email || !company){
-        return COMPANY_NULL_ARGUMENT;
-    }
-    *email = malloc(sizeof(char)*(strlen(company->email)+1));
-    MEMORY_CHECK_NULL(*email);
-    strcpy(*email,company->email);
-    return COMPANY_SUCCESS;
+char* companyGetEmail(Company company){
+    assert(company && email);
+    return company->email;
 }
 
 CompanyResult companyFindRoom(Company company, int id, Room* room){
     if(!company || !room){
         return COMPANY_NULL_ARGUMENT;
     }
-    SET_FOREACH(Room,current_room,company->Rooms){
+    SET_FOREACH(Room,current_room,company->rooms){
         assert(current_room != NULL);
         if(roomGetId(current_room) == id){
             *room = current_room;

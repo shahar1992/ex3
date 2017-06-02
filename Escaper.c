@@ -54,7 +54,7 @@ Escaper EscaperCreate(char* email, TechnionFaculty faculty, int skill_level){
         return  NULL;
     }
     escaper->Email= malloc(sizeof(char)*(strlen(email)+1));
-    if(escaper->Email==NULL) {
+    if(escaper->Email == NULL) {
 
     }
     strcpy(escaper->Email,email);
@@ -105,14 +105,9 @@ bool EscaperCmp(Escaper escaper1,Escaper escaper2){
 }
 
 /**=====EscaperGetEmail==================================*/
-EscaperResult EscaperGetEmail(Escaper escaper,char* mail){
-    assert(escaper&&mail);
-    mail=malloc(sizeof(char)*(strlen(escaper->Email)+1) );
-    if(mail==NULL){
-        return  Escaper_OUT_OF_MEMORY;
-    }
-    strcpy(escaper->Email,mail);
-    return Escaper_SUCCESS;
+char* EscaperGetEmail(Escaper escaper){
+    assert(escaper);
+    return escaper->Email;
 }
 
 /**
