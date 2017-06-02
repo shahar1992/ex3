@@ -164,3 +164,8 @@ static bool TimeCheck(long time){
     if( time<0 || time> 23) return false;
     return true;
 }
+
+char* orderGetEmail(Order order){
+    assert(order);
+    return order->Email;
+}

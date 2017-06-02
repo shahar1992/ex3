@@ -3,17 +3,17 @@
  *      @functions:
  *          main!
  *          create system - completed.
- *          destroy system - done.
+ *          destroy system - completed.
  *          static check input  for room.
- *          static check input  for company - done.
+ *          static check input  for company - completed.
  *          static check input  for order.
  *          static check input  for escaper.
- *          static check mail - done.
- *          static check faculty - done.
+ *          static check mail - completed.
+ *          static check faculty - completed.
  *          static check time.
  *
- *          add company - in progress.
- *          remove company
+ *          add company  - completed.
+ *          remove company - in progress.
  *          add room
  *          remove room
  *          add escaper
