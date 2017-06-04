@@ -16,17 +16,6 @@
         return LIST_NULL_ARGUMENT; \
     }
 
-#define NEW_ELEMENT_ALLOCATE_CHECK(new_element) \
-    if(!(new_element)) { \
-    return LIST_OUT_OF_MEMORY; \
-    }
-
-/*#define CREATING_NEW_ELEMENT \
-    LIST_NULL_ARGUMENT_CHECK(!list); \
-    elementsList new_element = createElement(list, element); \
-    NEW_ELEMENT_ALLOCATE_CHECK(new_element);
-*/
-
 /**
  * Definition of linked list of elements.
  * Each element of the list has a data and a pointer to the next element.
@@ -50,9 +39,12 @@ struct list_t{
     int list_size;
 };
 
-/**
- * Header function.
- */
+
+/**=====================Static function declaration===========================*/
+static elementsList createNewListElement(List list, ListElement element);
+
+
+/**======================listCreate===========================================*/
 List listCreate(CopyListElement copyElement, FreeListElement freeElement){
     NULL_CHECK(copyElement && freeElement);
     List new_list = malloc(sizeof(*new_list));
@@ -65,32 +57,42 @@ List listCreate(CopyListElement copyElement, FreeListElement freeElement){
     return new_list;
 }
 
-/**
- * Header function.
- */
+/**======================listDestroy==========================================*/
+void listDestroy(List list){
+    if(!list) {
+        return;
+    }
+    listClear(list);
+    free(list);
+}
+
+/**======================listCopy=============================================*/
 List listCopy(List list){
     NULL_CHECK(list);
     List new_list = listCreate(list->copy_function,list->free_function);
     NULL_CHECK(new_list);
-    LIST_FOREACH(elementsList,current_element,list){
-        elementsList new_list_element = malloc(sizeof(*new_element));
-        if(!new_list_element){
+    LIST_FOREACH(ListElement, current_element, list){
+        ListResult result = listInsertLast(new_list,current_element);
+        if(result != LIST_SUCCESS){
             listDestroy(new_list);
             return NULL;
         }
-        new_list_element->next = NULL;
-        new_list_element->element =
-                list->copy_function(current_element->element);
-        (*new_list->current_element)->next = new_list_element;
     }
-
+    new_list->current_element = &new_list->list_elements;
+    elementsList ptr = list->list_elements;
+    while(ptr != list->current_element){
+        if((*new_list->current_element)->next == NULL){
+            *new_list->current_element = NULL;
+            break;
+        }
+        new_list->current_element = &((*new_list->current_element)->next);
+        ptr = ptr->next;
+    }
     new_list->list_size = list->list_size;
     return new_list;
 }
 
-/**
- * Header function.
- */
+/**======================listGetSize==========================================*/
 int listGetSize(List list) {
     if(!list) {
         return -1;
@@ -98,149 +100,150 @@ int listGetSize(List list) {
     return list->list_size;
 }
 
-/**
- * Header function.
- */
-ListElement listGetFirst(List list){
-    NULL_CHECK((!list) || (listGetSize(list) == 0));
-    NULL_CHECK(!list->current_element);
-    list->current_element = list->list_elements;
-    return list->current_element->element;
-}
-
-/**
- * Header function.
- */
-ListElement listGetNext(List list){
-    NULL_CHECK((!list) || (!list->current_element->next));
-    list->current_element = list->current_element->next;
-    NULL_CHECK(!list->current_element);
-    return list->current_element->element;
-}
-
-/**
- * Header function.
- */
-ListElement listGetCurrent(List list){
-    NULL_CHECK((!list));
-    NULL_CHECK(!list->current_element);
-    return list->current_element->element;
-}
-
-/**
- * Header function.
- */
+/**======================listInsertFirst======================================*/
 ListResult listInsertFirst(List list, ListElement element){
-    LIST_NULL_ARGUMENT_CHECK(!list);
-    elementsList new_element =
-            createElement(list, element);
-    NEW_ELEMENT_ALLOCATE_CHECK(new_element);
-    new_element->next = list->list_elements;
-    list->list_elements = new_element;
+    LIST_NULL_ARGUMENT_CHECK(list);
+    assert(element != NULL);
+    elementsList new_list_element = createNewListElement(list,element);
+    if(!new_list_element){
+        return LIST_OUT_OF_MEMORY;
+    }
+    assert(new_list_element->element != NULL);
+    new_list_element->next = list->list_elements;
+    list->list_elements = new_list_element;
     list->list_size++;
     return LIST_SUCCESS;
 }
 
-/**
- * Header function.
- */
+/**======================listInsertLast=======================================*/
 ListResult listInsertLast(List list, ListElement element){
-    LIST_NULL_ARGUMENT_CHECK(!list);
-    elementsList new_element =
-            createElement(list, element);
-    NEW_ELEMENT_ALLOCATE_CHECK(new_element);
+    LIST_NULL_ARGUMENT_CHECK(list);
+    assert(element != NULL);
     elementsList ptr = list->list_elements;
-    while(ptr->next) {
+    if(!ptr){
+        return listInsertFirst(list,element);
+    }
+    elementsList new_list_element = createNewListElement(list,element);
+    if(!new_list_element){
+        return LIST_OUT_OF_MEMORY;
+    }
+    assert(new_list_element->element != NULL);
+    while(ptr->next){
         ptr = ptr->next;
     }
-    ptr->next = new_element;
+    new_list_element->next = ptr->next;
+    ptr->next = new_list_element;
     list->list_size++;
     return LIST_SUCCESS;
 }
 
-/**
- * Header function.
- */
+/**======================listInsertBeforeCurrent==============================*/
 ListResult listInsertBeforeCurrent(List list, ListElement element){
-    LIST_NULL_ARGUMENT_CHECK(!list);
-    elementsList new_element =
-            createElement(list, element);
-    NEW_ELEMENT_ALLOCATE_CHECK(new_element);
-    if(list->current_element == list->list_elements) {
-        list->list_elements = new_element;
+    LIST_NULL_ARGUMENT_CHECK(list);
+    if(!list->current_element){
+        return LIST_INVALID_CURRENT;
+    }
+    assert(element != NULL);
+    elementsList new_list_element = createNewListElement(list,element);
+    if(!new_list_element){
+        return LIST_OUT_OF_MEMORY;
+    }
+    assert(new_list_element->element != NULL);
+    if(*list->current_element == list->list_elements) {
+        new_list_element->next = *list->current_element;
+        list->list_elements = new_list_element;
         new_element->next = list->current_element;
-        return LIST_SUCCESS;
     }
-    elementsList ptr = list->list_elements;
-    while(ptr->next != list->current_element) {
-        ptr = ptr->next;
+    else {
+        elementsList ptr = list->list_elements;
+        while (ptr->next != *list->current_element) {
+            ptr = ptr->next;
+        }
+        new_list_element->next = ptr->next;
+        ptr->next = new_list_element;
     }
-    ptr->next = new_element;
-    new_element->next = list->current_element;
     list->list_size++;
     return LIST_SUCCESS;
 }
 
-/**
- * Header function.
- */
+/**======================listInsertAfterCurrent===============================*/
 ListResult listInsertAfterCurrent(List list, ListElement element){
-    LIST_NULL_ARGUMENT_CHECK(!list);
-    elementsList new_element =
-            createElement(list, element);
-    NEW_ELEMENT_ALLOCATE_CHECK(new_element);
-    new_element->next = list->current_element->next;
-    list->current_element->next=new_element;
+    LIST_NULL_ARGUMENT_CHECK(list);
+    if(!list->current_element){
+        return LIST_INVALID_CURRENT;
+    }
+    assert(element != NULL);
+    elementsList new_list_element = createNewListElement(list,element);
+    if(!new_list_element){
+        return LIST_OUT_OF_MEMORY;
+    }
+    assert(new_list_element->element != NULL);
+    new_list_element->next = list->current_element->next;
+    list->current_element->next = new_list_element;
     list->list_size++;
     return LIST_SUCCESS;
 }
 
-/**
- * Header function.
- */
+/**======================listRemoveCurrent====================================*/
 ListResult listRemoveCurrent(List list){
-    LIST_NULL_ARGUMENT_CHECK(!list);
-    if(list->current_element == list->list_elements){
+    LIST_NULL_ARGUMENT_CHECK(list);
+    if(*list->current_element == list->list_elements){
         list->list_elements = list->list_elements->next;
-        list->free_function(list->current_element->element);
-        free(list->current_element);
-        list->current_element = list->list_elements;
-        return LIST_SUCCESS;
+        list->free_function((*list->current_element)->element);
+        free(*list->current_element);
+        list->current_element = &list->list_elements;
     }
-    elementsList ptr = list->list_elements;
-    while(ptr->next != list->current_element){
-        ptr = ptr->next;
+    else {
+        elementsList ptr = list->list_elements;
+        while(ptr->next != *list->current_element){
+            ptr = ptr->next;
+        }
+        ptr->next = list->current_element->next;
+        list->free_function((*list->current_element)->element);
+        free(*list->current_element);
+        list->current_element = &ptr->next;
     }
-    ptr->next = list->current_element->next;
-    list->free_function(list->current_element->element);
-    list->current_element = ptr->next;
-}
-
-/**
- * Header function
-*/
-ListResult listSort(List list, CompareListElements compareElement){
-    LIST_NULL_ARGUMENT_CHECK((!list) || (!compareElement));
-    elementsList list_as_array = malloc(sizeof(elementsList)*listGetSize(list));
-    LIST_NULL_ARGUMENT_CHECK(list_as_array);
-    int i=0;
-    elementsList ptr = list->list_elements;
-    while(ptr){
-        (list_as_array+i)->element = list->copy_function(ptr->element);
-    }
-
-    free(list_as_array);
+    list->list_size--;
     return LIST_SUCCESS;
 }
 
-/**
- * Header function.
- */
+/**======================listRemoveCurrent====================================*/
+ListElement listGetCurrent(List list){
+    NULL_CHECK(list && list->current_element);
+    return (*list->current_element)->element;
+}
+
+/**======================listRemoveCurrent====================================*/
+ListElement listGetFirst(List list) {
+    NULL_CHECK(list);
+    list->current_element = &list->list_elements;
+    assert(*list->current_element == list->list_elements);
+    return *list->current_element;
+}
+
+/**======================listRemoveCurrent====================================*/
+ListElement listGetNext(List list){
+    NULL_CHECK(list && list->current_element);
+    NULL_CHECK(*list->current_element);
+    list->current_element = &((*list->current_element)->next);
+    return (*list->current_element)->element;
+}
+
+/**======================listSort=============================================*/
+ListResult listSort(List list, CompareListElements compareElement){
+
+}
+
+/**======================listFilter===========================================*/
+List listFilter(List list, FilterListElement filterElement, ListFilterKey key){
+
+}
+
+/**======================listClear============================================*/
 ListResult listClear(List list){
-    LIST_NULL_ARGUMENT_CHECK(!list);
-    elementsList ptr;
-    while(list->list_elements) {
-        ptr = list->list_elements;
+    LIST_NULL_ARGUMENT_CHECK(list);
+    while(list->list_elements){
+        elementsList ptr = list->list_elements;
         list->free_function(ptr->element);
         list->list_elements = ptr->next;
         free(ptr);
@@ -248,16 +251,20 @@ ListResult listClear(List list){
     return LIST_SUCCESS;
 }
 
-/**
- * Header function
- */
-void listDestroy(List list){
-    if(!list) {
-        return;
+
+
+/**====================Static functions implementations=======================*/
+static elementsList createNewListElement(List list, ListElement element){
+    assert(list && element);
+    elementsList new_list_element = malloc(sizeof(*new_list_element));
+    if(!new_list_element){
+        return NULL;
     }
-    listClear(list);
-    free(list->list_elements);
-    free(list);
+    new_list_element->element = list->copy_function(element);
+    if(!new_list_element->element){
+        free(new_list_element);
+        return NULL;
+    }
 }
 
 

@@ -35,8 +35,8 @@ static bool testCompanyCopy() {
     companyGetFaculty(company,&faculty1);
     companyGetFaculty(new_company,&faculty2);
     ASSERT_TEST(faculty1 == faculty2);
-    companyFree(company);
-    companyFree(new_company);
+    companyDestroy(company);
+    companyDestroy(new_company);
     return true;
 }
 
@@ -44,8 +44,8 @@ static bool testCompanyCompare(){
     Company company2 = companyCreate("shahar92@campus.technion.ac.il",ELECTRICAL_ENGINEERING);
     Company  company1 = companyCreate("1@2",ELECTRICAL_ENGINEERING);
     ASSERT_TEST(companyCompare(company1,company2) != 0);
-    companyFree(company2);
-    companyFree(company1);
+    companyDestroy(company2);
+    companyDestroy(company1);
     return true;
 }
 

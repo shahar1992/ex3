@@ -17,7 +17,7 @@ typedef enum RoomResult_t {
 SetElement roomCopy(SetElement room);
 
 /** Type of function for deallocating an element of the set */
-void roomFree(SetElement room);
+void roomDestroy(SetElement room);
 
 /**
 * This function used by the Room to identify equal Rooms by id.

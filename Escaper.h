@@ -47,13 +47,13 @@ void EscaperDestroy(Escaper escaper);
 /** Allocates a new Escaper which is a copy of the argument */
 Escaper EscaperCopy(Escaper escaper);
 
-/** checks if 2 escapers are identical. return true if dentical or false if
- * not */
-bool EscaperCmp(Escaper escaper1,Escaper escaper2);
+/** checks if 2 escapers are identical. return true if do and false otherwise.
+ */
+bool EscaperCompare(Escaper escaper1, Escaper escaper2);
 
-/** Gets an escaper and a pointer to char[] and returns a copy of the mail in it
- * */
-EscaperResult EscaperGetEmail(Escaper escaper,char* mail);
+/** Gets an escaper and returns a pointer to the mail address.
+ */
+char* EscaperGetEmail(Escaper escaper);
 
 /** Connect order to Given escaper* */
 SetResult EscaperAddOrder(Escaper escaper,Order order);

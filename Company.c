@@ -18,7 +18,7 @@
 struct company_t{
     char* email;
     TechnionFaculty faculty;
-    RoomSet Rooms;
+    RoomSet rooms;
 };
 
 /**====================End of macros and structs==============================*/
@@ -40,28 +40,28 @@ static  CompanyResult convertReturnType(SetResult result);
 
 Company companyCreate(char *email, TechnionFaculty faculty){
     assert(email != NULL);
-    Company  company = malloc(sizeof(*company));
+    Company company = malloc(sizeof(*company));
     if(!company){
         return NULL;
     }
     (company)->email = malloc(sizeof(char)*(strlen(email)+1));
     if(!company->email){
-        companyFree(company);
+        companyDestroy(company);
         return NULL;
     }
     strcpy(company->email, email);
     company->faculty = faculty;
-    company->Rooms =
-            (RoomSet)setCreate((SetElement)roomCopy, roomFree, roomCompare);
-    if(!company->Rooms){
-        companyFree(company);
+    company->rooms = setCreate(roomCopy, roomDestroy, roomCompare);
+    if(!company->rooms){
+        companyDestroy(company);
         return NULL;
     }
+    return company;
 }
 
-void companyFree(SetElement company){
+void companyDestroy(SetElement company){
     if(company != NULL){
-        setDestroy(((Company)company)->Rooms);
+        setDestroy(((Company)company)->rooms);
         if(((Company)company)->email != NULL) {
             free(((Company)company)->email);
         }
@@ -77,9 +77,9 @@ SetElement companyCopy(SetElement company){
     if(!new_company) {
         return NULL;
     }
-    new_company->Rooms = setCopy(((Company)company)->Rooms);
-    if(!new_company){
-        companyFree(new_company);
+    new_company->rooms = setCopy(((Company)company)->rooms);
+    if(!new_company->rooms){
+        companyDestroy(new_company);
         return NULL;
     }
     return new_company;
@@ -96,7 +96,7 @@ CompanyResult companyAddRoom(Company company, Room room){
     if(!company || !room){
         return COMPANY_NULL_ARGUMENT;
     }
-    CompanyResult result = convertReturnType(setAdd(company->Rooms,room));
+    CompanyResult result = convertReturnType(setAdd(company->rooms, room));
     return result;
 }
 
@@ -104,40 +104,38 @@ CompanyResult companyRemoveRoom(Company company, Room room){
     if(!company || !room){
         return COMPANY_NULL_ARGUMENT;
     }
-    CompanyResult result = convertReturnType(setRemove(company->Rooms,room));
+    CompanyResult result = convertReturnType(setRemove(company->rooms,room));
     return result;
 }
 
-CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty){
-    if(!company) {
-        return COMPANY_NULL_ARGUMENT;
-    }
-    *faculty = company->faculty;
-    return COMPANY_SUCCESS;
+TechnionFaculty companyGetFaculty(Company company){
+    assert(company);
+    return  company->faculty;
 }
 
-CompanyResult companyGetEmail(Company company, char** email){
-    if(!email || !company){
-        return COMPANY_NULL_ARGUMENT;
-    }
-    *email = malloc(sizeof(char)*(strlen(company->email)+1));
-    MEMORY_CHECK_NULL(*email);
-    strcpy(*email,company->email);
-    return COMPANY_SUCCESS;
+char* companyGetEmail(Company company){
+    assert(company);
+    return company->email;
 }
 
-CompanyResult companyFindRoom(Company company, int id, Room* room){
-    if(!company || !room){
-        return COMPANY_NULL_ARGUMENT;
-    }
-    SET_FOREACH(Room,current_room,company->Rooms){
+Room companyFindRoom(Company company, long id){
+    assert(company);
+    SET_FOREACH(Room,current_room,company->rooms){
         assert(current_room != NULL);
         if(roomGetId(current_room) == id){
-            *room = current_room;
-            return COMPANY_SUCCESS;
+            return current_room;
         }
     }
-    return COMPANY_ROOM_DOES_NOT_EXIST;
+    return NULL;
+}
+
+bool companyIsIdIn(Company company, long id){
+    SET_FOREACH(Room,current_room, company->rooms){
+        if(roomGetId(current_room) == id){
+            return true;
+        }
+    }
+    return false;
 }
 
 /**==================END of company ADT functions implementation==============*/

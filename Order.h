@@ -5,22 +5,23 @@
 #include "mtm_ex3.h"
 
 /**
-*  Order ADT
-*
-* Implements an Order struct
-* An Order is a struct of a future order in the system
-*
-* The following functions are available:
-*
-*   OrderCreate               - Creates a new Order
-*   OrderDestroy              - Deletes an existing Order and frees all resources
-*   OrderCopy                 - Copies an existing Order
-*   OrderGetFaculty           -return the faculty enum for a given order
- *  OrderCmpByTime            -cmp 2 orders by time
- *  OrderCmpByTime_Faculty_ID   -cmp 2 orders by time,faculty,id
- *  OrderPrint                 -Print A given order
-*
-*/
+ *  Order ADT
+ *
+ * Implements an Order struct
+ * An Order is a struct of a future order in the system
+ *
+ * The following functions are available:
+ *
+ *   OrderCreate                - Creates a new Order
+ *   OrderDestroy               - Deletes an existing Order and frees all resources
+ *   OrderCopy                  - Copies an existing Order
+ *   OrderGetFaculty            - return the faculty enum for a given order
+ *  OrderCmpByTime              - cmp 2 orders by time
+ *  OrderCmpByTime_Faculty_ID   - cmp 2 orders by time,faculty,id
+ *  OrderPrint                  - Print A given order
+ *  orderGetEmail               - Get the company email of an order.
+ *  orderGetId                  - Get the id of the ordered room.
+ */
 
 /** Type for defining an Order*/
 typedef struct Order_t* Order;
@@ -52,6 +53,11 @@ int OrderCmpByTime(Order order1,Order order2);
 /**Compare 2 orders by room faculty,id and time */
 int OrderCmpByTime_Faculty_ID(Order order1,Order order2);
 
+/**Get the company email of an order.*/
+char* orderGetEmail(Order order);
+
+/**Get the id of the ordered room.*/
+long orderGetId(Order order);
 
 /**Print A GIVEN ORDER*/
 void OrderPrint(Order order);

@@ -16,14 +16,10 @@
  * Implements a Company data type.
  *
  * The following functions are available:
- *   companyCreate	   - Creates a new empty set
- *   companyFree	   - Deletes an existing company and frees all resources.
- *   companyCopy	   - Copies an existing company.
- *   companyCompare    - Compares two companies with email as compare key.
- *   companyAddRoom    - Adds a new room to the company.
- *   companyRemoveRoom - Removes a room from the company.
- *   companyGetFaculty - Gets the Faculty who owns the company.
- *   companyGetEmail   - Gets the email of the company.
+ *   systemCreate	   - Creates a new empty set
+ *   systemDestroy	   - Deletes an existing company and frees all resources.
+ *   systemAddRoom    - Adds a new room to a company in the system.
+ *   companyRemoveRoom - Removes a room from a company in the system.
  *   companyFindRoom   - Find a room in the company rooms set by its id.
 */
 
@@ -32,86 +28,85 @@ typedef struct system_t *System;
 
 typedef Set CompanySet;
 
-typedef List OrderList;
+typedef List OrdersList;
 
 typedef Set EscaperSet;
 
-/** Type used for returning error codes from company functions */
-typedef enum CompanyResult_t {
-    COMPANY_SUCCESS,
-    COMPANY_OUT_OF_MEMORY,
-    COMPANY_NULL_ARGUMENT,
-    COMPANY_ROOM_ALREADY_EXISTS,
-    COMPANY_ROOM_DOES_NOT_EXIST
-} CompanyResult;
+typedef Set RoomsSet;
 
 /**
- * This function creates new room and reset all the room's parameters.
- * @param email The new company email address.
+ * This function creates new system and reset all the system's parameters.
+ * @param system The parameter to save a pointer to the new system.
+ * @return
+ *     MTM_OUT_OF_MEMORY if memory allocate failed.
+ *     MTM_SUCCESS the new system if create succeed.
+ */
+MtmErrorCode systemCreate(System* system);
+
+/**
+ * This function deletes an existing company and frees all resources.
+ * @param system The system to destroy.
+ */
+void systemDestroy(System system);
+
+/**
+ * This function add a new company to the system.
+ * @param system The relevant system
+ * @param email The email of the new company.
  * @param faculty The faculty that the new company belongs to.
- * @param company The new company's pointer.
  * @return
- *     return the new company if create succeed.
- *     NULL if memory allocate failed.
+ *      SYSTEM_INVALID_PARAMETER if email or faculty is not valid.
+ *      SYSTEM_OUT_OF_MEMORY if allocation failed
+ *      SYSTEM_SUCCESS otherwise.
  */
-Company companyCreate(char *email, TechnionFaculty faculty);
-
-/** This function deallocating a company and all of it resources*/
-void companyFree(SetElement company);
-
-/** This function copying a company */
-SetElement companyCopy(SetElement company);
+MtmErrorCode systemAddCompany(System system, char* email,
+                              TechnionFaculty faculty);
 
 /**
-* This function used by the Company to identify equal companies by email.
-* This function should return:
-* 		A positive integer if 'company1' email is lexicographicaly greater.
-* 		0 if they're equal;
-*		A negative integer if 'company2' email is lexicographicaly greater.
-*/
-int companyCompare(SetElement company1, SetElement company2);
+ * This function remove a company from the system.
+ * @param system The relebant system.
+ * @param email The mail to identify the company.
+ * @return
+ *      SYSTEM_COMPANY_EMAIL_DOES_NOT_EXIST if email does not belong to
+ *                                          any company.
+ *      SYSTEM_NULL_ARGUMENT if system or email are null.
+ *      SYSTEM_SUCEES otherwise.
+ */
+MtmErrorCode systemRemoveCompany(System system, char* email);
+
+/* This function add a room to a company in the system.*/
+/**
+ *
+ * @param system The relevant system.
+ * @param email The email of the company that the new room belongs to.
+ * @param id The id of the new room.
+ * @param price The price for a men in the new room.
+ * @param num_ppl Number of people that can enter the room.
+ * @param open_hour The opening hour of the room.
+ * @param close_hour The closing hour of the room.
+ * @param difficulty The difficulty level of the room.
+ * @return
+ *      SYSTEM_NULL_ARGUMENT if system is null.
+ *      SYSTEM_OUT_OF_MEMORY if allocation failed.
+ *      SYSTEM_ID_IS_ALREADY_EXIST Room with same id exist in the same company.
+ *      SYSTEM_COMPANY_EMAIL_DOES_NOT_EXIST if email does not belong to
+ *                                          any company.
+ *      SYSTEM_SUCCESS otherwise.
+ */
+MtmErrorCode systemAddRoom(System system, char* email, long id, long price,
+                            int num_ppl, int open_hour, int close_hour,
+                            int difficulty);
 
 /**
- * This function add a room to the company rooms list.
- * @param company The relevant company.
- * @param room The room to add.
+ * This function remove a room from the system.
+ * @param system The relevant system.
+ * @param faculty The room to remove.
  * @return
  *      COMPANY_NULL_ARGUMENT if 'company' or 'room' are null.
- *      COMPANY_OUT_OF_MEMORY if allocate failed.
- *      COMPANY_SUCCESS otherwise.
+ *      MTM_RESERVATION_EXISTS if a reservation exist to the relevant room.
+ *      MTM_SUCCESS otherwise.
  */
-CompanyResult companyAddRoom(Company company, Room room);
-
-/**
- * This function remove a room from the company rooms list.
- * @param company The relevant company.
- * @param room The room to remove.
- * @return
- *      COMPANY_NULL_ARGUMENT if 'company' or 'room' are null.
- *      COMPANY_SUCCESS otherwise.
- */
-CompanyResult companyRemoveRoom(Company company, Room room);
-
-/**
- *  This function return in parameter the faculty that ownes the company.
- * @param company The relevant company.
- * @param faculty A pointer to a integer to save the id value.
- * @return
- *      COMPANY_NULL_ARGUMENT if 'company' or 'faculty' are NULL.
- *      COMPANY_SUCCESS otherwise.
- */
-
-CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
-/**
- * This function return in parameter the faculty that ownes the company.
- * @param company The relevant company.
- * @param email A pointer to a string to save the email to.
- * @return
- *      COMPANY_NULL_ARGUMENT if 'company' or 'email' are NULL.
- *      COMPANY_SUCCESS otherwise.
- */
-CompanyResult companyGetEmail(Company company, char** email);
-
+MtmErrorCode systemRemoveRoom(System system, TechnionFaculty faculty, long id);
 
 
 /**
@@ -124,20 +119,7 @@ CompanyResult companyGetEmail(Company company, char** email);
  *      COMPANY_ROOM_NOT_EXIST if no room founds.
  *      COMPNY_SUCCESS otherwise.
  */
-CompanyResult companyFindRoom(Company company, int id, Room* room);
-
-
-/**
- * This function checks if the input parameters are legal company parameters.
- * @param email Company email address to check.
- * @param faculty Faculty to check.
- * @return
- *      False if one or more of the parameters is not legal.
- *      True otherwise.
- */
-//bool checkIfCompanyParametersLegal(char* email, int faculty);
-
-
+Room companyFindRoom(Company company, long id);
 
 
 

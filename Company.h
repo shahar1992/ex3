@@ -38,10 +38,9 @@ typedef enum CompanyResult_t {
 } CompanyResult;
 
 /**
- * This function creates new room and reset all the room's parameters.
+ * This function creates new company and reset all the company's parameters.
  * @param email The new company email address.
  * @param faculty The faculty that the new company belongs to.
- * @param company The new company's pointer.
  * @return
  *     return the new company if create succeed.
  *     NULL if memory allocate failed.
@@ -49,7 +48,7 @@ typedef enum CompanyResult_t {
 Company companyCreate(char *email, TechnionFaculty faculty);
 
 /** This function deallocating a company and all of it resources*/
-void companyFree(SetElement company);
+void companyDestroy(SetElement company);
 
 /** This function copying a company */
 SetElement companyCopy(SetElement company);
@@ -85,24 +84,21 @@ CompanyResult companyAddRoom(Company company, Room room);
 CompanyResult companyRemoveRoom(Company company, Room room);
 
 /**
- *  This function return in parameter the faculty that ownes the company.
+ *  This function return in parameter the faculty that owns the company.
  * @param company The relevant company.
- * @param faculty A pointer to a integer to save the id value.
  * @return
- *      COMPANY_NULL_ARGUMENT if 'company' or 'faculty' are NULL.
- *      COMPANY_SUCCESS otherwise.
+ *      The faculty of current company.
  */
 
-CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
+TechnionFaculty companyGetFaculty(Company company);
 /**
- * This function return in parameter the faculty that ownes the company.
+ * This function return the email of a company.
  * @param company The relevant company.
- * @param email A pointer to a string to save the email to.
  * @return
- *      COMPANY_NULL_ARGUMENT if 'company' or 'email' are NULL.
- *      COMPANY_SUCCESS otherwise.
+ *      NULL if company mail is null.
+ *      pointer to company mail otherwise.
  */
-CompanyResult companyGetEmail(Company company, char** email);
+char* companyGetEmail(Company company);
 
 
 
@@ -116,18 +112,17 @@ CompanyResult companyGetEmail(Company company, char** email);
  *      COMPANY_ROOM_NOT_EXIST if no room founds.
  *      COMPNY_SUCCESS otherwise.
  */
-CompanyResult companyFindRoom(Company company, int id, Room* room);
-
+Room companyFindRoom(Company company, long id);
 
 /**
- * This function checks if the input parameters are legal company parameters.
- * @param email Company email address to check.
- * @param faculty Faculty to check.
+ * This function checks if a id exist in the company's set of rooms.
+ * @param company The relevant company.
+ * @param id The id to check.
  * @return
- *      False if one or more of the parameters is not legal.
- *      True otherwise.
+ *      true if room with same id has found.
+ *      false otherwise.
  */
-//bool checkIfCompanyParametersLegal(char* email, int faculty);
+bool companyIsIdIn(Company company, long id)
 
 
 #endif //EX3_COMPANY_H
