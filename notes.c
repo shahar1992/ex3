@@ -4,10 +4,6 @@
  *          main!
  *          create system - completed.
  *          destroy system - completed.
- *          static check input for room - completed.
- *          static check input for company - completed.
- *          static check input for order -
- *          static check input for escaper -
  *          static check mail - completed
  *          static check faculty - completed.
  *          static check time -
@@ -21,39 +17,32 @@
  *          add order -
  *          remove order -
  *
- *          end of day
+ *          end of day - almost completed.
+ *          best faculties - almost completed.
  *
  *          find company (by mail) - completed.
+ *          Get faculty profit - completed.
  *          find recommended room.
- *          printing functions.
  *
- *
- * Company: Shahar
+ * Company: Shahar ============= NEED TO UPDATE Company.h notes!
  *      @functions:
- *          check validate.  - Not necessarily needed.
- *          create company. - complete.
- *          cmp company. - complete.
- *          free company. - complete.
- *          add room. - complete.
- *          remove room. - complete.
- *          get mail. - complete.
- *          find room. - completed.
- *          is any order exist.- Not necessarily needed.
- *          get faculty. - complete.
+ *          Check validate  - completed.
+ *          Create company - completed.
+ *          Cmp company - completed.
+ *          Destroy company - completed.
+ *          Add room - completed.
+ *          Remove room - completed.
+ *          Get mail - completed.
+ *          Find room - completed.
+ *          Get faculty - completed.
  *
- * Rooms: Shahar
+ * Rooms: Shahar ============= NEED TO UPDATE Room.h notes!
  *      @functions:
- *          check.  - complete.
- *          create. - complete.
- *          cmp. - complete.
- *          free. - complete.
- *          check availability. - complete in header
- *          add order. - Not necessarily needed.
- *          remove order. - Not necessarily needed.
- *          get id. - complete.
- *          is any order exist. - Not necessarily needed.
- *          get faculty. - Not necessarily needed.
- *
+ *          Check  - completed.
+ *          Create - completed.
+ *          Cmp - completed.
+ *          Destroy - completed.
+ *          Get id - completed.
  *
  * Orders: Amir
  *      @functions:

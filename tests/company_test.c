@@ -26,23 +26,25 @@ static bool testCompanyCreate() {
 }
 
 static bool testCompanyCopy() {
-    Company company = companyCreate("shahar92@campux.technion.ac.il",ELECTRICAL_ENGINEERING);
-    Room room = roomCreate(1,4,3,12,19,1);
+    Company company;
+    companyCreate("shahar92@campux.technion.ac.il",ELECTRICAL_ENGINEERING,&company);
+    Room room;
+    roomCreate(1,4,3,12,19,1,&room);
     companyAddRoom(company,room);
     Company new_company = companyCopy(company);
     ASSERT_TEST(companyCompare(company,new_company)==0);
-    TechnionFaculty faculty1,faculty2;
-    companyGetFaculty(company,&faculty1);
-    companyGetFaculty(new_company,&faculty2);
+    TechnionFaculty faculty1 = companyGetFaculty(company),faculty2 = companyGetFaculty(new_company);
     ASSERT_TEST(faculty1 == faculty2);
     companyDestroy(company);
     companyDestroy(new_company);
+    roomDestroy(room);
     return true;
 }
 
 static bool testCompanyCompare(){
-    Company company2 = companyCreate("shahar92@campus.technion.ac.il",ELECTRICAL_ENGINEERING);
-    Company  company1 = companyCreate("1@2",ELECTRICAL_ENGINEERING);
+    Company company1,company2;
+    companyCreate("shahar92@campus.technion.ac.il",ELECTRICAL_ENGINEERING,&company1);
+    companyCreate("1@2",ELECTRICAL_ENGINEERING,&company2);
     ASSERT_TEST(companyCompare(company1,company2) != 0);
     companyDestroy(company2);
     companyDestroy(company1);

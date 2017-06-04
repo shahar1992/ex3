@@ -5,15 +5,26 @@
 #include "Company.h"
 
 /**======================Macros and structs===================================*/
-#define NULL_PARAMETER_CHECK(ptr) \
-    if((ptr) == NULL) {\
-        return COMPANY_NULL_ARGUMENT; \
-    }
+#define FACULTY_NUM 19
 
-#define MEMORY_CHECK_NULL(ptr) \
-    if ((ptr) == NULL) { \
+#define NULL_ARGUMENT_CHECK(condition) {\
+    if(!(condition)) {\
+        return COMPANY_NULL_ARGUMENT; \
+    } \
+}
+
+#define MEMORY_CHECK(condition, ptr_to_destroy) {\
+    if (!(condition)) { \
+        companyDestroy(ptr_to_destroy); \
         return COMPANY_OUT_OF_MEMORY; \
-    }
+    } \
+}
+
+#define PARAMETER_CHECK(condition){ \
+    if(!(condition)){ \
+        return COMPANY_INVALID_PARAMETER; \
+    } \
+}
 
 struct company_t{
     char* email;
@@ -30,6 +41,8 @@ struct company_t{
 
 /**converts the result type from set result to comapny result*/
 static  CompanyResult convertReturnType(SetResult result);
+static bool isInputLegal(char* email, TechnionFaculty faculty);
+static bool isEmailLegal(char* email);
 
 /**===================End of static function declarations.====================*/
 
@@ -38,25 +51,19 @@ static  CompanyResult convertReturnType(SetResult result);
 
 /**===================Company ADT functions implementation====================*/
 
-Company companyCreate(char *email, TechnionFaculty faculty){
-    assert(email != NULL);
-    Company company = malloc(sizeof(*company));
-    if(!company){
-        return NULL;
-    }
-    (company)->email = malloc(sizeof(char)*(strlen(email)+1));
-    if(!company->email){
-        companyDestroy(company);
-        return NULL;
-    }
-    strcpy(company->email, email);
-    company->faculty = faculty;
-    company->rooms = setCreate(roomCopy, roomDestroy, roomCompare);
-    if(!company->rooms){
-        companyDestroy(company);
-        return NULL;
-    }
-    return company;
+CompanyResult companyCreate(char *email, TechnionFaculty faculty,
+                            Company* company){
+    NULL_ARGUMENT_CHECK(company && email);
+    PARAMETER_CHECK(isInputLegal(email,faculty));
+    *company = malloc(sizeof(**company));
+    MEMORY_CHECK(*company,*company);
+    (*company)->email = malloc(sizeof(char)*(strlen(email)+1));
+    MEMORY_CHECK((*company)->email,*company);
+    strcpy((*company)->email, email);
+    (*company)->faculty = faculty;
+    (*company)->rooms = setCreate(roomCopy, roomDestroy, roomCompare);
+    MEMORY_CHECK((*company)->rooms,*company);
+    return COMPANY_SUCCESS;
 }
 
 void companyDestroy(SetElement company){
@@ -72,20 +79,20 @@ void companyDestroy(SetElement company){
 
 SetElement companyCopy(SetElement company){
     assert(company != NULL);
-    Company new_company = companyCreate(((Company)company)->email,
-                                ((Company)company)->faculty);
-    if(!new_company) {
+    Company new_company;
+#ifndef NDEBUG
+    CompanyResult result =
+#endif
+    companyCreate(((Company)company)->email,((Company)company)->faculty,
+                  &new_company);
+    assert(result != ROOM_INVALID_PARAMETER);
+    if(result != ROOM_SUCCESS) {
         return NULL;
     }
     new_company->rooms = setCopy(((Company)company)->rooms);
-    if(!new_company->rooms){
-        companyDestroy(new_company);
-        return NULL;
-    }
+    MEMORY_CHECK(new_company->rooms,new_company);
     return new_company;
 }
-
-
 
 int companyCompare(SetElement company1, SetElement company2){
     assert((company1 != NULL ) && (company2 != NULL));
@@ -115,27 +122,32 @@ TechnionFaculty companyGetFaculty(Company company){
 
 char* companyGetEmail(Company company){
     assert(company);
+    assert(company->email);
     return company->email;
 }
 
-Room companyFindRoom(Company company, long id){
-    assert(company);
+CompanyResult companyFindRoom(Company company, long id, Room* room){
+    PARAMETER_CHECK(id > 0);
+    NULL_ARGUMENT_CHECK(company && room);
     SET_FOREACH(Room,current_room,company->rooms){
         assert(current_room != NULL);
         if(roomGetId(current_room) == id){
-            return current_room;
+            *room = current_room;
+            return COMPANY_SUCCESS;
         }
     }
-    return NULL;
+    return COMPANY_ROOM_DOES_NOT_EXIST;
 }
 
-bool companyIsIdIn(Company company, long id){
+CompanyResult companyIsIdIn(Company company, long id){
+    PARAMETER_CHECK(id > 0);
+    NULL_ARGUMENT_CHECK(company);
     SET_FOREACH(Room,current_room, company->rooms){
         if(roomGetId(current_room) == id){
-            return true;
+            return COMPANY_SUCCESS;
         }
     }
-    return false;
+    return COMPANY_ROOM_DOES_NOT_EXIST;
 }
 
 /**==================END of company ADT functions implementation==============*/
@@ -158,6 +170,25 @@ static  CompanyResult convertReturnType(SetResult result){
         case SET_OUT_OF_MEMORY:
             return COMPANY_OUT_OF_MEMORY;
     }
+}
+
+static bool isInputLegal(char* email, TechnionFaculty faculty){
+    assert(email);
+    return (isEmailLegal(email) && (faculty >= 0) && (faculty < FACULTY_NUM));
+}
+
+static bool isEmailLegal(char* email){
+    assert(email);
+    bool sign_flag = false;
+    while(email){
+        if(*(email++) == '@'){
+            if(sign_flag){
+                return false;
+            }
+            sign_flag = true;
+        }
+    }
+    return true;
 }
 
 /**==================End of static functions implementation===================*/

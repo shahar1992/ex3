@@ -1,8 +1,5 @@
-//
-// Created by Amir on 31/05/2017.
-//
 
-/**====================Include files==============================*/
+
 #include "Order.h"
 #include <stdlib.h>
 #include <assert.h>
@@ -11,21 +8,27 @@
 
 /**====================Main entity decleration================================*/
 struct Order_t{
-    char * Email;
     TechnionFaculty faculty;
-    int ID;
-    long start_hour;
-    long days_left;
+    int day;
+    int hour;
     int num_ppl;
+    Room* room;
+    Escaper* escaper;
 };
 /**====================end of entity decleration==============================*/
 
 /**======================Macros===================================*/
 
-#define MEMORY_CHECK_NULL(ptr) \
-    if ((ptr) == NULL) { \
-        return Order_OUT_OF_MEMORY; \
+#define NULL_CHECK(condition) \
+    if (!(condition)) { \
+        return ORDER_NULL_ARGUMENT; \
     }
+
+#define MEMORY_CHECK(condition,ptr_to_destroy) \
+if(!(condition)){ \
+    orderDestroy(ptr_to_destroy); \
+    return ORDER_OUT_OF_MEMORY; \
+}
 /**====================End of Macros==============================*/
 
 /**=====================Static functions declarations=========================*/
@@ -36,7 +39,8 @@ struct Order_t{
  *  TimeCheck         - checks if time is valid (betwenn 0 and 23 including)
  */
 static OrderResult GetTime(char *time_format,long* hour,long* days_left);
-static bool MailCheck(char* mail);
+static bool checkInput(TechnionFaculty faculty,int day, int hour,
+                       int num_of_ppl,Room room,Escaper escaper);
 static bool TimeCheck(long time);
 
 /**===================End of static function declarations.====================*/
@@ -46,41 +50,37 @@ static bool TimeCheck(long time);
 
 /**============OrderCreate===========================*/
 
-Order OrderCreate(char* email, TechnionFaculty faculty, int id,char* time,int num_of_ppl){
-    assert(email!=NULL && time!=NULL);
-    long days_left,hour;
-    GetTime(time,&hour,&days_left);
-    if( (MailCheck(email)!=true) || (TimeCheck(hour)!=true) ){
-        return  NULL;
+OrderResult orderCreate(TechnionFaculty faculty, int num_of_ppl, int hour,
+                        int day, Room room, Escaper escaper, Order* order){
+    if(!order){
+        return ORDER_NULL_ARGUMENT;
     }
-    Order order=malloc(sizeof(*order));
-    if(order==NULL) {
-        return NULL;
+    if(!checkInput(faculty, time, num_of_ppl,room,escaper)){
+        return ORDER_INVALID_PARAMETER;
     }
-    order->Email=malloc(sizeof(char)*(strlen(email)+1));
-    if(order->Email==NULL) {
-        OrderDestroy(order);
-        return NULL;
-    }
-    strcpy(order->Email,email);
-    order->faculty=faculty;
-    order->ID=id;
-    order->days_left=days_left;
-    order->start_hour=hour;
-    order->num_ppl=num_of_ppl;
-    return order;
+    *order = malloc(sizeof(*order));
+    MEMORY_CHECK(*order, *order);
+    (*order)->faculty=faculty;
+    (*order)->day=day;
+    (*order)->hour=hour;
+    (*order)->num_ppl=num_ppl;
+    (*order)->escaper = escaper;
+    (*order)->room = room;
+    return ORDER_SUCCESS;
 }
 
 /**============OrderDestroy===========================*/
 
-OrderResult OrderDestroy(Order order){
-    assert(order!=NULL);
-    free(order->Email);
-    free(order);
-    order=NULL;
+OrderResult orderDestroy(Order order){
+    if(order != NULL) {
+        free(order->email);
+        free(order);
+        order = NULL;
+    }
     return Order_SUCCESS;
 
 }
+
 /**============OrderCopy===========================*/
 Order OrderCopy(Order order){
     assert(order!=NULL);
@@ -104,11 +104,14 @@ Order OrderCopy(Order order){
     return new_order;
 }
 /**============OrdeGetFaculty===========================*/
+
 TechnionFaculty OrderGetFaculty(Order order){
     assert(order!=NULL);
     return  order->faculty;
 }
+
 /**============OrderCmpByTime===========================*/
+
 int OrderCmpByTime(Order order1,Order order2){
     assert(order1!=NULL&&order2!=NULL);
     if(order1->start_hour!=order2->start_hour) return 1;
@@ -117,6 +120,7 @@ int OrderCmpByTime(Order order1,Order order2){
 }
 
 /**============OrderCmpByTime===========================*/
+
 int OrderCmpByTime_Faculty_ID(Order order1,Order order2){
     assert(order1!=NULL&&order2!=NULL);
     if(order1->start_hour!=order2->start_hour) return 1;
@@ -126,6 +130,15 @@ int OrderCmpByTime_Faculty_ID(Order order1,Order order2){
     return 0;
 
 }
+
+OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty){
+    if(!order || !faculty){
+        return Order_NULL_ARGUMENT;
+    }
+    *faculty = order->faculty;
+    return Order_SUCCESS;
+}
+
 /**============OrderPrint===========================*/
 void OrderPrint(Order order){
     assert(order!=NULL);
@@ -137,6 +150,7 @@ void OrderPrint(Order order){
     printf("Order's wanted hour: %ld\n",order->start_hour);
     printf("Number of peoples in order: %d\n",order->num_ppl);
 }
+
 /** ===============Static functions implementaion==========================*/
 
 static OrderResult GetTime(char *time_format,long* hour,long* days_left){
@@ -165,12 +179,23 @@ static bool TimeCheck(long time){
     return true;
 }
 
-char* orderGetEmail(Order order){
-    assert(order);
-    return order->Email;
+Company orderGetCompany(Order order){
+    if(!order){
+        return NULL;
+    }
+    return roomGetCompany(order->room);
 }
 
-long orderGetId(Order order){
-    assert(order);
-    return order->ID;
+Room orderGetRoom(Order order){
+    if(!order){
+        return NULL;
+    }
+    return order->room;
+}
+
+long orderCalculatePrice(Order order){
+    if(!order){
+        return -1;
+    }
+    return (order->num_ppl * roomGetPrice(order->room));
 }

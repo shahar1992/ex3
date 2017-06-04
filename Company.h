@@ -21,6 +21,7 @@
  *   companyGetFaculty - Gets the Faculty who owns the company.
  *   companyGetEmail   - Gets the email of the company.
  *   companyFindRoom   - Find a room in the company rooms set by its id.
+ *   companyCheckInput - Check if Input is valid.
 */
 
 /** Type for defining the Company */
@@ -30,11 +31,13 @@ typedef Set RoomSet;
 
 /** Type used for returning error codes from company functions */
 typedef enum CompanyResult_t {
-    COMPANY_SUCCESS,
+
     COMPANY_OUT_OF_MEMORY,
     COMPANY_NULL_ARGUMENT,
     COMPANY_ROOM_ALREADY_EXISTS,
-    COMPANY_ROOM_DOES_NOT_EXIST
+    COMPANY_ROOM_DOES_NOT_EXIST,
+    COMPANY_INVALID_PARAMETER,
+    COMPANY_SUCCESS
 } CompanyResult;
 
 /**
@@ -45,7 +48,8 @@ typedef enum CompanyResult_t {
  *     return the new company if create succeed.
  *     NULL if memory allocate failed.
  */
-Company companyCreate(char *email, TechnionFaculty faculty);
+CompanyResult companyCreate(char *email, TechnionFaculty faculty,
+                            Company* company);
 
 /** This function deallocating a company and all of it resources*/
 void companyDestroy(SetElement company);
@@ -112,7 +116,7 @@ char* companyGetEmail(Company company);
  *      COMPANY_ROOM_NOT_EXIST if no room founds.
  *      COMPNY_SUCCESS otherwise.
  */
-Room companyFindRoom(Company company, long id);
+CompanyResult companyFindRoom(Company company, long id, Room* room);
 
 /**
  * This function checks if a id exist in the company's set of rooms.
@@ -122,7 +126,6 @@ Room companyFindRoom(Company company, long id);
  *      true if room with same id has found.
  *      false otherwise.
  */
-bool companyIsIdIn(Company company, long id)
-
+CompanyResult companyIsIdIn(Company company, long id);
 
 #endif //EX3_COMPANY_H

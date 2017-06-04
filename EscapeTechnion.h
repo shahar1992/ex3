@@ -11,20 +11,18 @@
 
 
 /**
- *  Abstract company.
- *
- * Implements a Company data type.
+ *  Abstract escapeTechnion data type.
  *
  * The following functions are available:
- *   systemCreate	   - Creates a new empty set
- *   systemDestroy	   - Deletes an existing company and frees all resources.
- *   systemAddRoom    - Adds a new room to a company in the system.
- *   companyRemoveRoom - Removes a room from a company in the system.
- *   companyFindRoom   - Find a room in the company rooms set by its id.
+ *   escapeTechnionCreate	   - Creates a new empty Escape Technion system.
+ *   escapeTechnionDestroy	   - Deletes an existing company and frees all resources.
+ *   escapeTechnionAddRoom    - Adds a new room to a company in the system.
+ *   escapeTechnionRemoveRoom - Removes a room from a company in the system.
+ *
 */
 
 /** Type for defining the Company */
-typedef struct system_t *System;
+typedef struct EscapeTechnion_t *EscapeTechnion;
 
 typedef Set CompanySet;
 
@@ -32,7 +30,23 @@ typedef List OrdersList;
 
 typedef Set EscaperSet;
 
-typedef Set RoomsSet;
+typedef enum {
+    ESCAPE_TECHNION_OUT_OF_MEMORY,
+    ESCAPE_TECHNION_INVALID_COMMAND_LINE_PARAMETERS,
+    ESCAPE_TECHNION_CANNOT_OPEN_FILE,
+    ESCAPE_TECHNION_NULL_PARAMETER,
+    ESCAPE_TECHNION_INVALID_PARAMETER,
+    ESCAPE_TECHNION_EMAIL_ALREADY_EXISTS,
+    ESCAPE_TECHNION_COMPANY_EMAIL_DOES_NOT_EXIST,
+    ESCAPE_TECHNION_CLIENT_EMAIL_DOES_NOT_EXIST,
+    ESCAPE_TECHNION_ID_ALREADY_EXIST,
+    ESCAPE_TECHNION_ID_DOES_NOT_EXIST,
+    ESCAPE_TECHNION_CLIENT_IN_ROOM,
+    ESCAPE_TECHNION_ROOM_NOT_AVAILABLE,
+    ESCAPE_TECHNION_RESERVATION_EXISTS,
+    ESCAPE_TECHNION_NO_ROOMS_AVAILABLE,
+    ESCAPE_TECHNION_SUCCESS,
+} EscapeTechnionResult;
 
 /**
  * This function creates new system and reset all the system's parameters.
@@ -41,13 +55,13 @@ typedef Set RoomsSet;
  *     MTM_OUT_OF_MEMORY if memory allocate failed.
  *     MTM_SUCCESS the new system if create succeed.
  */
-MtmErrorCode systemCreate(System* system);
+EscapeTechnionResult escapeTechnionCreate(EscapeTechnion *system);
 
 /**
  * This function deletes an existing company and frees all resources.
  * @param system The system to destroy.
  */
-void systemDestroy(System system);
+void escapeTechnionDestroy(EscapeTechnion system);
 
 /**
  * This function add a new company to the system.
@@ -59,8 +73,9 @@ void systemDestroy(System system);
  *      SYSTEM_OUT_OF_MEMORY if allocation failed
  *      SYSTEM_SUCCESS otherwise.
  */
-MtmErrorCode systemAddCompany(System system, char* email,
-                              TechnionFaculty faculty);
+EscapeTechnionResult escapeTechnionAddCompany(EscapeTechnion system,
+                                              char *email,
+                                              TechnionFaculty faculty);
 
 /**
  * This function remove a company from the system.
@@ -72,7 +87,7 @@ MtmErrorCode systemAddCompany(System system, char* email,
  *      SYSTEM_NULL_ARGUMENT if system or email are null.
  *      SYSTEM_SUCEES otherwise.
  */
-MtmErrorCode systemRemoveCompany(System system, char* email);
+EscapeTechnionResult escapeTechnionRemoveCompany(EscapeTechnion system, char *email);
 
 /* This function add a room to a company in the system.*/
 /**
@@ -93,9 +108,10 @@ MtmErrorCode systemRemoveCompany(System system, char* email);
  *                                          any company.
  *      SYSTEM_SUCCESS otherwise.
  */
-MtmErrorCode systemAddRoom(System system, char* email, long id, long price,
-                            int num_ppl, int open_hour, int close_hour,
-                            int difficulty);
+EscapeTechnionResult escapeTechnionAddRoom(EscapeTechnion system, char *email,
+                                           long id, long price, int num_ppl,
+                                           int open_hour, int close_hour,
+                                           int difficulty);
 
 /**
  * This function remove a room from the system.
@@ -106,21 +122,7 @@ MtmErrorCode systemAddRoom(System system, char* email, long id, long price,
  *      MTM_RESERVATION_EXISTS if a reservation exist to the relevant room.
  *      MTM_SUCCESS otherwise.
  */
-MtmErrorCode systemRemoveRoom(System system, TechnionFaculty faculty, long id);
-
-
-/**
- * This function finds a room in company rooms list by id.
- * @param company The relevant company.
- * @param id The id of wanted room.
- * @param room Paramete to save the wanted room if found.
- * @return
- *      COMPANY_NULL_PARAMETER if 'company' is null.
- *      COMPANY_ROOM_NOT_EXIST if no room founds.
- *      COMPNY_SUCCESS otherwise.
- */
-Room companyFindRoom(Company company, long id);
-
-
+EscapeTechnionResult systemRemoveRoom(EscapeTechnion system,
+                                      TechnionFaculty faculty, long id);
 
 #endif //EX3_ESCAPETECHNION_H
