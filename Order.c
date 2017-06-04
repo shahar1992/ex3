@@ -15,7 +15,7 @@ struct Order_t{
     TechnionFaculty faculty;
     int ID;
     long start_hour;
-    long days_left;
+    long day;
     int num_ppl;
 };
 /**====================end of entity decleration==============================*/
@@ -46,13 +46,11 @@ static bool TimeCheck(long time);
 
 /**============OrderCreate===========================*/
 
-Order OrderCreate(char* email, TechnionFaculty faculty, int id,char* time,int num_of_ppl){
-    assert(email!=NULL && time!=NULL);
-    long days_left,hour;
-    GetTime(time,&hour,&days_left);
-    if( (MailCheck(email)!=true) || (TimeCheck(hour)!=true) ){
-        return  NULL;
-    }
+Order OrderCreate(char* email, TechnionFaculty faculty, int id,long day,long hour
+                   ,int num_of_ppl){
+
+    assert(TimeCheck(hour)==true&&MailCheck(email)==true);
+    //We assume mail check and time check will be made in sys thus the assert
     Order order=malloc(sizeof(*order));
     if(order==NULL) {
         return NULL;
@@ -65,7 +63,7 @@ Order OrderCreate(char* email, TechnionFaculty faculty, int id,char* time,int nu
     strcpy(order->Email,email);
     order->faculty=faculty;
     order->ID=id;
-    order->days_left=days_left;
+    order->day=day;
     order->start_hour=hour;
     order->num_ppl=num_of_ppl;
     return order;
@@ -77,7 +75,6 @@ OrderResult OrderDestroy(Order order){
     assert(order!=NULL);
     free(order->Email);
     free(order);
-    order=NULL;
     return Order_SUCCESS;
 
 }
@@ -96,7 +93,7 @@ Order OrderCopy(Order order){
     }
     assert(new_order->Email!=NULL);
     strcpy(new_order->Email,order->Email);
-    new_order->days_left=order->days_left;
+    new_order->day=order->day;
     new_order->start_hour=order->start_hour;
     new_order->ID=order->ID;
     new_order->faculty=order->faculty;
@@ -111,16 +108,20 @@ TechnionFaculty OrderGetFaculty(Order order){
 /**============OrderCmpByTime===========================*/
 int OrderCmpByTime(Order order1,Order order2){
     assert(order1!=NULL&&order2!=NULL);
-    if(order1->start_hour!=order2->start_hour) return 1;
-    if(order1->days_left!=order2->days_left) return 1;
+    if(order1->day>order2->day)return 1;
+    if(order1->day<order2->day)return -1;
+    assert(order1->day==order2->day);
+    if(order1->start_hour>order2->start_hour) return 1;
+    if(order1->start_hour<order2->start_hour) return -1;
+    assert(order1->day==order2->day&&order1->start_hour==order2->start_hour);
     return 0;
 }
 
-/**============OrderCmpByTime===========================*/
+/**============OrderCmpByAll===========================*/
 int OrderCmpByTime_Faculty_ID(Order order1,Order order2){
     assert(order1!=NULL&&order2!=NULL);
     if(order1->start_hour!=order2->start_hour) return 1;
-    if(order1->days_left!=order2->days_left) return 1;
+    if(order1->day!=order2->day) return 1;
     if(order1->faculty!=order2->faculty) return  1;
     if(order1->ID!=order2->ID) return 1;
     return 0;
@@ -133,8 +134,8 @@ void OrderPrint(Order order){
     printf("Order's order email: %s\n",order->Email);
     printf("Order's room id : %d\n",order->ID);
     printf("Order's room faculty : %d\n",order->faculty);
-    printf("Days until order: %ld\n",order->days_left);
-    printf("Order's wanted hour: %ld\n",order->start_hour);
+    printf("Day of resevaition: %ld\n",order->day);
+    printf("Order's start hour: %ld\n",order->start_hour);
     printf("Number of peoples in order: %d\n",order->num_ppl);
 }
 /** ===============Static functions implementaion==========================*/
