@@ -82,7 +82,7 @@ OrderResult orderDestroy(Order order){
 }
 
 /**============OrderCopy===========================*/
-Order OrderCopy(Order order){
+Order OrderCopy(Order order){ //change this function and use create.
     assert(order!=NULL);
     Order new_order=malloc(sizeof(*new_order));
     if(new_order==NULL){
