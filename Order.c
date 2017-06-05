@@ -94,8 +94,6 @@ Order OrderCopy(Order order){
         orderDestroy(new_order);
         return NULL;
     }
-    assert(new_order->email!=NULL)email;
-    strcpy(new_order->email,order->email);
     new_order->days_left=order->days_left;
     new_order->start_hour=order->start_hour;
     new_order->ID=order->ID;
