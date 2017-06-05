@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+
 #include "list.h"
 /**================================================================*/
 
@@ -72,12 +73,13 @@ OrderResult orderCreate(TechnionFaculty faculty, int num_of_ppl, int hour,
 
 /**============OrderDestroy===========================*/
 
-void orderDestroy(ListElement  order){
+OrderResult orderDestroy(void* order){
     if(order != NULL) {
-        free(((Order)order)->email);
+        free(order->email);
         free(order);
     }
-    return;
+    return Order_SUCCESS;
+
 }
 
 /**============OrderCopy===========================*/
