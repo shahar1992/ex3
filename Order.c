@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+
+#include "list.h"
 /**================================================================*/
 
 /**====================Main entity decleration================================*/
@@ -71,11 +73,10 @@ OrderResult orderCreate(TechnionFaculty faculty, int num_of_ppl, int hour,
 
 /**============OrderDestroy===========================*/
 
-OrderResult orderDestroy(Order order){
+OrderResult orderDestroy(void* order){
     if(order != NULL) {
         free(order->email);
         free(order);
-        order = NULL;
     }
     return Order_SUCCESS;
 
