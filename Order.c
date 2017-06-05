@@ -13,7 +13,7 @@ struct Order_t{
     int hour;
     int num_ppl;
     Room* room;
-    Escaper* escaperף
+    Escaper* escaper;
 };
 /**====================end of entity decleration==============================*/
 
