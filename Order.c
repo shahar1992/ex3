@@ -86,16 +86,16 @@ Order OrderCopy(Order order){
     assert(order!=NULL);
     Order new_order=malloc(sizeof(*new_order));
     if(new_order==NULL){
-        OrderDestroy(new_order);
+        orderDestroy(new_order);
         return NULL;
     }
-    new_order->Email=malloc(sizeof(char)*(strlen(order->Email)+1));
-    if(new_order->Email==NULL){
-        OrderDestroy(new_order);
+    new_order->email=malloc(sizeof(char)*(strlen(order->email)+1));
+    if(new_order->email==NULL){
+        orderDestroy(new_order);
         return NULL;
     }
-    assert(new_order->Email!=NULL);
-    strcpy(new_order->Email,order->Email);
+    assert(new_order->email!=NULL)email;
+    strcpy(new_order->email,order->email);
     new_order->days_left=order->days_left;
     new_order->start_hour=order->start_hour;
     new_order->ID=order->ID;
@@ -143,7 +143,7 @@ OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty){
 void OrderPrint(Order order){
     assert(order!=NULL);
     printf("----------Printing order---------------\n");
-    printf("Order's order email: %s\n",order->Email);
+    printf("Order's order email: %s\n",order->email);
     printf("Order's room id : %d\n",order->ID);
     printf("Order's room faculty : %d\n",order->faculty);
     printf("Days until order: %ld\n",order->days_left);
