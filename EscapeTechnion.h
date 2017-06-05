@@ -25,15 +25,13 @@
 typedef struct EscapeTechnion_t *EscapeTechnion;
 
 typedef Set CompanySet;
-
 typedef List OrdersList;
-
 typedef Set EscaperSet;
+typedef Set RoomSet;
+
 
 typedef enum {
     ESCAPE_TECHNION_OUT_OF_MEMORY,
-    ESCAPE_TECHNION_INVALID_COMMAND_LINE_PARAMETERS,
-    ESCAPE_TECHNION_CANNOT_OPEN_FILE,
     ESCAPE_TECHNION_NULL_PARAMETER,
     ESCAPE_TECHNION_INVALID_PARAMETER,
     ESCAPE_TECHNION_EMAIL_ALREADY_EXISTS,
@@ -118,11 +116,30 @@ EscapeTechnionResult escapeTechnionAddRoom(EscapeTechnion system, char *email,
  * @param system The relevant system.
  * @param faculty The room to remove.
  * @return
- *      COMPANY_NULL_ARGUMENT if 'company' or 'room' are null.
- *      MTM_RESERVATION_EXISTS if a reservation exist to the relevant room.
- *      MTM_SUCCESS otherwise.
+ *      ESCAPE_TECHNION_NULL_ARGUMENT if 'company' or 'room' are null.
+ *      ESCAPE_TECHNION_RESERVATION_EXISTS if a reservation exist to the relevant room.
+ *      ESCAPE_TECHNION_SUCCESS otherwise.
  */
-EscapeTechnionResult systemRemoveRoom(EscapeTechnion system,
-                                      TechnionFaculty faculty, long id);
+EscapeTechnionResult escapeTechnionRemoveRoom(EscapeTechnion system,
+                                              TechnionFaculty faculty, long id);
+
+/**
+ * This function adds a client to the system's clients set.
+ * @param system The relevant system
+ * @param email The client email address.
+ * @param faculty The client's faculty .
+ * @param skill_level the client's skill level.
+ * @return
+ *      ESCAPE_TECHNION_NULL_ARGUMENT if system is null.
+ *      ESCAPE_TECHNION_OUT_OF_MEMORY if allocation failed.
+ *      ESCAPE_TECHNION_ID_IS_ALREADY_EXIST Room with same id
+ *          exist in the same company.
+ *      ESCAPE_TECHNION_COMPANY_EMAIL_DOES_NOT_EXIST if email does not belong
+ *          to any company.
+ *      ESCAPE_TECHNION_SUCCESS otherwise.
+ */
+EscapeTechnionResult escapeTechnionAddClient(EscapeTechnion system, char* email,
+                                             TechnionFaculty faculty,
+                                             int skill_level);
 
 #endif //EX3_ESCAPETECHNION_H

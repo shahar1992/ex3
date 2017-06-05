@@ -13,10 +13,9 @@
 
 /**====================Main entity decleration==============================*/
 struct Escaper_t{
-    char * Email;
+    char* Email;
     TechnionFaculty faculty;
     int skill_level;
-    Set Orders;
 
 };
 /**====================end of entity decleration==============================*/
@@ -24,6 +23,7 @@ struct Escaper_t{
 
 
 /**======================Macros===================================*/
+#define FACULTY_NUM 19
 
 /**====================End of Macros==============================*/
 
@@ -35,9 +35,9 @@ struct Escaper_t{
  * MailCheck          -checks if a given mail is valid;
  * Facultycheck       -checks if a given faculty is valid;
  */
-static bool MailCheck(char *mail);
+static bool mailCheck(char *mail);
 static bool FacultyCheck(TechnionFaculty faculty);
-static EscaperResult GetTime(char *time_format,long* hour,long* days_left);
+static EscaperResult getTime(char *time_format, long *hour, long *days_left);
 
 /**===================End of static function declarations.====================*/
 
@@ -45,36 +45,39 @@ static EscaperResult GetTime(char *time_format,long* hour,long* days_left);
 
 
 /**============EscaperCreate===========================*/
-Escaper EscaperCreate(char* email, TechnionFaculty faculty, int skill_level){
+EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
+                            int skill_level, Escaper* escaper){
     if( !MailCheck(email) || !FacultyCheck(faculty) ){
-        return NULL;
+        return ESCAPER_INVALID_PARAMETER;
     }
-    Escaper escaper=malloc(sizeof(*escaper));
-    if(escaper==NULL){
-        return  NULL;
+    *escaper = malloc(sizeof(**escaper));
+    if(!*escaper){
+        return ESCAPER_OUT_OF_MEMORY;
     }
-    escaper->Email= malloc(sizeof(char)*(strlen(email)+1));
-    if(escaper->Email == NULL) {
-
+    (*escaper)->Email = malloc(sizeof(char)*(strlen(email)+1));
+    if(!(*escaper)->Email) {
+        EscaperDestroy(escaper);
+        return ESCAPER_OUT_OF_MEMORY;
     }
     strcpy(escaper->Email,email);
-    escaper->Orders=setCreate(OrderCopy,OrderDestroy,OrderCmpByTime);
-    escaper->faculty=faculty;
-    escaper->skill_level=skill_level;
-return escaper;
+    escaper->faculty = faculty;
+    escaper->skill_level = skill_level;
+    return ESCAPER_SUCCESS;
 }
 
 /**=====EscaperDestroy==================================*/
-void EscaperDestroy(Escaper escaper){
-    assert(escaper);
-    free(escaper->Email);
-    setDestroy(escaper->Orders);
-    free(escaper);
+void escaperDestroy(Escaper escaper){
+    if(escaper != NULL) {
+        if(escaper->Email != NULL) {
+            free(escaper->Email);
+        }
+        free(escaper);
+    }
     return;
 }
 
 /**=====EscaperCopy==================================*/
-Escaper EscaperCopy(Escaper escaper){
+Escaper escaperCopy(Escaper escaper){
     assert(escaper);
     Escaper  new_escaper=malloc(sizeof(*new_escaper));
     if(new_escaper==NULL){
@@ -97,7 +100,7 @@ Escaper EscaperCopy(Escaper escaper){
 }
 
 /**=====EscaperCmp==================================*/
-bool EscaperCmp(Escaper escaper1,Escaper escaper2){
+bool escaperCmp(Escaper escaper1, Escaper escaper2){
     assert(escaper1&&escaper2);
     return (strcmp(escaper1->Email,escaper2->Email));
     /**strcmp returns 0 if both string are equal which differs
@@ -105,70 +108,29 @@ bool EscaperCmp(Escaper escaper1,Escaper escaper2){
 }
 
 /**=====EscaperGetEmail==================================*/
-char* EscaperGetEmail(Escaper escaper){
+char* escaperGetEmail(Escaper escaper){
     assert(escaper);
     return escaper->Email;
 }
 
-/**
- *
- * Implement order ADT AND CONTINUE
- *
- *
- */
-/**=====EscaperAddOrder=========================*/
-SetResult EscaperAddOrder(Escaper escaper,Order order){
-    assert(escaper!=NULL&&order!=NULL);
-    return  setAdd(escaper->Orders,order);
-}
-
-/**=====EscaperRemoveOrder=========================*/
-SetResult EscaperRemoveOrder(Escaper escaper,Order order){
-    assert(escaper!=NULL&&order!=NULL);
-    return setRemove(escaper->Orders,order);
-}
-
-/**=====EscaperRemoveAllOrders=========================*/
-void EscaperRemoveAllOrders(Escaper escaper){
-    assert(escaper!=NULL);
-    setDestroy(escaper->Orders);
-    return;
-}
-
 /**=====EscaperGetFaculty=========================*/
-TechnionFaculty EscaperGetFaculty(Escaper escaper){
+TechnionFaculty escaperGetFaculty(Escaper escaper){
     assert(escaper!=NULL);
     return escaper->faculty;
 }
 
-/**=====EscaperCheckAvailabilty=========================*/
-SetResult EscaperCheckAvailabilty(Escaper escaper,char* time){
-    long hour,days_left;
-    GetTime(time,&hour,&days_left);
-    Order dummy_order=OrderCreate('Dummy order',UNKNOWN,0,time,0);
-    //create a dummy order to check availabilty by time
-    SetResult result=setIsIn(escaper->Orders,dummy_order);// returns true if
-    //element is in the set
-    OrderDestroy(dummy_order);
-    return  result;
-
-}
-
-
-
-
 /** ===============Static functions implementaion==========================*/
-static bool MailCheck(char* mail){
+static bool mailCheck(char *mail){
     char* ptr=mail;
     int counter =0;
     while(*ptr!=0){
         if(*ptr=='@') counter++;
     }
-    return (counter==1)?true:false;//return true if only 1 @;
-
+    return (counter == 1);
 }
-static bool FacultyCheck(TechnionFaculty faculty){
 
+static bool FacultyCheck(TechnionFaculty faculty){
+    return (((int)faculty >= 0) &&((int)faculty < FACULTY_NUM));
 }
 
 static EscaperResult GetTime(char *time_format,long* hour,long* days_left){

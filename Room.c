@@ -40,6 +40,9 @@ static bool inputCheck(long id, int price, int num_ppl, int open_hour,
 /**------------------------Room Create----------------------------------------*/
 RoomResult roomCreate(long id, int price, int num_ppl, int open_hour,
                   int close_hour, int difficulty, Company company, Room* room){
+    if(!room){
+        return ROOM_NULL_ARGUMENT;
+    }
     PARAMETER_CHECK(inputCheck(id,price,num_ppl,open_hour,close_hour,
                                difficulty));
     *room = malloc(sizeof(*room));

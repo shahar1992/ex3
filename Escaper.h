@@ -33,19 +33,21 @@ typedef struct Escaper_t* Escaper;
 /** Type used for returning error codes from list functions */
 /** Type used for returning error codes from room functions */
 typedef enum EscaperResult_t {
-    Escaper_SUCCESS,
-    Escaper_OUT_OF_MEMORY,
-    Escaper_NULL_ARGUMENT
+    ESCAPER_SUCCESS,
+    ESCAPER_INVALID_PARAMETER,
+    ESCAPER_OUT_OF_MEMORY,
+    ESCAPER_NULL_ARGUMENT
 } EscaperResult;
 
 /** Allocates a new escaper */
-Escaper EscaperCreate(char* email, TechnionFaculty faculty, int skill_level);
+EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
+                            int skill_level, Escaper* escaper);
 
 /** Frees an existing Escaper object */
-void EscaperDestroy(Escaper escaper);
+void escaperDestroy(Escaper escaper);
 
 /** Allocates a new Escaper which is a copy of the argument */
-Escaper EscaperCopy(Escaper escaper);
+Escaper escaperCopy(Escaper escaper);
 
 /** checks if 2 escapers are identical. return true if do and false otherwise.
  */
@@ -53,22 +55,10 @@ bool EscaperCompare(Escaper escaper1, Escaper escaper2);
 
 /** Gets an escaper and returns a pointer to the mail address.
  */
-char* EscaperGetEmail(Escaper escaper);
-
-/** Connect order to Given escaper* */
-SetResult EscaperAddOrder(Escaper escaper,Order order);
-
-/** Remove order from Given escaper* */
-SetResult EscaperRemoveOrder(Escaper escaper,Order order);
-
-/** Remove all orders from Given escaper* */
-void EscaperRemoveAllOrders(Escaper escaper);
+char* escaperGetEmail(Escaper escaper);
 
 /**Returns the faculty of the escaper*/
-TechnionFaculty EscaperGetFaculty(Escaper escaper);
-
-/**Check availabilty**/
-SetResult EscaperCheckAvailabilty(Escaper,char* time);
+TechnionFaculty escaperGetFaculty(Escaper escaper);
 
 
 

@@ -27,15 +27,11 @@
 /** Type for defining the Company */
 typedef struct company_t *Company;
 
-typedef Set RoomSet;
-
 /** Type used for returning error codes from company functions */
 typedef enum CompanyResult_t {
 
     COMPANY_OUT_OF_MEMORY,
     COMPANY_NULL_ARGUMENT,
-    COMPANY_ROOM_ALREADY_EXISTS,
-    COMPANY_ROOM_DOES_NOT_EXIST,
     COMPANY_INVALID_PARAMETER,
     COMPANY_SUCCESS
 } CompanyResult;
@@ -75,7 +71,7 @@ int companyCompare(SetElement company1, SetElement company2);
  *      COMPANY_OUT_OF_MEMORY if allocate failed.
  *      COMPANY_SUCCESS otherwise.
  */
-CompanyResult companyAddRoom(Company company, Room room);
+//CompanyResult companyAddRoom(Company company, Room room);
 
 /**
  * This function remove a room from the company rooms list.
@@ -85,7 +81,7 @@ CompanyResult companyAddRoom(Company company, Room room);
  *      COMPANY_NULL_ARGUMENT if 'company' or 'room' are null.
  *      COMPANY_SUCCESS otherwise.
  */
-CompanyResult companyRemoveRoom(Company company, Room room);
+//CompanyResult companyRemoveRoom(Company company, Room room);
 
 /**
  *  This function return in parameter the faculty that owns the company.
@@ -116,7 +112,7 @@ char* companyGetEmail(Company company);
  *      COMPANY_ROOM_NOT_EXIST if no room founds.
  *      COMPNY_SUCCESS otherwise.
  */
-CompanyResult companyFindRoom(Company company, long id, Room* room);
+//CompanyResult companyFindRoom(Company company, long id, Room* room);
 
 /**
  * This function checks if a id exist in the company's set of rooms.
@@ -126,6 +122,6 @@ CompanyResult companyFindRoom(Company company, long id, Room* room);
  *      true if room with same id has found.
  *      false otherwise.
  */
-CompanyResult companyIsIdIn(Company company, long id);
+//CompanyResult companyIsIdIn(Company company, long id);
 
 #endif //EX3_COMPANY_H

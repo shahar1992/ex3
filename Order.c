@@ -14,8 +14,8 @@ struct Order_t{
     int day;
     int hour;
     int num_ppl;
-    Room* room;
-    Escaper* escaper;
+    Room room;
+    Escaper escaper;
 };
 /**====================end of entity decleration==============================*/
 
@@ -57,7 +57,7 @@ OrderResult orderCreate(TechnionFaculty faculty, int num_of_ppl, int hour,
     if(!order){
         return ORDER_NULL_ARGUMENT;
     }
-    if(!checkInput(faculty, time, num_of_ppl,room,escaper)){
+    if(!checkInput(faculty, hour, day, num_of_ppl,room,escaper)){
         return ORDER_INVALID_PARAMETER;
     }
     *order = malloc(sizeof(*order));

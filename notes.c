@@ -12,7 +12,7 @@
  *          remove company - completed.
  *          add room - completed.
  *          remove room - completed.
- *          add escaper -
+ *          add escaper - completed.
  *          remove escaper -
  *          add order -
  *          remove order -
@@ -53,15 +53,11 @@
  *
  * Escaper: Amir
  *      @functions:
- *          create.-complete
- *          destroy-complete
- *          copy.-complete
- *          cmp.-complete
- *          get mail.-complete
- *          add order.
- *          remove order.
- *          remove all orders.
- *          get faculty.
- *          check availability.
+ *          create - complete
+ *          destroy - complete
+ *          copy - you need to change the function and use create.
+ *          cmp - to check and update.
+ *          get mail - complete
+ *          get faculty -
  *
  */
