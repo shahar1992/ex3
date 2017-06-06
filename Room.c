@@ -1,15 +1,19 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdbool.h>
-#include <string.h>
 #include <stdlib.h>
 
-#include "Room.h"
+#include "Room.h
+
 
 /**=========================Macros and Defines================================*/
 #define PARAMETER_CHECK(condition) \
     if(!(condition)) {\
         return ROOM_INVALID_PARAMETER; \
+    }
+#define NULL_CHECK(condition) \
+    if(!(condition)){ \
+        return ROOM_NULL_ARGUMENT; \
     }
 
 #define MEMORY_CHECK_NULL(condition,ptr_to_destroy) {\
@@ -22,12 +26,11 @@
 /**=========================ADT Room Struct===================================*/
 struct room_t {
     long id;
-    int price;
+    int price_per_person;
     int open_hour;
     int close_hour;
     int num_ppl;
     int difficulty;
-    Company company;
 };
 
 /**=======================Static functions declarations=======================*/
@@ -39,7 +42,10 @@ static bool inputCheck(long id, int price, int num_ppl, int open_hour,
 
 /**------------------------Room Create----------------------------------------*/
 RoomResult roomCreate(long id, int price, int num_ppl, int open_hour,
-                  int close_hour, int difficulty, Company company, Room* room){
+                  int close_hour, int difficulty, Room* room){
+    if(!room){
+        return ROOM_NULL_ARGUMENT;
+    }
     PARAMETER_CHECK(inputCheck(id,price,num_ppl,open_hour,close_hour,
                                difficulty));
     *room = malloc(sizeof(*room));
@@ -49,21 +55,20 @@ RoomResult roomCreate(long id, int price, int num_ppl, int open_hour,
     (*room)->open_hour = open_hour;
     (*room)->close_hour = close_hour;
     (*room)->num_ppl = num_ppl;
-    (*room)->price = price;
-    (*room)->company = company;
+    (*room)->price_per_person = price;
     return ROOM_SUCCESS;
 }
 
 /**-------------------------Room Copy-----------------------------------------*/
-SetElement roomCopy(SetElement room){
+void* roomCopy(void* room){
     assert(room != NULL);
     Room new_room;
 #ifndef NDEBUG
      RoomResult result =
 #endif
-     roomCreate(((Room)room)->id,((Room)room)->price, ((Room)room)->num_ppl,
-                ((Room)room)->open_hour, ((Room)room)->close_hour,
-                ((Room)room)->difficulty, ((Room)room)->company, &new_room);
+     roomCreate(((Room)room)->id,((Room)room)->price_per_person,
+                ((Room)room)->num_ppl, ((Room)room)->open_hour,
+                ((Room)room)->close_hour, ((Room)room)->difficulty, &new_room);
     assert(result != ROOM_INVALID_PARAMETER);
     if(!new_room){
         return NULL;
@@ -72,7 +77,7 @@ SetElement roomCopy(SetElement room){
 }
 
 /**-------------------------Room Destroy--------------------------------------*/
-void roomDestroy(SetElement room){
+void roomDestroy(void* room){
     if(room != NULL) {
         free(room);
     }
@@ -80,16 +85,11 @@ void roomDestroy(SetElement room){
 }
 
 /**-------------------------Room Compare--------------------------------------*/
-int roomCompare(SetElement room1, SetElement room2){
+int roomCompare(void* room1, void* room2){
     assert((room1 != NULL) && (room2 != NULL));
     assert(roomGetId(room1) > 0 );
     assert(roomGetId(room2) > 0 );
-    TechnionFaculty faculty1 = companyGetFaculty(((Room)room1)->company);
-    TechnionFaculty faculty2 = companyGetFaculty(((Room)room2)->company);
-    if(faculty1 == faculty2){
-        return roomGetId(room1) - roomGetId(room2);
-    }
-    return faculty1 - faculty2;
+    return roomGetId((Room)room1) - roomGetId((Room)room2);
 }
 
 /**-------------------------Room Get Id---------------------------------------*/
@@ -100,18 +100,21 @@ long roomGetId(Room room){
     return room->id;
 }
 
-Company roomGetCompany(Room room){
-    if(!room){
-        return NULL;
-    }
-    return room->company;
-}
-
-long orderGetPrice(Room room){
+/**------------------------Room Get Price-------------------------------------*/
+long roomGetPrice(Room room){
     if(!room){
         return 0;
     }
-    return room->price;
+    return room->price_per_person;
+}
+
+
+
+int roomGetRecommendedNumOfPeople(Room room){
+    if(!room){
+        return 0;
+    }
+    return room->num_ppl;
 }
 
 
@@ -121,6 +124,7 @@ long orderGetPrice(Room room){
 static bool inputCheck(long id, int price, int num_ppl, int open_hour,
                                 int close_hour, int difficulty){
     return ((id > 0) && (price > 0) && (price %4 == 0) && (num_ppl > 0)
-            && (open_hour >= 0) && (close_hour > open_hour) && (close_hour < 24)
-            && (difficulty >= 1) && (difficulty <= 10));
+            && (open_hour >= 0) && (close_hour > open_hour)
+            && (close_hour <= 24) && (difficulty >= 1) && (difficulty <= 10));
 }
+

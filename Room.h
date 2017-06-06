@@ -2,7 +2,8 @@
 #define EX3_ROOMS_H
 
 #include "set.h"
-#include "Company.h"
+#include "Order.h"
+#include "list.h"
 
 /** Type for defining the set */
 typedef struct room_t *Room;
@@ -12,8 +13,9 @@ typedef enum RoomResult_t {
     ROOM_SUCCESS,
     ROOM_OUT_OF_MEMORY,
     ROOM_NULL_ARGUMENT,
-    ROOM_INVALID_PARAMETER
+    ROOM_INVALID_PARAMETER,
 } RoomResult;
+
 
 /**
  * This function creates new room and reset all the room's parameters.
@@ -28,10 +30,10 @@ typedef enum RoomResult_t {
  *      NULL if memory allocate failed.
  */
 RoomResult roomCreate(long id, int price, int num_ppl, int open_hour,
-                int close_hour, int difficulty,Company company ,Room* room);
+                int close_hour, int difficulty, Room* room);
 
 /** This function copying a room */
-SetElement roomCopy(SetElement room);
+void* roomCopy(void* room);
 
 /** Type of function for deallocating an element of the set */
 void roomDestroy(SetElement room);
@@ -43,7 +45,7 @@ void roomDestroy(SetElement room);
 * 		0 if they're equal;
 *		A negative integer if the second Room's id is greater.
 */
-int roomCompare(SetElement room1, SetElement room2);
+int roomCompare(void* room1, void* room2);
 
 /**
  * Function to get id of specific room.
@@ -54,8 +56,8 @@ int roomCompare(SetElement room1, SetElement room2);
  */
 long roomGetId(Room room);
 
-Company roomGetCompany(Room room);
+long roomGetPrice(Room room);
 
-long orderGetPrice(Room room);
+int roomGetRecommendedNumOfPeople(Room room);
 
 #endif //EX3_ROOMS_H

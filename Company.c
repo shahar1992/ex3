@@ -29,7 +29,7 @@
 struct company_t{
     char* email;
     TechnionFaculty faculty;
-    RoomSet rooms;
+    //RoomSet rooms;
 };
 
 /**====================End of macros and structs==============================*/
@@ -61,14 +61,14 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
     MEMORY_CHECK((*company)->email,*company);
     strcpy((*company)->email, email);
     (*company)->faculty = faculty;
-    (*company)->rooms = setCreate(roomCopy, roomDestroy, roomCompare);
-    MEMORY_CHECK((*company)->rooms,*company);
+    //(*company)->rooms = setCreate(roomCopy, roomDestroy, roomCompare);
+    //MEMORY_CHECK((*company)->rooms,*company);
     return COMPANY_SUCCESS;
 }
 
 void companyDestroy(SetElement company){
     if(company != NULL){
-        setDestroy(((Company)company)->rooms);
+        //setDestroy(((Company)company)->rooms);
         if(((Company)company)->email != NULL) {
             free(((Company)company)->email);
         }
@@ -78,19 +78,18 @@ void companyDestroy(SetElement company){
 }
 
 SetElement companyCopy(SetElement company){
-    assert(company != NULL);
     Company new_company;
 #ifndef NDEBUG
     CompanyResult result =
 #endif
     companyCreate(((Company)company)->email,((Company)company)->faculty,
                   &new_company);
-    assert(result != ROOM_INVALID_PARAMETER);
-    if(result != ROOM_SUCCESS) {
+    assert(result != COMPANY_INVALID_PARAMETER);
+    if(result != COMPANY_SUCCESS) {
         return NULL;
     }
-    new_company->rooms = setCopy(((Company)company)->rooms);
-    MEMORY_CHECK(new_company->rooms,new_company);
+    //new_company->rooms = setCopy(((Company)company)->rooms);
+    //MEMORY_CHECK(new_company->rooms,new_company);
     return new_company;
 }
 
@@ -99,7 +98,7 @@ int companyCompare(SetElement company1, SetElement company2){
     return strcmp(((Company)company1)->email, ((Company)company2)->email);
 }
 
-CompanyResult companyAddRoom(Company company, Room room){
+/*CompanyResult companyAddRoom(Company company, Room room){
     if(!company || !room){
         return COMPANY_NULL_ARGUMENT;
     }
@@ -114,19 +113,20 @@ CompanyResult companyRemoveRoom(Company company, Room room){
     CompanyResult result = convertReturnType(setRemove(company->rooms,room));
     return result;
 }
-
+*/
 TechnionFaculty companyGetFaculty(Company company){
     assert(company);
     return  company->faculty;
 }
 
 char* companyGetEmail(Company company){
-    assert(company);
-    assert(company->email);
+    if(!company){
+        return NULL;
+    }
     return company->email;
 }
 
-CompanyResult companyFindRoom(Company company, long id, Room* room){
+/*CompanyResult companyFindRoom(Company company, long id, Room* room){
     PARAMETER_CHECK(id > 0);
     NULL_ARGUMENT_CHECK(company && room);
     SET_FOREACH(Room,current_room,company->rooms){
@@ -149,7 +149,7 @@ CompanyResult companyIsIdIn(Company company, long id){
     }
     return COMPANY_ROOM_DOES_NOT_EXIST;
 }
-
+*/
 /**==================END of company ADT functions implementation==============*/
 
 
@@ -160,12 +160,12 @@ CompanyResult companyIsIdIn(Company company, long id){
 static  CompanyResult convertReturnType(SetResult result){
     switch(result){
         case SET_SUCCESS:
-            return COMPANY_SUCCESS;
+            return COMPANY_SUCCESS;/*
         case SET_ITEM_ALREADY_EXISTS:
             return COMPANY_ROOM_ALREADY_EXISTS;
         case SET_ITEM_DOES_NOT_EXIST:
             return COMPANY_ROOM_DOES_NOT_EXIST;
-        case SET_NULL_ARGUMENT:
+        */case SET_NULL_ARGUMENT:
             return COMPANY_NULL_ARGUMENT;
         case SET_OUT_OF_MEMORY:
             return COMPANY_OUT_OF_MEMORY;
