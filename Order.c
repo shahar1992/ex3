@@ -69,6 +69,7 @@ OrderResult orderCreate(int num_of_ppl, int hour, int day,
     (*order)->escaper = escaper;
     (*order)->faculty = faculty;
     return ORDER_SUCCESS;
+
 }
 
 /**============OrderDestroy===========================*/
