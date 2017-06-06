@@ -47,7 +47,7 @@ static EscaperResult getTime(char *time_format, long *hour, long *days_left);
 /**============EscaperCreate===========================*/
 EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
                             int skill_level, Escaper* escaper){
-    if( !MailCheck(email) || !FacultyCheck(faculty) ){
+    if( !mailCheck(email) || !FacultyCheck(faculty) ){
         return ESCAPER_INVALID_PARAMETER;
     }
     *escaper = malloc(sizeof(**escaper));

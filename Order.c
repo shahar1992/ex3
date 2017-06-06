@@ -99,7 +99,6 @@ void* orderCopy(void* order){
 }
 
 /**============OrderCmpByTime===========================*/
-
 int orderCompare(Order order1, Order order2){
     assert((order1 != NULL) && (order2 != NULL));
     if(order1->day != order2->day){
@@ -107,19 +106,6 @@ int orderCompare(Order order1, Order order2){
     }
     return  (order1->hour - order2->hour);
 }
-
-
-/**============OrderCmpByTime===========================*/
-/*int OrderCmpByTime_Faculty_ID(Order order1,Order order2){
-    assert(order1!=NULL&&order2!=NULL);
-    if(order1->start_hour!=order2->start_hour) return 1;
-    if(order1->days_left!=order2->days_left) return 1;
-    if(order1->faculty!=order2->faculty) return  1;
-    if(order1->ID!=order2->ID) return 1;
-    return 0;
-
-}*/
-
 
 OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty){
     if(!order || !faculty){
