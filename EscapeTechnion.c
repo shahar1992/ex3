@@ -46,8 +46,6 @@ static MtmErrorCode getSystemTime(char *time_format, long* hour, long* day);
 static bool isEmailAlreadyExist(EscapeTechnion system, char* email);
 static bool isCompanyHasReservation(EscapeTechnion system, Company company);
 static Company getCompany(EscapeTechnion system, char *email);
-static bool checkRoomInput(char *email, long id, long price, int num_ppl,
-                           int open_hour, int close_hour, int difficulty);
 static bool isIdAlreadyExistInFaculty(EscapeTechnion system, Room room);
 static bool isRoomHasReservation(EscapeTechnion system, Room room);
 static EscapeTechnionResult convertFromCompanyResult( CompanyResult result);
@@ -56,6 +54,7 @@ static EscapeTechnionResult convertFromEscaperResult(EscaperResult result);
 static bool isOrderFacultyMatch(ListElement order, ListFilterKey faculty);
 static long calculate_total_profit(EscapeTechnion system);
 static void findBestFaculties(EscapeTechnion system, TechnionFaculty* faculty);
+static void removeClientOrders(EscapeTechnion system, Escaper escaper);
 
 /**===================System ADT functions implementation=====================*/
 
@@ -70,7 +69,7 @@ EscapeTechnionResult escapeTechnionCreate(EscapeTechnion *system){
     (*system)->escapers = setCreate(escaperCopy,
                                     escaperDestroy, EscaperCompare);
     MEMORY_CHECK((*system)->escapers, *system);
-    (*system)->orders = listCreate(OrderCopy, orderDestroy);
+    (*system)->orders = listCreate(orderCopy, orderDestroy);
     MEMORY_CHECK((*system)->orders, *system);
     (*system)->rooms = setCreate(roomCopy,roomDestroy,roomCompare);
     MEMORY_CHECK((*system)->rooms, *system);
@@ -206,6 +205,47 @@ EscapeTechnionResult escapeTechnionAddClient(EscapeTechnion system, char* email,
         return ESCAPE_TECHNION_OUT_OF_MEMORY;
     }
     return ESCAPE_TECHNION_SUCCESS;
+}
+
+EscapeTechnionResult escapeTechnionRemoveClient(EscapeTechnion system,
+                                                char* email){
+    NULL_ARGUMENT_CHECK(system && email);
+    Escaper escaper;
+    EscapeTechnionResult result = convertFromEscaperResult(escaperCreate(
+            email, ELECTRICAL_ENGINEERING, 1, &escaper));
+    if(result != ESCAPE_TECHNION_SUCCESS){
+        return result;
+    }
+    if(!setIsIn(system->escapers,escaper)){
+        escaperDestroy(escaper);
+        return ESCAPE_TECHNION_CLIENT_EMAIL_DOES_NOT_EXIST;
+    }
+    removeClientOrders(system,escaper);
+    setRemove(system->escapers,escaper);
+    escaperDestroy(escaper);
+    return ESCAPE_TECHNION_SUCCESS;
+}
+
+EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
+                                            TechnionFaculty faculty, long id,
+                                            int day, int hour, int num_ppl) {
+    NULL_ARGUMENT_CHECK(system && email);
+    Order order;
+    Room room;
+    Escaper escaper;
+    EscapeTechnionResult result = convertFromEscaperResult(
+            escaperCreate(email,faculty,1,&escaper));
+    if(result != ESCAPE_TECHNION_SUCCESS){
+        return result;
+    }
+    EscapeTechnionResult result1 = convertFromRoomResult(
+            roomCreate(id,4,1,0,24,1,NULL,&room));
+    if(result1 != ESCAPE_TECHNION_SUCCESS){
+        escaperDestroy(escaper);
+        return result;
+    }
+    EscapeTechnionResult result2 = convertFromOrderResult(
+            orderCreate(faculty, num_ppl,hour,day,room,escaper,&order));
 }
 
 /**------------------------Escape Technion Get Faculty Profit-----------------*/
@@ -398,6 +438,18 @@ static void findBestFaculties(EscapeTechnion system, TechnionFaculty* faculty){
                 }
                 *(faculty+j) = (TechnionFaculty)i;
             }
+        }
+    }
+    return;
+}
+
+static void removeClientOrders(EscapeTechnion system, Escaper escaper){
+    if(!system || !escaper){
+        return;
+    }
+    LIST_FOREACH(Order, current_order,system->orders){
+        if(EscaperCompare(orderGetEscaper(current_order),escaper) == 0){
+            listRemoveCurrent(system->orders);
         }
     }
     return;

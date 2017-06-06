@@ -13,9 +13,8 @@
  *          add room - completed.
  *          remove room - completed.
  *          add escaper - completed.
- *          remove escaper -
+ *          remove escaper - completed.
  *          add order -
- *          remove order -
  *
  *          end of day - almost completed.
  *          best faculties - almost completed.

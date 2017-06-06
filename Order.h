@@ -10,8 +10,8 @@
 /**
  *  Order ADT
  *
- * Implements an Order struct
- * An Order is a struct of a future order in the system
+ * Implements an order struct.
+ * An Order is a struct of a future order in the system.
  *
  * The following functions are available:
  *
@@ -35,32 +35,30 @@ typedef enum OrderResult_t {
     ORDER_SUCCESS,
     ORDER_OUT_OF_MEMORY,
     ORDER_NULL_ARGUMENT,
-    ORDERS_ARE_EQUAL,
-    ORDERS_NOT_EQUAL,
     ORDER_INVALID_PARAMETER
 } OrderResult;
 
 /** Allocates a new Order */
-OrderResult orderCreate(TechnionFaculty faculty, int num_of_ppl, int hour,
-                        ind day, Room room, Escaper escaper, Order* order);
+OrderResult orderCreate(int num_of_ppl, int hour, int day, Room  room,
+                        Escaper escaper, Order* order);
 
 /** Frees an existing Order object */
-OrderResult orderDestroy(Order order);
+void orderDestroy(void* order);
 
 /** Allocates a new Order which is a copy of the argument */
-Order OrderCopy(Order order);
+void* orderCopy(void* order);
 
 /** Get the order's faculty */
-TechnionFaculty OrderGetFaculty(Order order);
+//TechnionFaculty OrderGetFaculty(Order order);
 
 /** Compare 2 orders by time only return 0 if equal */
-int OrderCmpByTime(Order order1,Order order2);
+int orderCompare(Order order1, Order order2);
 
-/**Compare 2 orders by room faculty,id and time */
+/**Compare 2 orders by room faculty,id and time *//*
 int OrderCmpByTime_Faculty_ID(Order order1,Order order2);
 
-/**Get the company of an ordered room.*/
-Company orderGetCompany(Order order);
+*//**Get the company of an ordered room.*//*
+Company orderGetCompany(Order order);*/
 
 /**Get the faculty owns the ordered room*/
 OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
@@ -68,10 +66,10 @@ OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
 /**Print A GIVEN ORDER*/
 void OrderPrint(Order order);
 
-/**Get the ordered room.*/
+/**Get the ordered room.*//*
 Room orderGetRoom(Order order);
 
-/**Get the price of an order*/
-long orderCalculatePrice(Order order);
+*//**Get the price of an order*//*
+long orderCalculatePrice(Order order);*/
 
 #endif //EX3_ORDER_H
