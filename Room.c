@@ -36,8 +36,6 @@ struct room_t {
 /**=======================Static functions declarations=======================*/
 static bool inputCheck(long id, int price, int num_ppl, int open_hour,
                 int close_hour, int difficulty);
-static RoomResult convertFromOrderResult(OrderResult result);
-static bool roomAvailabilityCheck(Room room, int day, int hour, Order order);
 
 
 /**======================ADT functions implementations========================*/
@@ -103,7 +101,7 @@ long roomGetId(Room room){
 }
 
 /**------------------------Room Get Price-------------------------------------*/
-long orderGetPrice(Room room){
+long roomGetPrice(Room room){
     if(!room){
         return 0;
     }

@@ -9,6 +9,7 @@
 
 /**====================Main entity decleration================================*/
 struct Order_t{
+    TechnionFaculty faculty;
     int day;
     int hour;
     int num_ppl;
@@ -19,6 +20,8 @@ struct Order_t{
 /**====================end of entity decleration==============================*/
 
 /**======================Macros===================================*/
+#define DISCOUNT_FOT_FACULTY_MEMBERS 3/4
+
 
 #define NULL_CHECK(condition) \
     if (!(condition)) { \
@@ -50,8 +53,9 @@ static bool TimeCheck(long time);
 
 /**============OrderCreate===========================*/
 
-OrderResult orderCreate(int num_of_ppl, int hour, int day, Room room,
-                        Escaper escaper, Order* order){
+OrderResult orderCreate(int num_of_ppl, int hour, int day,
+                        TechnionFaculty faculty, Room room, Escaper escaper,
+                        Order* order){
     NULL_CHECK(order && room && escaper);
     if(!checkInput(hour, day, num_of_ppl)){
         return ORDER_INVALID_PARAMETER;
@@ -63,6 +67,7 @@ OrderResult orderCreate(int num_of_ppl, int hour, int day, Room room,
     (*order)->num_ppl = num_of_ppl;
     (*order)->room = room;
     (*order)->escaper = escaper;
+    (*order)->faculty = faculty;
     return ORDER_SUCCESS;
 }
 
@@ -84,31 +89,13 @@ void* orderCopy(void* order){
     Order new_order;
     OrderResult result = orderCreate(((Order)order)->num_ppl,
                                      ((Order)order)->hour,((Order)order)->day,
+                                     ((Order)order)->faculty,
                                      ((Order)order)->room,
                                      ((Order)order)->escaper,&(new_order));
     if(result != ORDER_SUCCESS){
         return NULL;
     }
     return new_order;
-}
-/**============OrdeGetFaculty===========================*/
-
-/*TechnionFaculty OrderGetFaculty(Order order){
-    assert(order!=NULL);
-    return  order->faculty;
-}*/
-
-/** ===============Static functions implementaion==========================*/
-
-static OrderResult GetTime(char *time_format,long* hour,long* days_left){
-    assert(time_format&&hour&&days_left);
-    char *ptr;
-    long ret;
-    ret = strtol(time_format, &ptr, 10);
-    *days_left=ret;
-    ret=strtol(ptr+1,&ptr,10);
-    *hour=ret;
-    return  Order_SUCCESS;
 }
 
 /**============OrderCmpByTime===========================*/
@@ -121,6 +108,7 @@ int orderCompare(Order order1, Order order2){
     return  (order1->hour - order2->hour);
 }
 
+
 /**============OrderCmpByTime===========================*/
 /*int OrderCmpByTime_Faculty_ID(Order order1,Order order2){
     assert(order1!=NULL&&order2!=NULL);
@@ -132,41 +120,37 @@ int orderCompare(Order order1, Order order2){
 
 }*/
 
-/*
+
 OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty){
     if(!order || !faculty){
-        return Order_NULL_ARGUMENT;
+        return ORDER_NULL_ARGUMENT;
     }
     *faculty = order->faculty;
-    return Order_SUCCESS;
-}*/
-
-/**============OrderPrint===========================*/
-void OrderPrint(Order order){
-    assert(order!=NULL);
-    printf("----------Printing order---------------\n");
-    printf("Order's order email: %s\n",order->email);
-    printf("Order's room id : %d\n",order->ID);
-    printf("Order's room faculty : %d\n",order->faculty);
-    printf("Days until order: %ld\n",order->days_left);
-    printf("Order's wanted hour: %ld\n",order->start_hour);
-    printf("Number of peoples in order: %d\n",order->num_ppl);
+    return ORDER_SUCCESS;
 }
 
-/*
 Room orderGetRoom(Order order){
     if(!order){
         return NULL;
     }
     return order->room;
-}*/
-/*
+}
+
+Escaper orderGetEscaper(Order order){
+    if(!order){
+        return NULL;
+    }
+    return order->escaper;
+}
+
 long orderCalculatePrice(Order order){
     if(!order){
-        return -1;
+        return 0;
     }
-    return (order->num_ppl * roomGetPrice(order->room));
-}*/
+    long total_price = order->num_ppl * roomGetPrice(order->room);
+    return (order->faculty == escaperGetFaculty(order->escaper)) ?
+           total_price*DISCOUNT_FOT_FACULTY_MEMBERS : total_price;
+}
 
 int orderGetNumOfPeople(Order order){
     if(!order){
@@ -175,24 +159,8 @@ int orderGetNumOfPeople(Order order){
     return order->num_ppl;
 }
 
-static bool MailCheck(char* mail){
-    char* ptr=mail;
-    int counter =0;
-    while(*ptr!=0){
-        if(*ptr=='@') counter++;
-        ptr++;
-    }
-    return (counter==1)?true:false;//return true if only 1 @;
+/** ===============Static functions implementaion==========================*/
 
+static bool checkInput(int day, int hour, int num_of_ppl){
+    return ((day > 0) && (hour >= 0) && (hour <= 24) && (num_of_ppl > 0));
 }
-static bool TimeCheck(long time){
-    if( time < 0 || time > 23) return false;
-    return (time >= 0) && (time <=24);
-}
-/*
-Company orderGetCompany(Order order){
-    if(!order){
-        return NULL;
-    }
-    return roomGetCompany(order->room);
-}*/

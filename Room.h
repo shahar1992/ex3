@@ -56,7 +56,7 @@ int roomCompare(void* room1, void* room2);
  */
 long roomGetId(Room room);
 
-long orderGetPrice(Room room);
+long roomGetPrice(Room room);
 
 int roomGetRecommendedNumOfPeople(Room room);
 

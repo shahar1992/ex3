@@ -39,8 +39,9 @@ typedef enum OrderResult_t {
 } OrderResult;
 
 /** Allocates a new Order */
-OrderResult orderCreate(int num_of_ppl, int hour, int day, Room  room,
-                        Escaper escaper, Order* order);
+OrderResult orderCreate(int num_of_ppl, int hour, int day,
+                        TechnionFaculty faculty, Room  room, Escaper escaper,
+                        Order* order);
 
 /** Frees an existing Order object */
 void orderDestroy(void* order);
@@ -49,7 +50,7 @@ void orderDestroy(void* order);
 void* orderCopy(void* order);
 
 /** Get the order's faculty */
-//TechnionFaculty OrderGetFaculty(Order order);
+OrderResult OrderGetFaculty(Order order, TechnionFaculty* faculty);
 
 /** Compare 2 orders by time only return 0 if equal */
 int orderCompare(Order order1, Order order2);
@@ -65,6 +66,8 @@ OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
 
 /**Print A GIVEN ORDER*/
 void OrderPrint(Order order);
+
+
 
 /**Get the ordered room.*//*
 Room orderGetRoom(Order order);
