@@ -82,48 +82,35 @@ void* escaperCopy(void* escaper){
     if(!escaper){
         return NULL;
     }
+    Escaper escaper1 = escaper;
     Escaper  new_escaper;
-    EscaperResult result = escaperCreate(((Escaper)escaper)->email,
-                                         ((Escaper)escaper)->faculty,
-                                         ((Escaper)escaper)->skill_level,
-                                         &new_escaper);
-    if(result==NULL){
-        return  NULL;
-    }
-    new_escaper->Email=malloc(sizeof(char)*(strlen(escaper->Email)+1) );
-    if(new_escaper->Email==NULL){
-        escaperDestroy(new_escaper);
-        return  NULL;
-    }
-    strcpy(new_escaper->Email,escaper->Email);
-    new_escaper->Orders=setCopy(escaper->Orders);
-    if(new_escaper->Orders==NULL){
-        escaperDestroy(new_escaper);
+    EscaperResult result = escaperCreate(escaper->email, escaper->faculty,
+                                         escaper->skill_level, &new_escaper);
+    if(result != ESCAPER_SUCCESS){
         return NULL;
     }
-    new_escaper->skill_level=escaper->skill_level;
-    new_escaper->faculty=new_escaper->faculty;
     return new_escaper;
 }
 
 /**=====EscaperCmp==================================*/
-bool escaperCmp(Escaper escaper1, Escaper escaper2){
-    assert(escaper1&&escaper2);
+bool escaperCompare(Escaper escaper1, Escaper escaper2){
+    assert(escaper1 && escaper2);
     return (strcmp(escaper1->Email,escaper2->Email));
-    /**strcmp returns 0 if both string are equal which differs
-     * escapers*/
 }
 
 /**=====EscaperGetEmail==================================*/
 char* escaperGetEmail(Escaper escaper){
     assert(escaper);
-    return escaper->Email;
+    return escaper->email;
 }
 
 /**=====EscaperGetFaculty=========================*/
-TechnionFaculty escaperGetFaculty(Escaper escaper){
-    assert(escaper!=NULL);
-    return escaper->faculty;
+EscaperResult escaperGetFaculty(Escaper escaper, TechnionFaculty* faculty){
+    if(!escaper || !faculty){
+        return ESCAPER_NULL_ARGUMENT;
+    }
+    *faculty = escaper->faculty;
+    return ESCAPER_SUCCESS;
 }
 
 /** ===============Static functions implementaion==========================*/
