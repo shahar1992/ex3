@@ -44,22 +44,24 @@ EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
                             int skill_level, Escaper* escaper);
 
 /** Frees an existing Escaper object */
-void escaperDestroy(Escaper escaper);
+void escaperDestroy(void* escaper);
 
 /** Allocates a new Escaper which is a copy of the argument */
-Escaper escaperCopy(Escaper escaper);
+void* escaperCopy(void* escaper);
 
 /** checks if 2 escapers are identical. return true if do and false otherwise.
  */
-bool EscaperCompare(Escaper escaper1, Escaper escaper2);
+int EscaperCompare(void* escaper1, void* escaper2);
 
 /** Gets an escaper and returns a pointer to the mail address.
  */
 char* escaperGetEmail(Escaper escaper);
 
 /**Returns the faculty of the escaper*/
-TechnionFaculty escaperGetFaculty(Escaper escaper);
+EscaperResult escaperGetFaculty(Escaper escaper, TechnionFaculty* faculty);
 
+/**Gets an escaper skill level*/
+int escaperGetSkillLevel(Escaper escaper);
 
 
 #endif //EX3_ESCAPER_H

@@ -13,9 +13,9 @@
     } \
 }
 
-#define MEMORY_CHECK(condition, ptr_to_destroy) {\
+#define MEMORY_CHECK(condition, company_to_destroy) {\
     if (!(condition)) { \
-        companyDestroy(ptr_to_destroy); \
+        companyDestroy(company_to_destroy); \
         return COMPANY_OUT_OF_MEMORY; \
     } \
 }
@@ -29,7 +29,7 @@
 struct company_t{
     char* email;
     TechnionFaculty faculty;
-    //RoomSet rooms;
+    RoomSet rooms;
 };
 
 /**====================End of macros and structs==============================*/
@@ -40,9 +40,10 @@ struct company_t{
 /**=====================Static functions declarations=========================*/
 
 /**converts the result type from set result to comapny result*/
-static  CompanyResult convertReturnType(SetResult result);
+static  CompanyResult convertReturnTypeFromSet(SetResult result);
 static bool isInputLegal(char* email, TechnionFaculty faculty);
 static bool isEmailLegal(char* email);
+static CompanyResult convertReturnTypeFromRoom(RoomResult result);
 
 /**===================End of static function declarations.====================*/
 
@@ -61,14 +62,14 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
     MEMORY_CHECK((*company)->email,*company);
     strcpy((*company)->email, email);
     (*company)->faculty = faculty;
-    //(*company)->rooms = setCreate(roomCopy, roomDestroy, roomCompare);
-    //MEMORY_CHECK((*company)->rooms,*company);
+    (*company)->rooms = setCreate(roomCopy, roomDestroy, roomCompare);
+    MEMORY_CHECK((*company)->rooms,*company);
     return COMPANY_SUCCESS;
 }
 
 void companyDestroy(SetElement company){
     if(company != NULL){
-        //setDestroy(((Company)company)->rooms);
+        setDestroy(((Company)company)->rooms);
         if(((Company)company)->email != NULL) {
             free(((Company)company)->email);
         }
@@ -88,8 +89,8 @@ SetElement companyCopy(SetElement company){
     if(result != COMPANY_SUCCESS) {
         return NULL;
     }
-    //new_company->rooms = setCopy(((Company)company)->rooms);
-    //MEMORY_CHECK(new_company->rooms,new_company);
+    new_company->rooms = setCopy(((Company)company)->rooms);
+    MEMORY_CHECK(new_company->rooms,new_company);
     return new_company;
 }
 
@@ -98,11 +99,17 @@ int companyCompare(SetElement company1, SetElement company2){
     return strcmp(((Company)company1)->email, ((Company)company2)->email);
 }
 
-/*CompanyResult companyAddRoom(Company company, Room room){
-    if(!company || !room){
-        return COMPANY_NULL_ARGUMENT;
+CompanyResult companyAddRoom(Company company, long id, long price, int num_ppl,
+                             int open_hour, int close_hour, int difficult){
+    NULL_ARGUMENT_CHECK(company);
+    Room room;
+    CompanyResult result = convertReturnTypeFromRoom(
+            roomCreate(id,price,num_ppl,open_hour,close_hour,difficult,&room));
+    if(result != COMPANY_SUCCESS){
+        return result;
     }
-    CompanyResult result = convertReturnType(setAdd(company->rooms, room));
+    result = convertReturnTypeFromSet(setAdd(company->rooms, room));
+    roomDestroy(room);
     return result;
 }
 
@@ -110,13 +117,15 @@ CompanyResult companyRemoveRoom(Company company, Room room){
     if(!company || !room){
         return COMPANY_NULL_ARGUMENT;
     }
-    CompanyResult result = convertReturnType(setRemove(company->rooms,room));
+    CompanyResult result = convertReturnTypeFromSet(
+            setRemove(company->rooms, room));
     return result;
 }
-*/
-TechnionFaculty companyGetFaculty(Company company){
-    assert(company);
-    return  company->faculty;
+
+CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty){
+    NULL_ARGUMENT_CHECK(company && faculty);
+    *faculty = company->faculty;
+    return COMPANY_SUCCESS;
 }
 
 char* companyGetEmail(Company company){
@@ -126,7 +135,7 @@ char* companyGetEmail(Company company){
     return company->email;
 }
 
-/*CompanyResult companyFindRoom(Company company, long id, Room* room){
+CompanyResult companyFindRoom(Company company, long id, Room* room){
     PARAMETER_CHECK(id > 0);
     NULL_ARGUMENT_CHECK(company && room);
     SET_FOREACH(Room,current_room,company->rooms){
@@ -139,17 +148,16 @@ char* companyGetEmail(Company company){
     return COMPANY_ROOM_DOES_NOT_EXIST;
 }
 
-CompanyResult companyIsIdIn(Company company, long id){
-    PARAMETER_CHECK(id > 0);
+CompanyResult companyIsRoomAlreadyExist(Company company, long id){
     NULL_ARGUMENT_CHECK(company);
-    SET_FOREACH(Room,current_room, company->rooms){
+    SET_FOREACH(Room, current_room,company->rooms){
         if(roomGetId(current_room) == id){
-            return COMPANY_SUCCESS;
+            return COMPANY_ROOM_ALREADY_EXIST;
         }
     }
     return COMPANY_ROOM_DOES_NOT_EXIST;
 }
-*/
+
 /**==================END of company ADT functions implementation==============*/
 
 
@@ -157,18 +165,33 @@ CompanyResult companyIsIdIn(Company company, long id){
 
 /**===================static functions implementation=========================*/
 
-static  CompanyResult convertReturnType(SetResult result){
+static  CompanyResult convertReturnTypeFromSet(SetResult result){
     switch(result){
         case SET_SUCCESS:
-            return COMPANY_SUCCESS;/*
-        case SET_ITEM_ALREADY_EXISTS:
-            return COMPANY_ROOM_ALREADY_EXISTS;
+            return COMPANY_SUCCESS;
         case SET_ITEM_DOES_NOT_EXIST:
             return COMPANY_ROOM_DOES_NOT_EXIST;
-        */case SET_NULL_ARGUMENT:
-            return COMPANY_NULL_ARGUMENT;
         case SET_OUT_OF_MEMORY:
             return COMPANY_OUT_OF_MEMORY;
+        case SET_ITEM_ALREADY_EXISTS:
+            return COMPANY_ROOM_ALREADY_EXIST;
+
+        default:
+            return COMPANY_NULL_ARGUMENT;
+    }
+}
+
+static CompanyResult convertReturnTypeFromRoom(RoomResult result){
+    switch (result){
+        case ROOM_SUCCESS:
+            return COMPANY_SUCCESS;
+        case ROOM_OUT_OF_MEMORY:
+            return COMPANY_OUT_OF_MEMORY;
+        case ROOM_INVALID_PARAMETER:
+            return COMPANY_INVALID_PARAMETER;
+
+        default:
+            return COMPANY_NULL_ARGUMENT;
     }
 }
 

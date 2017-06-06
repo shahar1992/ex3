@@ -20,7 +20,7 @@ struct Order_t{
 /**====================end of entity decleration==============================*/
 
 /**======================Macros===================================*/
-#define DISCOUNT_FOT_FACULTY_MEMBERS 3/4
+#define DISCOUNT_FOT_FACULTY_MEMBERS 1/4
 
 
 #define NULL_CHECK(condition) \
@@ -135,8 +135,10 @@ long orderCalculatePrice(Order order){
         return 0;
     }
     long total_price = order->num_ppl * roomGetPrice(order->room);
-    return (order->faculty == escaperGetFaculty(order->escaper)) ?
-           total_price*DISCOUNT_FOT_FACULTY_MEMBERS : total_price;
+    TechnionFaculty faculty;
+    escaperGetFaculty(order->escaper,&faculty);
+    return (order->faculty == faculty) ?
+           (total_price * DISCOUNT_FOT_FACULTY_MEMBERS) : total_price;
 }
 
 int orderGetNumOfPeople(Order order){

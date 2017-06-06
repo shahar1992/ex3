@@ -14,6 +14,8 @@ set(SOURCE_FILES
         EscapeTechnion.c
         Order.h
         Order.c
+        Escaper.h
+        Escaper.c
         )
 
 add_executable(ex3 ${SOURCE_FILES})

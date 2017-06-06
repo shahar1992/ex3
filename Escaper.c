@@ -3,12 +3,11 @@
 //
 
 /**====================Include files==============================*/
-#include "Escaper.h"
-#include <stdlib.h>
 #include <assert.h>
+#include <stdlib.h>
 #include <string.h>
-#include "set.h"
-#include "list.h"
+
+#include "Escaper.h"
 /**================================================================*/
 
 /**====================Main entity decleration==============================*/
@@ -56,7 +55,7 @@ EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
         return ESCAPER_OUT_OF_MEMORY;
     }
     (*escaper)->email = malloc(sizeof(char)*(strlen(email)+1));
-    if(!(*escaper)->Email) {
+    if(!(*escaper)->email) {
         escaperDestroy(*escaper);
         return ESCAPER_OUT_OF_MEMORY;
     }
@@ -67,12 +66,12 @@ EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
 }
 
 /**=====EscaperDestroy==================================*/
-void escaperDestroy(Escaper escaper){
+void escaperDestroy(void* escaper){
     if(escaper != NULL) {
-        if(escaper->email != NULL) {
-            free(escaper->email);
+        if(((Escaper)escaper)->email != NULL) {
+            free(((Escaper)escaper)->email);
         }
-        free(escaper);
+        free((Escaper)escaper);
     }
     return;
 }
@@ -84,8 +83,8 @@ void* escaperCopy(void* escaper){
     }
     Escaper escaper1 = escaper;
     Escaper  new_escaper;
-    EscaperResult result = escaperCreate(escaper->email, escaper->faculty,
-                                         escaper->skill_level, &new_escaper);
+    EscaperResult result = escaperCreate(escaper1->email, escaper1->faculty,
+                                         escaper1->skill_level, &new_escaper);
     if(result != ESCAPER_SUCCESS){
         return NULL;
     }
@@ -93,9 +92,10 @@ void* escaperCopy(void* escaper){
 }
 
 /**=====EscaperCmp==================================*/
-bool escaperCompare(Escaper escaper1, Escaper escaper2){
+int escaperCompare(void* escaper1, void* escaper2){
     assert(escaper1 && escaper2);
-    return (strcmp(escaper1->Email,escaper2->Email));
+    Escaper escaper1_ptr = escaper1, escaper2_ptr = escaper2;
+    return (strcmp(escaper1_ptr->email,escaper2_ptr->email));
 }
 
 /**=====EscaperGetEmail==================================*/
@@ -111,6 +111,14 @@ EscaperResult escaperGetFaculty(Escaper escaper, TechnionFaculty* faculty){
     }
     *faculty = escaper->faculty;
     return ESCAPER_SUCCESS;
+}
+
+/**---------------------Escaper Get Skill Level-------------------------------*/
+int escaperGetSkillLevel(Escaper escaper){
+    if(!escaper){
+        return 0;
+    }
+    return escaper->skill_level;
 }
 
 /** ===============Static functions implementaion==========================*/
