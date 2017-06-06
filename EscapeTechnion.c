@@ -107,6 +107,7 @@ EscapeTechnionResult escapeTechnionAddCompany(EscapeTechnion system,
         companyDestroy(company);
         return ESCAPE_TECHNION_OUT_OF_MEMORY;
     }
+    companyDestroy(company);
     return ESCAPE_TECHNION_SUCCESS;
 }
 
