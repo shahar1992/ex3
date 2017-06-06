@@ -28,7 +28,7 @@ typedef enum RoomResult_t {
  *      NULL if memory allocate failed.
  */
 RoomResult roomCreate(long id, int price, int num_ppl, int open_hour,
-                int close_hour, int difficulty, Company company ,Room* room);
+                int close_hour, int difficulty,Company company ,Room* room);
 
 /** This function copying a room */
 SetElement roomCopy(SetElement room);

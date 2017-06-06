@@ -14,8 +14,8 @@ struct Order_t{
     int day;
     int hour;
     int num_ppl;
-    Room* room;
-    Escaper* escaper;
+    Room room;
+    Escaper escaper;
 };
 /**====================end of entity decleration==============================*/
 
@@ -69,6 +69,7 @@ OrderResult orderCreate(TechnionFaculty faculty, int num_of_ppl, int hour,
     (*order)->escaper = escaper;
     (*order)->room = room;
     return ORDER_SUCCESS;
+
 }
 
 /**============OrderDestroy===========================*/

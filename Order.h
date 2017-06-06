@@ -42,7 +42,7 @@ typedef enum OrderResult_t {
 
 /** Allocates a new Order */
 OrderResult orderCreate(TechnionFaculty faculty, int num_of_ppl, int hour,
-                        ind day, Room room, Escaper escaper, Order* order);
+                        int day, Room room, Escaper escaper, Order* order);
 
 /** Frees an existing Order object */
 OrderResult orderDestroy(Order order);
