@@ -13,10 +13,9 @@
 
 /**====================Main entity decleration==============================*/
 struct Escaper_t{
-    char* Email;
+    char* email;
     TechnionFaculty faculty;
     int skill_level;
-
 };
 /**====================end of entity decleration==============================*/
 
@@ -24,6 +23,8 @@ struct Escaper_t{
 
 /**======================Macros===================================*/
 #define FACULTY_NUM 19
+#define MIN_SKILL_LEVEL 1
+#define MAX_SKILL_LEVEL 10
 
 /**====================End of Macros==============================*/
 
@@ -36,8 +37,8 @@ struct Escaper_t{
  * Facultycheck       -checks if a given faculty is valid;
  */
 static bool mailCheck(char *mail);
-static bool FacultyCheck(TechnionFaculty faculty);
-static EscaperResult getTime(char *time_format, long *hour, long *days_left);
+static bool facultyCheck(TechnionFaculty faculty);
+static bool skillLevelCheck(int skill_level);
 
 /**===================End of static function declarations.====================*/
 
@@ -47,29 +48,29 @@ static EscaperResult getTime(char *time_format, long *hour, long *days_left);
 /**============EscaperCreate===========================*/
 EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
                             int skill_level, Escaper* escaper){
-    if( !MailCheck(email) || !FacultyCheck(faculty) ){
+    if( !mailCheck(email) || !facultyCheck(faculty) || !skillLevelCheck(skill_level) ){
         return ESCAPER_INVALID_PARAMETER;
     }
     *escaper = malloc(sizeof(**escaper));
     if(!*escaper){
         return ESCAPER_OUT_OF_MEMORY;
     }
-    (*escaper)->Email = malloc(sizeof(char)*(strlen(email)+1));
+    (*escaper)->email = malloc(sizeof(char)*(strlen(email)+1));
     if(!(*escaper)->Email) {
-        EscaperDestroy(escaper);
+        escaperDestroy(*escaper);
         return ESCAPER_OUT_OF_MEMORY;
     }
-    strcpy(escaper->Email,email);
-    escaper->faculty = faculty;
-    escaper->skill_level = skill_level;
+    strcpy((*escaper)->email,email);
+    (*escaper)->faculty = faculty;
+    (*escaper)->skill_level = skill_level;
     return ESCAPER_SUCCESS;
 }
 
 /**=====EscaperDestroy==================================*/
 void escaperDestroy(Escaper escaper){
     if(escaper != NULL) {
-        if(escaper->Email != NULL) {
-            free(escaper->Email);
+        if(escaper->email != NULL) {
+            free(escaper->email);
         }
         free(escaper);
     }
@@ -77,21 +78,27 @@ void escaperDestroy(Escaper escaper){
 }
 
 /**=====EscaperCopy==================================*/
-Escaper escaperCopy(Escaper escaper){
-    assert(escaper);
-    Escaper  new_escaper=malloc(sizeof(*new_escaper));
+void* escaperCopy(void* escaper){
+    if(!escaper){
+        return NULL;
+    }
+    Escaper  new_escaper;
+    EscaperResult result = escaperCreate(((Escaper)escaper)->email,
+                                         ((Escaper)escaper)->faculty,
+                                         ((Escaper)escaper)->skill_level,
+                                         &new_escaper);
     if(new_escaper==NULL){
         return  NULL;
     }
     new_escaper->Email=malloc(sizeof(char)*(strlen(escaper->Email)+1) );
     if(new_escaper->Email==NULL){
-        EscaperDestroy(new_escaper);
+        escaperDestroy(new_escaper);
         return  NULL;
     }
     strcpy(new_escaper->Email,escaper->Email);
     new_escaper->Orders=setCopy(escaper->Orders);
     if(new_escaper->Orders==NULL){
-        EscaperDestroy(new_escaper);
+        escaperDestroy(new_escaper);
         return NULL;
     }
     new_escaper->skill_level=escaper->skill_level;
@@ -133,7 +140,7 @@ static bool FacultyCheck(TechnionFaculty faculty){
     return (((int)faculty >= 0) &&((int)faculty < FACULTY_NUM));
 }
 
-static EscaperResult GetTime(char *time_format,long* hour,long* days_left){
+/*static EscaperResult GetTime(char *time_format,long* hour,long* days_left){
     assert(time_format&&hour&&days_left);
     char *ptr;
     long ret;
@@ -142,4 +149,8 @@ static EscaperResult GetTime(char *time_format,long* hour,long* days_left){
     ret=strtol(ptr+1,&ptr,10);
     *hour=ret;
     return  Escaper_SUCCESS;
+}
+*/
+static bool skillLevelCheck(int skill_level){
+    return ( (skill_level>=MIN_SKILL_LEVEL) && (skill_level<=MAX_SKILL_LEVEL) );
 }
