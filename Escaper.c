@@ -87,7 +87,7 @@ void* escaperCopy(void* escaper){
                                          ((Escaper)escaper)->faculty,
                                          ((Escaper)escaper)->skill_level,
                                          &new_escaper);
-    if(new_escaper==NULL){
+    if(result==NULL){
         return  NULL;
     }
     new_escaper->Email=malloc(sizeof(char)*(strlen(escaper->Email)+1) );
