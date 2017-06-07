@@ -5,7 +5,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 
 set(SOURCE_FILES
         tests/list_mtm/test_utilities.h
-        tests/Escaper_tests.c
+        tests/Order_tests.c
         Escaper.h
         Escaper.c
         )

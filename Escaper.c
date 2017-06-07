@@ -36,6 +36,7 @@ struct Escaper_t{
 static bool mailCheck(char *mail);
 static bool facultyCheck(TechnionFaculty faculty);
 static bool skillLevelCheck(int skill_level);
+static bool inputCheck(char* email, TechnionFaculty faculty, int skill_level);
 
 /**===================End of static function declarations.====================*/
 
@@ -48,7 +49,7 @@ EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
     if(!email || !escaper){
         return ESCAPER_NULL_ARGUMENT;
     }
-    if( !mailCheck(email) || !facultyCheck(faculty) || !skillLevelCheck(skill_level) ){
+    if(!inputCheck(email,faculty,skill_level)){
         return ESCAPER_INVALID_PARAMETER;
     }
     *escaper = malloc(sizeof(**escaper));
@@ -160,4 +161,9 @@ static bool facultyCheck(TechnionFaculty faculty){
 */
 static bool skillLevelCheck(int skill_level){
     return ( (skill_level>=MIN_SKILL_LEVEL) && (skill_level<=MAX_SKILL_LEVEL) );
+}
+
+static bool inputCheck(char* email, TechnionFaculty faculty, int skill_level){
+    return (mailCheck(email) && facultyCheck(faculty)
+            && skillLevelCheck(skill_level));
 }

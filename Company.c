@@ -154,6 +154,7 @@ CompanyResult companyFindRoom(Company company, long id, Room* room){
             return COMPANY_SUCCESS;
         }
     }
+    *room = NULL;
     return COMPANY_ROOM_DOES_NOT_EXIST;
 }
 
