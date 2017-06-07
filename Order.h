@@ -4,7 +4,6 @@
 #include <stdbool.h>
 #include "mtm_ex3.h"
 #include "Escaper.h"
-#include "Order.h"
 #include "Room.h"
 
 /**
@@ -40,7 +39,7 @@ typedef enum OrderResult_t {
 
 /** Allocates a new Order */
 OrderResult orderCreate(int num_of_ppl, int hour, int day,
-                        TechnionFaculty faculty, Room  room, Escaper escaper,
+                        TechnionFaculty faculty, Room room, Escaper escaper,
                         Order* order);
 
 /** Frees an existing Order object */

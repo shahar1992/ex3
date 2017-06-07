@@ -101,25 +101,34 @@ int companyCompare(SetElement company1, SetElement company2){
 
 CompanyResult companyAddRoom(Company company, long id, long price, int num_ppl,
                              int open_hour, int close_hour, int difficult){
-    NULL_ARGUMENT_CHECK(company);
+
     Room room;
     CompanyResult result = convertReturnTypeFromRoom(
             roomCreate(id,price,num_ppl,open_hour,close_hour,difficult,&room));
     if(result != COMPANY_SUCCESS){
         return result;
     }
+    NULL_ARGUMENT_CHECK(company);
     result = convertReturnTypeFromSet(setAdd(company->rooms, room));
     roomDestroy(room);
     return result;
 }
 
-CompanyResult companyRemoveRoom(Company company, Room room){
-    if(!company || !room){
-        return COMPANY_NULL_ARGUMENT;
+CompanyResult companyRemoveRoom(Company company, long id){
+    NULL_ARGUMENT_CHECK(company);
+    if(id < 0){
+        return COMPANY_INVALID_PARAMETER;
     }
-    CompanyResult result = convertReturnTypeFromSet(
-            setRemove(company->rooms, room));
-    return result;
+    CompanyResult result;
+    SET_FOREACH(Room, room, company->rooms){
+        if(roomGetId(room) == id){
+            result = convertReturnTypeFromSet(setRemove(company->rooms,room));
+            if(result != COMPANY_ROOM_DOES_NOT_EXIST){
+                return result;
+            }
+        }
+    }
+    return COMPANY_ROOM_DOES_NOT_EXIST;
 }
 
 CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty){
@@ -152,7 +161,7 @@ CompanyResult companySearchRoom(Company company, long id){
     NULL_ARGUMENT_CHECK(company);
     SET_FOREACH(Room, current_room,company->rooms){
         if(roomGetId(current_room) == id){
-            return COMPANY_ROOM_ALREADY_EXIST;
+            return COMPANY_SUCCESS;
         }
     }
     return COMPANY_ROOM_DOES_NOT_EXIST;
