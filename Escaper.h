@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include "mtm_ex3.h"
-#include "set.h"
 
 #define FACULTY_NUM 19
 #define MIN_SKILL_LEVEL 1
@@ -20,13 +19,9 @@
 *   EscaperCreate               - Creates a new Escaper
 *   EscaperDestroy              - Deletes an existing Escaper and frees all resources
 *   EscaperCopy                 - Copies an existing Escaper
-*   EscaperCmp                  -checks if 2 escapers are identical(0=identical)
+*   EscaperCmp                  -checks if 2 escapers are identical
 *   EscaperGetEmail             -Returns a copy of the escaper mail.
 *   EscaperGetFaculty           -Return enum faculty of the escaper
-*   EscaperAddOrder             -adds an order to the escaper.
-*   EscaperRemoveOrder          -Remove an order of the escaper
-*   EscaperRemoveAllOrders      -Remove all orders of the escaper
-*   EscaperCheckAvailabilty     -Checks if the escaper is available in given time
 *
 */
 
