@@ -25,7 +25,6 @@
  *  orderCalculatePrice             - Get the id of the ordered room.-Tested
  *  orderGetNumOfPeople           - Get the faculty owns the ordered room.-Tested
  */
-//
 /** Type for defining an Order*/
 typedef struct Order_t* Order;
 
