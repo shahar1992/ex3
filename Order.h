@@ -54,24 +54,15 @@ OrderResult OrderGetFaculty(Order order, TechnionFaculty* faculty);
 /** Compare 2 orders by time only return 0 if equal */
 int orderCompare(Order order1, Order order2);
 
-/**Compare 2 orders by room faculty,id and time *//*
-int OrderCmpByTime_Faculty_ID(Order order1,Order order2);
-
-*//**Get the company of an ordered room.*//*
-Company orderGetCompany(Order order);*/
-
 /**Get the faculty owns the ordered room*/
 OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
 
-/**Print A GIVEN ORDER*/
-void OrderPrint(Order order);
+Escaper orderGetEscaper(Order order);
 
-
-
-/**Get the ordered room.*//*
+/*Get the ordered room.*/
 Room orderGetRoom(Order order);
 
-*//**Get the price of an order*//*
-long orderCalculatePrice(Order order);*/
+/**Get the price of an order*/
+long orderCalculatePrice(Order order);
 
 #endif //EX3_ORDER_H
