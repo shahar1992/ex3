@@ -3,8 +3,11 @@
 
 #include <stdbool.h>
 #include "mtm_ex3.h"
-#include "Order.h"
 #include "set.h"
+
+#define FACULTY_NUM 19
+#define MIN_SKILL_LEVEL 1
+#define MAX_SKILL_LEVEL 10
 /**
 *  Escaper ADT
 *
@@ -51,11 +54,11 @@ void* escaperCopy(void* escaper);
 
 /** checks if 2 escapers are identical. return true if do and false otherwise.
  */
-int EscaperCompare(void* escaper1, void* escaper2);
+int escaperCompare(void* escaper1, void* escaper2);
 
 /** Gets an escaper and returns a pointer to the mail address.
  */
-char* escaperGetEmail(Escaper escaper);
+EscaperResult escaperGetEmail(Escaper escaper,char** mail);
 
 /**Returns the faculty of the escaper*/
 EscaperResult escaperGetFaculty(Escaper escaper, TechnionFaculty* faculty);
