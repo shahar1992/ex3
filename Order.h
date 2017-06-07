@@ -4,9 +4,9 @@
 #include <stdbool.h>
 #include "mtm_ex3.h"
 #include "Escaper.h"
-#include "Order.h"
 #include "Room.h"
 
+#define DISCOUNT_FOT_FACULTY_MEMBERS 3/4
 /**
  *  Order ADT
  *
@@ -15,16 +15,15 @@
  *
  * The following functions are available:
  *
- *   OrderCreate                - Creates a new Order
+ *   OrderCreate                - Creates a new Order-TESTED
  *   OrderDestroy               - Deletes an existing Order and frees all resources
- *   OrderCopy                  - Copies an existing Order
- *   OrderGetFaculty            - return the faculty enum for a given order
- *  OrderCmpByTime              - cmp 2 orders by time
- *  OrderCmpByTime_Faculty_ID   - cmp 2 orders by time,faculty,id
- *  OrderPrint                  - Print A given order
- *  orderGetEmail               - Get the company email of an order.
- *  orderGetId                  - Get the id of the ordered room.
- *  orderGetFaculty             - Get the faculty owns the ordered room.
+ *   OrderCopy                  - Copies an existing Orde-Tested
+ *   orderCompare               -Compare orders by day and time-Tested
+ *   OrderGetFaculty            - return the faculty enum for a given order-Tested
+ *  orderGetRoom                 - Print A given order-Tested
+ *  orderGetEscaper             - Get the company email of an order.-Tested
+ *  orderCalculatePrice             - Get the id of the ordered room.-Tested
+ *  orderGetNumOfPeople           - Get the faculty owns the ordered room.-Tested
  */
 
 /** Type for defining an Order*/
@@ -49,29 +48,21 @@ void orderDestroy(void* order);
 void* orderCopy(void* order);
 
 /** Get the order's faculty */
-OrderResult OrderGetFaculty(Order order, TechnionFaculty* faculty);
+OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
 
 /** Compare 2 orders by time only return 0 if equal */
 int orderCompare(Order order1, Order order2);
 
-/**Compare 2 orders by room faculty,id and time *//*
-int OrderCmpByTime_Faculty_ID(Order order1,Order order2);
-
-*//**Get the company of an ordered room.*//*
-Company orderGetCompany(Order order);*/
-
 /**Get the faculty owns the ordered room*/
 OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
 
-/**Print A GIVEN ORDER*/
-void OrderPrint(Order order);
-
-
-
-/**Get the ordered room.*//*
+/**Get the ordered room.*/
 Room orderGetRoom(Order order);
-
-*//**Get the price of an order*//*
-long orderCalculatePrice(Order order);*/
+/**Get the Customer.*/
+Escaper orderGetEscaper(Order order);
+/**Get the price of an order*/
+long orderCalculatePrice(Order order);
+/**Get the order's number of people*/
+int orderGetNumOfPeople(Order order);
 
 #endif //EX3_ORDER_H
