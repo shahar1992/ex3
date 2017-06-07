@@ -21,9 +21,7 @@ struct Escaper_t{
 
 
 /**======================Macros===================================*/
-#define FACULTY_NUM 19
-#define MIN_SKILL_LEVEL 1
-#define MAX_SKILL_LEVEL 10
+
 
 /**====================End of Macros==============================*/
 
@@ -47,6 +45,9 @@ static bool skillLevelCheck(int skill_level);
 /**============EscaperCreate===========================*/
 EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
                             int skill_level, Escaper* escaper){
+    if(!email || !escaper){
+        return ESCAPER_NULL_ARGUMENT;
+    }
     if( !mailCheck(email) || !facultyCheck(faculty) || !skillLevelCheck(skill_level) ){
         return ESCAPER_INVALID_PARAMETER;
     }
@@ -99,9 +100,16 @@ int escaperCompare(void* escaper1, void* escaper2){
 }
 
 /**=====EscaperGetEmail==================================*/
-char* escaperGetEmail(Escaper escaper){
-    assert(escaper);
-    return escaper->email;
+EscaperResult escaperGetEmail(Escaper escaper,char** mail){
+    if(!escaper || !mail){
+        return ESCAPER_NULL_ARGUMENT;
+    }
+    *mail=malloc(sizeof(char)*(strlen(escaper->email) +1));
+    if(!*mail){
+        return ESCAPER_OUT_OF_MEMORY;
+    }
+    strcpy(*mail,escaper->email);
+    return ESCAPER_SUCCESS;
 }
 
 /**=====EscaperGetFaculty=========================*/
@@ -123,15 +131,19 @@ int escaperGetSkillLevel(Escaper escaper){
 
 /** ===============Static functions implementaion==========================*/
 static bool mailCheck(char *mail){
+    if(mail==NULL){
+        return false;
+    }
     char* ptr=mail;
     int counter =0;
     while(*ptr!=0){
         if(*ptr=='@') counter++;
+        ptr++;
     }
     return (counter == 1);
 }
 
-static bool FacultyCheck(TechnionFaculty faculty){
+static bool facultyCheck(TechnionFaculty faculty){
     return (((int)faculty >= 0) &&((int)faculty < FACULTY_NUM));
 }
 

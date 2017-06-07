@@ -30,7 +30,7 @@ static bool testCompanyCopy() {
     companyCreate("shahar92@campux.technion.ac.il",ELECTRICAL_ENGINEERING,&company);
     Room room;
     roomCreate(1,4,3,12,19,1,&room);
-    companyAddRoom(company,room);
+    //companyAddRoom(company,room);
     Company new_company = companyCopy(company);
     ASSERT_TEST(companyCompare(company,new_company)==0);
     TechnionFaculty faculty1 = companyGetFaculty(company),faculty2 = companyGetFaculty(new_company);

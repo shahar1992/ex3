@@ -42,9 +42,7 @@ if(!(condition)){ \
  *  MailCheck        -checks if a mail is valid (only 1 @)
  *  TimeCheck         - checks if time is valid (betwenn 0 and 23 including)
  */
-static OrderResult GetTime(char *time_format,long* hour,long* days_left);
 static bool checkInput(int day, int hour, int num_of_ppl);
-static bool TimeCheck(long time);
 
 /**===================End of static function declarations.====================*/
 
