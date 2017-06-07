@@ -127,6 +127,6 @@ CompanyResult companyFindRoom(Company company, long id, Room* room);
  *      true if room with same id has found.
  *      false otherwise.
  */
-CompanyResult companyIsRoomAlreadyExist(Company company, long id);
+CompanyResult companySearchRoom(Company company, long id);
 
 #endif //EX3_COMPANY_H

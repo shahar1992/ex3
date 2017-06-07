@@ -148,7 +148,7 @@ CompanyResult companyFindRoom(Company company, long id, Room* room){
     return COMPANY_ROOM_DOES_NOT_EXIST;
 }
 
-CompanyResult companyIsRoomAlreadyExist(Company company, long id){
+CompanyResult companySearchRoom(Company company, long id){
     NULL_ARGUMENT_CHECK(company);
     SET_FOREACH(Room, current_room,company->rooms){
         if(roomGetId(current_room) == id){
