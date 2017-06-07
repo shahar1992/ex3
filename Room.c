@@ -43,12 +43,10 @@ static bool inputCheck(long id, int price, int num_ppl, int open_hour,
 /**------------------------Room Create----------------------------------------*/
 RoomResult roomCreate(long id, int price, int num_ppl, int open_hour,
                   int close_hour, int difficulty, Room* room){
-    if(!room){
-        return ROOM_NULL_ARGUMENT;
-    }
+    NULL_CHECK(room);
     PARAMETER_CHECK(inputCheck(id,price,num_ppl,open_hour,close_hour,
                                difficulty));
-    *room = malloc(sizeof(*room));
+    *room = malloc(sizeof(**room));
     MEMORY_CHECK_NULL(*room, *room);
     (*room)->id = id;
     (*room)->difficulty = difficulty;
@@ -85,7 +83,7 @@ void roomDestroy(void* room){
 }
 
 /**-------------------------Room Compare--------------------------------------*/
-int roomCompare(void* room1, void* room2){
+long roomCompare(void* room1, void* room2){
     assert((room1 != NULL) && (room2 != NULL));
     assert(roomGetId(room1) > 0 );
     assert(roomGetId(room2) > 0 );
@@ -123,8 +121,14 @@ int roomGetRecommendedNumOfPeople(Room room){
 /**--------------------------Input Check--------------------------------------*/
 static bool inputCheck(long id, int price, int num_ppl, int open_hour,
                                 int close_hour, int difficulty){
-    return ((id > 0) && (price > 0) && (price %4 == 0) && (num_ppl > 0)
-            && (open_hour >= 0) && (close_hour > open_hour)
-            && (close_hour <= 24) && (difficulty >= 1) && (difficulty <= 10));
+    return ((id > 0)
+            && (price > 0)
+            && (price %PRICE_MOUDLE == 0)
+            && (num_ppl >=MIN_PLAYERS_FOR_ROOM)
+            && (open_hour >= MIN_HOUR)
+            && (close_hour > open_hour)
+            && (close_hour <= MAX_HOUR)
+            && (difficulty >= MIN_DIFFICULTY_LEVEL)
+            && (difficulty <= MAX_DIFFICULTY_LEVEL));
 }
 

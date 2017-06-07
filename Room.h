@@ -3,6 +3,32 @@
 
 #include "set.h"
 #include "list.h"
+#include "mtm_ex3.h"
+
+#define PRICE_MOUDLE 4
+#define MIN_DIFFICULTY_LEVEL 1
+#define MAX_DIFFICULTY_LEVEL 10
+#define MIN_HOUR 0
+#define MAX_HOUR 24
+#define MIN_PLAYERS_FOR_ROOM 1
+
+/**
+*  Escaper ADT
+*
+* Implements an Escaper struct
+* An escaper is visitor currently playing or has a future order to play in the
+ * escape technion system.
+*
+* The following functions are available:
+*
+*   roomCreate               - Creates a new Room-TESTED
+*   roomDestroy               - Destroys a  Room-Cannot be tested
+*   roomCompare               - Destroys a  Room-TESTED
+*   roomCopy                  -copys a room-TESTED
+*   roomGetId                 -Get room id as and int-Tested
+*   roomGetPrice               -Get room price as and int-Tested
+*  roomGetRecommendedNumberOfPeople -Get rec_number_of_ppl as and int
+*/
 
 /** Type for defining the set */
 typedef struct room_t *Room;
@@ -14,6 +40,7 @@ typedef enum RoomResult_t {
     ROOM_NULL_ARGUMENT,
     ROOM_INVALID_PARAMETER,
 } RoomResult;
+
 
 
 /**
@@ -44,7 +71,7 @@ void roomDestroy(SetElement room);
 * 		0 if they're equal;
 *		A negative integer if the second Room's id is greater.
 */
-int roomCompare(void* room1, void* room2);
+long roomCompare(void* room1, void* room2);
 
 /**
  * Function to get id of specific room.
