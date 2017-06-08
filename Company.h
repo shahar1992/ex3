@@ -86,7 +86,7 @@ CompanyResult companyAddRoom(Company company, long id, long price, int num_ppl,
  *      COMPANY_NULL_ARGUMENT if 'company' or 'room' are null.
  *      COMPANY_SUCCESS otherwise.
  */
-CompanyResult companyRemoveRoom(Company company, Room room);
+CompanyResult companyRemoveRoom(Company company, long id);
 
 /**
  *  This function return in parameter the faculty that owns the company.
