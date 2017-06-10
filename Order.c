@@ -91,19 +91,16 @@ void* orderCopy(void* order){
                                      ((Order)order)->faculty,
                                      ((Order)order)->room,
                                      ((Order)order)->escaper,&(new_order));
-    if(result != ORDER_SUCCESS){
-        return NULL;
-    }
-    return new_order;
+    return (result != ORDER_SUCCESS) ? NULL : new_order;
 }
 
 /**============OrderCmpByTime===========================*/
-int orderCompare(Order order1, Order order2){
+int orderCompare(void* order1, void* order2){
     assert((order1 != NULL) && (order2 != NULL));
-    if(order1->day != order2->day){
-        return order1->day - order2->day;
+    if(((Order)order1)->day != ((Order)order2)->day){
+        return ((Order)order1)->day - ((Order)order2)->day;
     }
-    return  (order1->hour - order2->hour);
+    return  (((Order)order1)->hour - ((Order)order2)->hour);
 }
 
 OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty){
@@ -115,17 +112,15 @@ OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty){
 }
 
 Room orderGetRoom(Order order){
-    if(!order){
-        return NULL;
-    }
-    return order->room;
+    return (order == NULL) ? NULL : order->room;
+}
+
+int orderGetDay(Order order){
+    return (order == NULL) ? 0 : order->day;
 }
 
 Escaper orderGetEscaper(Order order){
-    if(!order){
-        return NULL;
-    }
-    return order->escaper;
+    return (order == NULL) ? NULL : order->escaper;
 }
 
 long orderCalculatePrice(Order order){
@@ -140,10 +135,20 @@ long orderCalculatePrice(Order order){
 }
 
 int orderGetNumOfPeople(Order order){
-    if(!order){
-        return 0;
-    }
-    return order->num_ppl;
+    return (order == NULL) ? 0 : order->num_ppl;
+}
+
+bool orderIsFacultyAndIdMatch(void* order, void* faculty_and_id_array){
+    TechnionFaculty faculty;
+    orderGetFaculty((Order)order,&faculty);
+    return (faculty == (*(TechnionFaculty*)faculty_and_id_array) &&
+            (roomGetId(((Order)order)->room) ==
+                    *(long*)(faculty_and_id_array+1)));
+}
+
+bool orderFilterByDayAndHour(void* order, void* time_array){
+    return (((Order)order)->day == (*(int*)time_array) &&
+            ((Order)order)->hour == (*(int*)(time_array+1)));
 }
 
 /** ===============Static functions implementaion==========================*/

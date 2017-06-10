@@ -52,7 +52,7 @@ void* orderCopy(void* order);
 OrderResult OrderGetFaculty(Order order, TechnionFaculty* faculty);
 
 /** Compare 2 orders by time only return 0 if equal */
-int orderCompare(Order order1, Order order2);
+int orderCompare(void* order1, void* order2);
 
 /**Get the faculty owns the ordered room*/
 OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
@@ -62,7 +62,14 @@ Escaper orderGetEscaper(Order order);
 /*Get the ordered room.*/
 Room orderGetRoom(Order order);
 
+int orderGetDay(Order order);
+
 /**Get the price of an order*/
 long orderCalculatePrice(Order order);
+
+/**can be used as list filter function*/
+bool orderFilterByFacultiesAndId(void* order, void* faculty_and_id_array);
+
+bool orderFilterByDayAndHour(void* order, void* time_array);
 
 #endif //EX3_ORDER_H
