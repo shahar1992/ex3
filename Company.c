@@ -62,7 +62,7 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
     MEMORY_CHECK((*company)->email,*company);
     strcpy((*company)->email, email);
     (*company)->faculty = faculty;
-    (*company)->rooms = setCreate(roomCopy, roomDestroy, roomCompare);
+    (*company)->rooms = setCreate(roomCopy, roomDestroy,roomCompare);
     MEMORY_CHECK((*company)->rooms,*company);
     return COMPANY_SUCCESS;
 }
@@ -70,6 +70,7 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
 void companyDestroy(SetElement company){
     if(company != NULL){
         setDestroy(((Company)company)->rooms);
+        //
         if(((Company)company)->email != NULL) {
             free(((Company)company)->email);
         }
@@ -137,11 +138,17 @@ CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty){
     return COMPANY_SUCCESS;
 }
 
-char* companyGetEmail(Company company){
+CompanyResult companyGetEmail(Company company,char** mail){
     if(!company){
-        return NULL;
+        return COMPANY_NULL_ARGUMENT;
     }
-    return company->email;
+    *mail=malloc(sizeof(**mail)*(strlen(company->email)+1));
+    if(mail==NULL){
+        return COMPANY_OUT_OF_MEMORY;
+    }
+    assert(*mail!=NULL);
+    strcpy(*mail,company->email);
+    return COMPANY_SUCCESS;
 }
 
 CompanyResult companyFindRoom(Company company, long id, Room* room){
@@ -212,16 +219,15 @@ static bool isInputLegal(char* email, TechnionFaculty faculty){
 
 static bool isEmailLegal(char* email){
     assert(email);
-    bool sign_flag = false;
-    while(email){
-        if(*(email++) == '@'){
-            if(sign_flag){
-                return false;
-            }
-            sign_flag = true;
+    char* ptr=email;
+    int counter=0;
+    while(*ptr){
+        if((*ptr) == '@'){
+            counter++;
         }
+        ptr++;
     }
-    return true;
+    return (counter==1)?true:false;
 }
 
 /**==================End of static functions implementation===================*/

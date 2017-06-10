@@ -83,7 +83,7 @@ void roomDestroy(void* room){
 }
 
 /**-------------------------Room Compare--------------------------------------*/
-long roomCompare(void* room1, void* room2){
+int roomCompare(void* room1, void* room2){
     assert((room1 != NULL) && (room2 != NULL));
     assert(roomGetId(room1) > 0 );
     assert(roomGetId(room2) > 0 );

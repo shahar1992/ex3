@@ -71,7 +71,7 @@ void roomDestroy(SetElement room);
 * 		0 if they're equal;
 *		A negative integer if the second Room's id is greater.
 */
-long roomCompare(void* room1, void* room2);
+int roomCompare(void* room1, void* room2);
 
 /**
  * Function to get id of specific room.

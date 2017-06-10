@@ -6,20 +6,22 @@
 #include "Room.h"
 #include "mtm_ex3.h"
 
+#define FACULTY_NUM 19
+
 /**
  *  Abstract company.
  *
  * Implements a Company data type.
  *
  * The following functions are available:
- *   companyCreate	   - Creates a new empty set
- *   companyFree	   - Deletes an existing company and frees all resources.
- *   companyCopy	   - Copies an existing company.
- *   companyCompare    - Compares two companies with email as compare key.
- *   companyAddRoom    - Adds a new room to the company.
- *   companyRemoveRoom - Removes a room from the company.
- *   companyGetFaculty - Gets the Faculty who owns the company.
- *   companyGetEmail   - Gets the email of the company.
+ *   companyCreate	   - Creates a new empty set--TESTED
+ *   companyDestroy	   - Deletes an existing company and frees all resources.-TESTED
+ *   companyCopy	   - Copies an existing company.-TESTED
+ *   companyCompare    - Compares two companies with email as compare key.-TESTED
+ *   companyAddRoom    - Adds a new room to the company.-TESTED
+ *   companyRemoveRoom - Removes a room from the company.-TESTED
+ *   companyGetFaculty - Gets the Faculty who owns the company.-TESTED
+ *   companyGetEmail   - Gets the email of the company.-TESTED
  *   companyFindRoom   - Find a room in the company rooms set by its id.
  *   companyCheckInput - Check if Input is valid.
 */
@@ -103,7 +105,7 @@ CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
  *      NULL if company mail is null.
  *      pointer to company mail otherwise.
  */
-char* companyGetEmail(Company company);
+CompanyResult companyGetEmail(Company company,char** mail);//
 
 
 
