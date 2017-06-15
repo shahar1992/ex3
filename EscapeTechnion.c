@@ -255,7 +255,7 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
                                           : ESCAPE_TECHNION_SUCCESS;
 }
 
-/**------------------------Escape Technion Get Faculty Profit-----------------*/
+/**------------------------Escape Technion Get Faculty Profit---------------*/
 EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
                                                     TechnionFaculty faculty,
                                                     long* profit){
