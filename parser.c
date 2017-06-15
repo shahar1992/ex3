@@ -8,6 +8,7 @@
 #include <string.h>
 
 MtmErrorCode GetChannels(int argc,char** argv,FILE** input_c,FILE** output_c){
+    if()
     if (argc==1){
         *input_c=stdin;
         *output_c=stdout;
@@ -28,17 +29,33 @@ MtmErrorCode GetChannels(int argc,char** argv,FILE** input_c,FILE** output_c){
     else if (argc == 3){
 
     }
-    else{
+    else
 
-    }
 }
 
-static MtmErrorCode getInputOutputChannels(char** input_file,char** output_file,
-                                           FILE** input_c,FILE** output_c){
-
-    *input_c = fopen(*input_file,"r");
-    if(!input_file){
-        return MTM_CANNOT_OPEN_FILE;
+static MtmErrorCode Check_CL_Parameters(int argc,char** argv){
+    if(argc==1){
+        return MTM_SUCCESS;
     }
-    *output_c = fopen(*output_file,"a")
+    if(argc==3){
+        CheckCLValidilty(argv,1)==
+    }
+    if(argc==5){
+        ( (CheckCLValidilty(argv,1)==true) && (CheckCLValidilty(argv,3)==true) )
+        ?
+
+    }
+    else return MTM_INVALID_COMMAND_LINE_PARAMETERS;
+}
+static bool CheckIndexValidilty(char **argv, int index){
+    if( (strcmp(argv[index],"-i"==0) || (strcmp(argv[index],"-o")==0) ){
+        /*Check if index string is "-i" or "-o" */
+        if( (strcmp(argv[index+1],"-i"!=0) && (strcmp(argv[index+1],"-o")!=0) ){
+            /*Check if index+1 string is not "-i" or "-o" */
+            return true;
+        }
+    }
+    return false;
+
+
 }
