@@ -20,7 +20,7 @@ int main(int argc,  char** argv) {
     }
     char buffer[MAX_LINE_SIZE]={0};
     while(fgets(buffer,MAX_LINE_SIZE,input_c) != NULL){//while !EOF
-
+        result = parserAnalyseCommand(buffer,input_c,output_c);
         char command[MAX_LINE_SIZE];
         if(fscanf(input_c,"%s",command) == 0){
             printf("empty line\n");
