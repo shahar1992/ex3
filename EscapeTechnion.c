@@ -289,6 +289,7 @@ EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system){
     return ESCAPE_TECHNION_SUCCESS;
 }
 
+/**--------------------Escape Technion Best Faculties-------------------------*/
 EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system){
     NULL_ARGUMENT_CHECK(system);
     long totalprofit = calculate_total_profit(system);

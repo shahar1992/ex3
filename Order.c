@@ -54,7 +54,7 @@ OrderResult orderCreate(int num_of_ppl, int hour, int day,
     if(!checkInput(day, hour, num_of_ppl,faculty)){
         return ORDER_INVALID_PARAMETER;
     }
-    *order = malloc(sizeof(**order));//**
+    *order = malloc(sizeof(**order));
     MEMORY_CHECK(*order, *order);
     (*order)->day = day;
     (*order)->hour = hour;
