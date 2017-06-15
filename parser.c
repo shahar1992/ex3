@@ -30,6 +30,8 @@ MtmErrorCode getChannels2(int args_c, char **args_v, FILE **input_c,
                 return result;
             }
             break;
+        default:
+            return MTM_INVALID_COMMAND_LINE_PARAMETERS;
     }
     return  MTM_SUCCESS;
 }
