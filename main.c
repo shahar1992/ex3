@@ -6,47 +6,60 @@
 #include <string.h>
 #include "parser.c"
 
+
+/**======================Macros and structs===================================*/
 #define MAX_LINE_SIZE 256
 
+#define KILL_PROG(error,system,output_c,input_c)\
+            mtmPrintErrorMessage((stderr),(error)); \
+            escapeTechnionDestroy((system)); \
+            fclose((output_c)); \
+            fclose((input_c)); \
+            escapeTechnionDestroy((system)); \
+            return 0; \
+
+/**======================Static Functions Decleration ========================*/
 static MtmErrorCode getChannels(int args_c, char **args_v, FILE **input_c,
                                 FILE **output_c);
-static MtmErrorCode getInputOutputChannels(char** input_file,char** output_file,
-                                           FILE** input_c,FILE** output_c);
 static MtmErrorCode getOneChannel(char** argv,FILE** input_c,FILE** output_c);
 static MtmErrorCode getTwoChannels(char** argv,FILE** input_c,FILE** output_c);
 
 
+/** -----------------------Main-Function------------------------------------**/
+
 int main(int argc,  char** argv) {
-    //EscapeTechnion system;
-    //escapeTechnionCreate(&system);
+    EscapeTechnion system;
+    escapeTechnionCreate(&system);
     FILE *input_c,*output_c;
     MtmErrorCode result;
-    char* array[] = {"main","-i","input.txt","-o","output.txt"};
-    result = getChannels(5, array, &input_c, &output_c);
-    if(result != MTM_SUCCESS){
-        mtmPrintErrorMessage(stderr,result);
-        //escapeTechnionDestroy(system);
-        return 0;
+    char* array[] = {"main","-i","input.txt","-o","output.txt"};///////////
+    result = getChannels(5, array, &input_c, &output_c);///////////////////////////
+   // result = getChannels(argc,argv,&input_c, &output_c);
+    if(result != MTM_SUCCESS){//Invalid command or open file problem
+        KILL_PROG(result,system,output_c,input_c);
     }
     char buffer[MAX_LINE_SIZE]={0};
     while(fgets(buffer,MAX_LINE_SIZE,input_c) != NULL){//while !EOF
         result = parserAnalyzeCommand(buffer,input_c,output_c);
+        /*Analyze next command and return error message*/
         if(result != MTM_SUCCESS){
-            mtmPrintErrorMessage(stderr,result);
-            break;
+            mtmPrintErrorMessage(stderr,result);//print error msg
+            if(result==MTM_INVALID_COMMAND_LINE_PARAMETERS||
+                    result==MTM_OUT_OF_MEMORY){
+                KILL_PROG(result,system,output_c,input_c);
+            }
         }
     }
+    escapeTechnionDestroy(system);
     fclose(output_c);
     fclose(input_c);
-    //escapeTechnionDestroy(system);
     return 0;
 }
 
 
 
 
-
-
+/**======================Static function implemantation=======================*/
 
 /**-------------------- Input/Output Handle-----------------------------------*/
 static MtmErrorCode getChannels(int args_c, char **args_v, FILE **input_c,
