@@ -87,10 +87,7 @@ void* orderCopy(void* order){
                                      ((Order)order)->faculty,
                                      ((Order)order)->room,
                                      ((Order)order)->escaper,&(new_order));
-    if(result != ORDER_SUCCESS){
-        return NULL;
-    }
-    return new_order;
+    return (result != ORDER_SUCCESS) ? NULL : new_order;
 }
 
 /**============OrderCmp===========================*/
