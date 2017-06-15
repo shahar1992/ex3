@@ -16,8 +16,19 @@
  * The following functions are available:
  *   escapeTechnionCreate	   - Creates a new empty Escape Technion system.
  *   escapeTechnionDestroy	   - Deletes an existing company and frees all resources.
+ *   escapeTechnionAddCompany -
+ *   escapeTechnionRemoveCompany -
  *   escapeTechnionAddRoom    - Adds a new room to a company in the system.
  *   escapeTechnionRemoveRoom - Removes a room from a company in the system.
+ *   escapeTechnionAddClient -
+ *   escapeTechnionRemoveClient -
+ *   escapeTechnionAddOrder -
+ *   escapeTechnionGetFacultyProfit -
+ *   escapeTechnionReportday -
+ *   escapeTechnionBestFaculty -
+ *
+ *
+ *
  *
 */
 
