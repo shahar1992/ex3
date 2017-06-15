@@ -23,22 +23,16 @@ int main(int argc,  char** argv) {
     result = getChannels(5, array, &input_c, &output_c);
     if(result != MTM_SUCCESS){
         mtmPrintErrorMessage(stderr,result);
+        escapeTechnionDestroy(system);
+        return 0;
     }
     char buffer[MAX_LINE_SIZE]={0};
     while(fgets(buffer,MAX_LINE_SIZE,input_c) != NULL){//while !EOF
-
-        char command[MAX_LINE_SIZE];
-        if(fscanf(input_c,"%s",command) == 0){
-            printf("empty line\n");
-            continue;
+        result = parserAnalyzeCommand(buffer,input_c,output_c);
+        if(result != MTM_SUCCESS){
+            mtmPrintErrorMessage(stderr,result);
+            break;
         }
-        if(*command == '#'){
-            printf("comment line\n");
-            continue;
-        }
-        printf("%s",command);
-        break;
-
     }
     fclose(output_c);
     fclose(input_c);
