@@ -175,6 +175,13 @@ CompanyResult companySearchRoom(Company company, long id){
     return COMPANY_ROOM_DOES_NOT_EXIST;
 }
 
+RoomSet companyGetRoomsSet(Company company){
+    if(!company){
+        return NULL;
+    }
+    return  setCopy(company->rooms);
+}
+
 /**==================END of company ADT functions implementation==============*/
 
 
@@ -229,5 +236,7 @@ static bool isEmailLegal(char* email){
     }
     return (counter==1)?true:false;
 }
+
+
 
 /**==================End of static functions implementation===================*/

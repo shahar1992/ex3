@@ -131,4 +131,11 @@ CompanyResult companyFindRoom(Company company, long id, Room* room);
  */
 CompanyResult companySearchRoom(Company company, long id);
 
+/**
+ *
+ * @param company
+ * @return
+ */
+RoomSet companyGetRoomsSet(Company company);
+
 #endif //EX3_COMPANY_H
