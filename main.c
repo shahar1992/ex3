@@ -8,10 +8,9 @@
 
 int main(int argc,  char** argv) {
     FILE *input_c,*output_c;
-    char* array[] = {argv[0],"-i","-o","output.txt"};
-    char* array1[] = {"-i","input.txt","-o","output.txt"};
+    char* array[] = {argv[0],"-i","input.txt","-o","output.txt"};
     MtmErrorCode result;
-    result = getChannels2(4, array, &input_c, &output_c);
+    result = getChannels(5, array, &input_c, &output_c);
     assert(result != MTM_INVALID_COMMAND_LINE_PARAMETERS);
     assert(result != MTM_CANNOT_OPEN_FILE);
 
