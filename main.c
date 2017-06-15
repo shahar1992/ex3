@@ -17,15 +17,15 @@ static MtmErrorCode getTwoChannels(char** argv,FILE** input_c,FILE** output_c);
 
 
 int main(int argc,  char** argv) {
-    EscapeTechnion system;
-    escapeTechnionCreate(&system);
+    //EscapeTechnion system;
+    //escapeTechnionCreate(&system);
     FILE *input_c,*output_c;
     MtmErrorCode result;
     char* array[] = {"main","-i","input.txt","-o","output.txt"};
     result = getChannels(5, array, &input_c, &output_c);
     if(result != MTM_SUCCESS){
         mtmPrintErrorMessage(stderr,result);
-        escapeTechnionDestroy(system);
+        //escapeTechnionDestroy(system);
         return 0;
     }
     char buffer[MAX_LINE_SIZE]={0};
@@ -38,7 +38,7 @@ int main(int argc,  char** argv) {
     }
     fclose(output_c);
     fclose(input_c);
-    escapeTechnionDestroy(system);
+    //escapeTechnionDestroy(system);
     return 0;
 }
 
