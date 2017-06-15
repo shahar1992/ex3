@@ -121,7 +121,7 @@ EscapeTechnionResult escapeTechnionRemoveCompany(EscapeTechnion system,
         companyDestroy(company);
         return ESCAPE_TECHNION_COMPANY_EMAIL_DOES_NOT_EXIST;
     }
-    result = isCompanyHasReservation(system, company)
+    result = isCompanyHasReservation(system, company);
     if(result != ESCAPE_TECHNION_SUCCESS){
         companyDestroy(company);
         return result;
