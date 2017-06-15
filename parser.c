@@ -67,11 +67,11 @@ static MtmErrorCode getTwoChannels(char** argv,FILE** input_c,FILE** output_c){
         if(strcmp(argv[2],"-o") != 0){
             return MTM_INVALID_COMMAND_LINE_PARAMETERS;
         }
-        *input_c = fopen(argv[1],"r");
+        *input_c = fopen(argv[0],"r");
         if(!(*input_c) ){
             return MTM_CANNOT_OPEN_FILE;
         }
-        *output_c = fopen(argv[3],"w");
+        *output_c = fopen(argv[2],"w");
         if(!(*output_c) ){
             fclose(*input_c);
             return MTM_CANNOT_OPEN_FILE;
