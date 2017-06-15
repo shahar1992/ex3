@@ -11,7 +11,7 @@ static MtmErrorCode getOneChannel(char** argv,FILE** input_c,FILE** output_c);
 static MtmErrorCode getTwoChannels(char** argv,FILE** input_c,FILE** output_c);
 
 MtmErrorCode getChannels(int args_c, char **args_v, FILE **input_c,
-                          FILE **output_c){
+                         FILE **output_c){
     MtmErrorCode result;
     switch (args_c){
         case 1:
@@ -67,11 +67,26 @@ static MtmErrorCode getTwoChannels(char** argv,FILE** input_c,FILE** output_c){
         if(strcmp(argv[2],"-o") != 0){
             return MTM_INVALID_COMMAND_LINE_PARAMETERS;
         }
-        *input_c = fopen(argv[0],"r");
+        *input_c = fopen(argv[1],"r");
         if(!(*input_c) ){
             return MTM_CANNOT_OPEN_FILE;
         }
-        *output_c = fopen(argv[2],"w");
+        *output_c = fopen(argv[3],"w");
+        if(!(*output_c) ){
+            fclose(*input_c);
+            return MTM_CANNOT_OPEN_FILE;
+        }
+        return MTM_SUCCESS;
+    }
+    else if(strcmp(argv[0],"-o") == 0){
+        if(strcmp(argv[2],"-i") != 0){
+            return MTM_INVALID_COMMAND_LINE_PARAMETERS;
+        }
+        *input_c = fopen(argv[3],"r");
+        if(!(*input_c) ){
+            return MTM_CANNOT_OPEN_FILE;
+        }
+        *output_c = fopen(argv[1],"w");
         if(!(*output_c) ){
             fclose(*input_c);
             return MTM_CANNOT_OPEN_FILE;
