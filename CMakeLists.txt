@@ -12,7 +12,7 @@ set(SOURCE_FILES
         Escaper.c
         Room.h
         Room.c
-        )
+        main.c)
 
 add_executable(ex3 ${SOURCE_FILES})
 target_link_libraries(ex3 ${CMAKE_SOURCE_DIR}//libmtm/win64/libmtm.a)
