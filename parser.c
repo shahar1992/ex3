@@ -5,8 +5,6 @@
 #include <string.h>
 #include <assert.h>
 
-MtmErrorCode getChannels2(int args_c, char **args_v, FILE **input_c,
-                          FILE **output_c);
 static MtmErrorCode getInputOutputChannels(char** input_file,char** output_file,
                                            FILE** input_c,FILE** output_c);
 static MtmErrorCode getOneChannel(char** argv,FILE** input_c,FILE** output_c);
