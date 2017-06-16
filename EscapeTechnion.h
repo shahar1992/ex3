@@ -8,15 +8,16 @@
 #include "Company.h"
 #include "order.h"
 #include "Escaper.h"
+#include "Room.h"
 
 
 /**
  *  Abstract escapeTechnion data type.
  *
  * The following functions are available:
- *   escapeTechnionCreate	   - Creates a new empty Escape Technion system.
- *   escapeTechnionDestroy	   - Deletes an existing company and frees all resources.
- *   escapeTechnionAddCompany -
+ *   escapeTechnionCreate	   - Creates a new empty Escape Technion system.-TESTED
+ *   escapeTechnionDestroy	   - Deletes an existing company and frees all resources.-TESTED
+ *   escapeTechnionAddCompany -Add a company to the system-TESTED
  *   escapeTechnionRemoveCompany -
  *   escapeTechnionAddRoom    - Adds a new room to a company in the system.
  *   escapeTechnionRemoveRoom - Removes a room from a company in the system.
@@ -153,5 +154,20 @@ EscapeTechnionResult escapeTechnionRemoveRoom(EscapeTechnion system,
 EscapeTechnionResult escapeTechnionAddClient(EscapeTechnion system, char* email,
                                              TechnionFaculty faculty,
                                              int skill_level);
+
+EscapeTechnionResult escapeTechnionRemoveClient(EscapeTechnion system,
+                                                char* email);
+
+EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
+                                            TechnionFaculty faculty, long id,
+                                            int day, int hour, int num_ppl);
+
+EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
+                                                    TechnionFaculty faculty,
+                                                    long* profit);
+
+EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system);
+
+EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system);
 
 #endif //EX3_ESCAPETECHNION_H
