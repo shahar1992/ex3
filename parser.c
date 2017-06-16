@@ -16,7 +16,7 @@ MtmErrorCode parserAnalyzeCommand(char* buffer,FILE* input_c,FILE* output_c) {
         return MTM_SUCCESS;
     }
     char* token;
-    char* delim = " ";;
+    char* delim = " ";
     token = strtok(buffer,delim);
     if(*token == '#'){
         return MTM_SUCCESS;
