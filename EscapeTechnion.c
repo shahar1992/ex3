@@ -31,7 +31,6 @@ struct EscapeTechnion_t{
     int day;
     long faculty_profit[FACULTY_NUM];
 };
-
 /**=====================Static functions declarations=========================*/
 
 static bool facultyCheck(TechnionFaculty faculty);
@@ -40,24 +39,26 @@ static bool isCompanyHasReservation(EscapeTechnion system, Company company);
 static Company getCompany(EscapeTechnion system, char *email);
 static bool isIdAlreadyExistInFaculty(EscapeTechnion system,
                                       TechnionFaculty faculty, long id);
-static EscapeTechnionResult checkRoomReservations(EscapeTechnion system,
-                                                  Company company, long id);
+static bool DoesRoomHaveOrders(EscapeTechnion sys,Room room,TechnionFaculty rooms_fac);
+/*static EscapeTechnionResult checkRoomReservations(EscapeTechnion system,
+                                                  Company company, long id);*/
 static EscapeTechnionResult convertFromCompanyResult( CompanyResult result);
 static EscapeTechnionResult convertFromEscaperResult(EscaperResult result);
+static EscapeTechnionResult convertFromRoomResult(EscaperResult result);
 static long calculate_total_profit(EscapeTechnion system);
 static void findBestFaculties(EscapeTechnion system, TechnionFaculty* faculty);
 static void removeClientOrders(EscapeTechnion system, Escaper escaper);
 static Escaper getEscaper(EscapeTechnion system, char *email);
 static Room getRoom(EscapeTechnion system, TechnionFaculty faculty,long id);
 static EscapeTechnionResult convertFromOrderResult(OrderResult result);
-static EscapeTechnionResult checkIfRoomAvailable(
-        EscapeTechnion system,int day,int hour,long id,TechnionFaculty faculty);
+/*static EscapeTechnionResult checkIfRoomAvailable(
+        EscapeTechnion system,int day,int hour,long id,TechnionFaculty faculty);*/
 
 /**===================System ADT functions implementation=====================*/
 
 /**-------------------------System Create-------------------------------------*/
 EscapeTechnionResult escapeTechnionCreate(EscapeTechnion *system){
-    NULL_ARGUMENT_CHECK(*system);
+    NULL_ARGUMENT_CHECK(system);
     *system = malloc(sizeof(**system));
     MEMORY_CHECK(*system, *system);
     (*system)->companies = setCreate(companyCopy,companyDestroy,companyCompare);
@@ -107,13 +108,14 @@ EscapeTechnionResult escapeTechnionAddCompany(EscapeTechnion system,
 }
 
 /**-------------------System Remove Company-----------------------------------*/
+
 EscapeTechnionResult escapeTechnionRemoveCompany(EscapeTechnion system,
                                                  char *email){
     NULL_ARGUMENT_CHECK(system && email);
     Company company;
     EscapeTechnionResult result = convertFromCompanyResult(
             companyCreate(email,RANDOM_FACULTY,&company));
-    if(!result){
+    if(result!=ESCAPE_TECHNION_SUCCESS){
         companyDestroy(company);
         return result;
     }
@@ -121,10 +123,9 @@ EscapeTechnionResult escapeTechnionRemoveCompany(EscapeTechnion system,
         companyDestroy(company);
         return ESCAPE_TECHNION_COMPANY_EMAIL_DOES_NOT_EXIST;
     }
-    result = isCompanyHasReservation(system, company);
-    if(result != ESCAPE_TECHNION_SUCCESS){
+    if(isCompanyHasReservation(system, company)==true){
         companyDestroy(company);
-        return result;
+        return ESCAPE_TECHNION_RESERVATION_EXISTS;
     }
     setRemove(system->companies,company);
     companyDestroy(company);
@@ -137,53 +138,53 @@ EscapeTechnionResult escapeTechnionAddRoom(EscapeTechnion system, char *email,
                                            int open_hour, int close_hour,
                                            int difficulty){
     NULL_ARGUMENT_CHECK(system && email);
-    Company company = getCompany(system, email);
-    EscapeTechnionResult result = convertFromCompanyResult(
-            companyAddRoom(company, id, price, num_ppl, open_hour, close_hour,
-                           difficulty));
-    if(result == ESCAPER_NULL_ARGUMENT){
+    Company company = getCompany(system, email);//get Company by mail
+    if(company==NULL){//if no company exists
         return ESCAPE_TECHNION_COMPANY_EMAIL_DOES_NOT_EXIST;
     }
+    TechnionFaculty faculty;
+    companyGetFaculty(company,&faculty);//get company's faculty
+    if(isIdAlreadyExistInFaculty(system, faculty, id)==true){
+        return ESCAPE_TECHNION_ID_ALREADY_EXIST;//break if id exists in faculty
+    }
+    CompanyResult com_res;
+    com_res=companyAddRoom(company, id, price, num_ppl, open_hour, close_hour,
+                           difficulty);
+    EscapeTechnionResult result = convertFromCompanyResult(com_res);
     if(result != ESCAPE_TECHNION_SUCCESS){
         return result;
     }
-    TechnionFaculty faculty;
-    companyGetFaculty(company,&faculty);
-    if(isIdAlreadyExistInFaculty(system, faculty, id)){
-        companyRemoveRoom(company,id);
-        return ESCAPE_TECHNION_ID_ALREADY_EXIST;
-    }
+
     return ESCAPE_TECHNION_SUCCESS;
 }
 
 /**----------------------System Remove Room-----------------------------------*/
+
 EscapeTechnionResult escapeTechnionRemoveRoom(EscapeTechnion system,
                                               TechnionFaculty faculty, long id){
-    if((faculty >= FACULTY_NUM) || (faculty < 0) || (id < 0)){
+    if((faculty >= FACULTY_NUM) || (faculty < 0) || (id < 0)){//input check
         return ESCAPE_TECHNION_INVALID_PARAMETER;
     }
-    Company company = NULL;
-    EscapeTechnionResult result = ESCAPE_TECHNION_ID_DOES_NOT_EXIST;
-    SET_FOREACH(Company,current_company,system->companies){
+    SET_FOREACH(Company,current_company,system->companies){//for each company
         TechnionFaculty current_company_faculty;
-        companyGetFaculty(current_company,&current_company_faculty);
-        if(current_company_faculty == faculty) {
-            result = convertFromCompanyResult(
-                    companySearchRoom(current_company,id));
-            if(result == ESCAPE_TECHNION_SUCCESS){
-                company = current_company;
-                break;
+        companyGetFaculty(current_company,&current_company_faculty);//get faculty
+        if(current_company_faculty == faculty) {//if its the same faculty
+            Room room;
+            CompanyResult companyResult;
+            companyResult=companyFindRoom((Company)current_company,id,&room);//search company for room id
+            if(companyResult == COMPANY_SUCCESS){//found the room
+                if(DoesRoomHaveOrders(system,room,faculty)==true){//if room has orders
+                    return ESCAPE_TECHNION_RESERVATION_EXISTS;
+                }
+                else{//no order exists. its ok to delete room
+                    companyRemoveRoom((Company)current_company,id);
+                    return ESCAPE_TECHNION_SUCCESS;
+                }
+
             }
         }
     }
-    if(result != ESCAPE_TECHNION_ID_DOES_NOT_EXIST){
-        return result;
-    }
-    result = checkRoomReservations(system,company,id);
-    if(result == ESCAPE_TECHNION_SUCCESS){
-        companyRemoveRoom(company,id);
-    }
-    return result;
+    return ESCAPE_TECHNION_ID_DOES_NOT_EXIST;
 }
 
 EscapeTechnionResult escapeTechnionAddClient(EscapeTechnion system, char* email,
@@ -226,7 +227,7 @@ EscapeTechnionResult escapeTechnionRemoveClient(EscapeTechnion system,
     escaperDestroy(escaper);
     return ESCAPE_TECHNION_SUCCESS;
 }
-
+/*
 EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
                                             TechnionFaculty faculty, long id,
                                             int day, int hour, int num_ppl) {
@@ -254,7 +255,7 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
     return (result1 == LIST_OUT_OF_MEMORY) ? ESCAPE_TECHNION_OUT_OF_MEMORY
                                           : ESCAPE_TECHNION_SUCCESS;
 }
-
+*/
 /**------------------------Escape Technion Get Faculty Profit---------------*/
 EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
                                                     TechnionFaculty faculty,
@@ -268,6 +269,7 @@ EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
 }
 
 /**-----------------------Escape Technion Report Day------------------------------------------*/
+/*
 EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system){
     NULL_ARGUMENT_CHECK(system);
     //mtmPrintDayFooter(,system->day);
@@ -288,7 +290,7 @@ EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system){
     system->day++;
     return ESCAPE_TECHNION_SUCCESS;
 }
-
+*/
 /**--------------------Escape Technion Best Faculties-------------------------*/
 EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system){
     NULL_ARGUMENT_CHECK(system);
@@ -306,6 +308,49 @@ EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system){
 
 
 /**===================Static functions implementation=========================*/
+static bool isCompanyHasReservation(EscapeTechnion system, Company company){
+    LIST_FOREACH(OrdersList,cur_order,system->orders){//for each order in sys
+        TechnionFaculty orders_faculty;
+        OrderResult ord_result=orderGetFaculty((Order)cur_order,&orders_faculty);
+        if(ord_result!=ORDER_SUCCESS){
+            return convertFromOrderResult(ord_result);
+        }
+        SET_FOREACH(CompanySet,cur_company,system->companies) {//for each company
+            TechnionFaculty companys_faculty;
+            CompanyResult com_result=companyGetFaculty((Company)cur_company,&companys_faculty);
+            if (com_result!=COMPANY_SUCCESS) {
+                 return convertFromCompanyResult(com_result);
+             }
+             if (orders_faculty == companys_faculty) {//if same faculty
+                 Room orders_room=orderGetRoom((Order)cur_order);
+                 long orders_room_id=roomGetId(orders_room);
+                 com_result=companySearchRoom((Company)cur_company,orders_room_id);
+                 if(com_result==COMPANY_SUCCESS){//found a match
+                     return true;
+                 }
+             }
+         }
+    }
+    return false;
+}
+
+static bool DoesRoomHaveOrders(EscapeTechnion sys,Room room,TechnionFaculty rooms_fac){
+    LIST_FOREACH(OrdersList,cur_order,sys->orders){//for each order
+        TechnionFaculty cur_order_fac;
+        orderGetFaculty((Order)cur_order,&cur_order_fac);//get orders faculty
+        if(cur_order_fac==rooms_fac){//if its the same faculty
+            Room  orders_room;
+            orders_room=orderGetRoom((Order)cur_order);//get orders room
+            long orders_room_id=roomGetId(orders_room);//get orders room id
+            if(orders_room_id==roomGetId(room)){//if its same faculty and same id
+                return true;
+            }
+        }
+    }
+    return  false;
+
+}
+
 static bool sysMailCheck(char* mail){
     char* ptr = mail;
     bool email_check = false;
@@ -342,7 +387,7 @@ static bool isEmailAlreadyExist(EscapeTechnion system, char* email){
     }
     return false;
 }
-
+/*
 static EscapeTechnionResult checkCompanyHasReservation(EscapeTechnion system,
                                                        Company company){
     assert(system && company);
@@ -357,7 +402,8 @@ static EscapeTechnionResult checkCompanyHasReservation(EscapeTechnion system,
     }
     return ESCAPE_TECHNION_SUCCESS;
 }
-
+ */
+/*
 static EscapeTechnionResult checkRoomReservations(EscapeTechnion system,
                                                   Company company, long id){
     assert(system && company);
@@ -375,11 +421,13 @@ static EscapeTechnionResult checkRoomReservations(EscapeTechnion system,
     }
     return ESCAPE_TECHNION_SUCCESS;
 }
-
+*/
 static Company getCompany(EscapeTechnion system, char *email){
     assert(system && email);
     SET_FOREACH(Company,current_company,system->companies){
-        if(strcmp(companyGetEmail(current_company),email) == 0){
+        char *cur_company_mail;
+        companyGetEmail((Company)current_company,&cur_company_mail);
+        if(strcmp(cur_company_mail,email) == 0){
             return current_company;
         }
     }
@@ -389,17 +437,17 @@ static Company getCompany(EscapeTechnion system, char *email){
 static bool isIdAlreadyExistInFaculty(EscapeTechnion system, TechnionFaculty faculty, long id){
     assert(system);
     CompanyResult result;
-    SET_FOREACH(Company , current_company, system->companies){
+    SET_FOREACH(CompanySet,current_company,system->companies){//for each company
         TechnionFaculty current_faculty;
-        companyGetFaculty(current_company,&current_faculty);
-        if(faculty == current_faculty){
-            result = companySearchRoom(current_company, id);
-            if(result == COMPANY_ROOM_ALREADY_EXIST){
-                break;
+        companyGetFaculty((Company)current_company,&current_faculty);//get faculty
+        if(faculty == current_faculty){//if same faculty
+            result = companySearchRoom((Company)current_company, id);//
+            if(result == COMPANY_SUCCESS){//and same id
+                return true;
             }
         }
     }
-    return (result == COMPANY_ROOM_ALREADY_EXIST);
+    return false;
 }
 
 static  EscapeTechnionResult convertFromCompanyResult(CompanyResult result){
@@ -444,6 +492,18 @@ static EscapeTechnionResult convertFromOrderResult(OrderResult result){
 
         default:
             return ESCAPE_TECHNION_NULL_PARAMETER;
+    }
+}
+static EscapeTechnionResult convertFromRoomResult(EscaperResult result){
+    switch (result){
+        case ROOM_SUCCESS:
+            return ESCAPE_TECHNION_SUCCESS;
+        case ROOM_INVALID_PARAMETER:
+            return ESCAPE_TECHNION_INVALID_PARAMETER;
+        case ROOM_NULL_ARGUMENT:
+            return ESCAPE_TECHNION_NULL_PARAMETER;
+        case ROOM_OUT_OF_MEMORY:
+            return ESCAPE_TECHNION_OUT_OF_MEMORY;
     }
 }
 
@@ -515,7 +575,7 @@ static Room getRoom(EscapeTechnion system, TechnionFaculty faculty, long id){
     }
     return NULL;
 }
-
+/*
 static EscapeTechnionResult checkIfRoomAvailable(EscapeTechnion system, int day,
                                                  int hour, long id,
                                                  TechnionFaculty faculty){
@@ -541,3 +601,4 @@ static EscapeTechnionResult checkIfRoomAvailable(EscapeTechnion system, int day,
     return ESCAPE_TECHNION_SUCCESS;
 }
 
+*/

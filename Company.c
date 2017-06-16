@@ -167,8 +167,8 @@ CompanyResult companyFindRoom(Company company, long id, Room* room){
 
 CompanyResult companySearchRoom(Company company, long id){
     NULL_ARGUMENT_CHECK(company);
-    SET_FOREACH(Room, current_room,company->rooms){
-        if(roomGetId(current_room) == id){
+    SET_FOREACH(RoomSet , current_room,company->rooms){
+        if(roomGetId((Room)current_room) == id){
             return COMPANY_SUCCESS;
         }
     }
