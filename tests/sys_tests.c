@@ -170,7 +170,6 @@ static bool testAddOrder(){
     return  true;
 }
 int main (int argv, char** arc){
-    /*
     RUN_TEST(testSysCreate);
     RUN_TEST(testSysAddCompany);
     RUN_TEST(testSysRemoveCompany);
@@ -178,7 +177,6 @@ int main (int argv, char** arc){
     RUN_TEST(testSysRemoveRoom);
     RUN_TEST(testAddClient);
     RUN_TEST(testRemoveClient);
-     */
     RUN_TEST(testAddOrder);
     return 0;
 }
