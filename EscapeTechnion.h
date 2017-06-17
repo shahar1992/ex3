@@ -27,6 +27,7 @@
  *   escapeTechnionGetFacultyProfit -
  *   escapeTechnionReportday -
  *   escapeTechnionBestFaculty -
+ *   escapeTechnionGetDay -
  *
  *
  *
@@ -162,11 +163,14 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
                                             TechnionFaculty faculty, long id,
                                             int day, int hour, int num_ppl);
 
+int escapeTechnionGetDay(EscapeTechnion system);
+
 EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
                                                     TechnionFaculty faculty,
                                                     long* profit);
 
-EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system);
+EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system,
+                                              const FILE* output_c);
 
 EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system);
 
