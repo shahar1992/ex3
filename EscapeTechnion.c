@@ -57,6 +57,7 @@ inline static bool checkAddOrderInput(int day, int hour, int num_of_ppl,
                                       TechnionFaculty faculty,char* mail,long id);
 static bool isClientAvailable(EscapeTechnion system,long day,
                               long hour,Escaper client);
+static bool isOrderForDay(ListElement order, ListFilterKey key);
 
 /**===================System ADT functions implementation=====================*/
 
@@ -269,6 +270,21 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
                                           : ESCAPE_TECHNION_SUCCESS;
 }
 
+/***/
+Company escapeTechnionFindCompanyByRoomAndFaculty(EscapeTechnion system,
+                                                  Room room,
+                                                  TechnionFaculty* faculty){
+    SET_FOREACH(Company,company,system->companies){
+        TechnionFaculty company_faculty;
+        companyGetFaculty(company,&company_faculty);
+        if(faculty == company_faculty){
+            if(companySearchRoom(company,roomGetId(room)) == COMPANY_SUCCESS){
+                return company;
+            }
+        }
+    }
+    return NULL;
+}
 /**------------------------Escape Technion Get Faculty Profit---------------*/
 EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
                                                     TechnionFaculty faculty,
@@ -322,6 +338,34 @@ EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system){
 int escapeTechnionGetDay(EscapeTechnion system){
     assert(system);
     return system->day;
+}
+
+EscapeTechnionResult escapeTechnionSortOrdersByDay(EscapeTechnion system){
+    assert(system);
+    ListResult result = listSort(system->orders,orderCompare);
+    return result == LIST_OUT_OF_MEMORY ? ESCAPE_TECHNION_OUT_OF_MEMORY
+                                        : ESCAPE_TECHNION_SUCCESS;
+}
+
+/**----------------Escape Technion Get Today Orders List----------------------*/
+OrdersList escapeTechnionGetTodayOrdersLists(EscapeTechnion system){
+    assert(system);
+    ListResult result = listSort(system->orders,orderCompare);
+    if(result == LIST_OUT_OF_MEMORY){
+        return NULL;
+    }
+    OrdersList list = listFilter(system->orders,isOrderForDay,&system->day);
+    if(!list){
+        return NULL;
+    }
+    LIST_FOREACH(Order,order,system->orders){
+        if(orderGetTimeAndDay(order) > system->day){
+            break;
+        }
+        listRemoveCurrent(system->orders);
+        listGetFirst(system->orders);
+    }
+    return list;
 }
 
 /**===================Static functions implementation=========================*/
@@ -630,6 +674,7 @@ static bool isRoomAvailable(EscapeTechnion system,long day,
     return ESCAPE_TECHNION_SUCCESS;
      */
 }
+
 inline static bool checkAddOrderInput(int day, int hour, int num_of_ppl,
                                TechnionFaculty faculty,char* mail,long id){
     assert(mail!=NULL);
@@ -657,7 +702,13 @@ static bool isClientAvailable(EscapeTechnion system,long day,
                 return false;
             }
         }
-
     }
     return true;
+}
+
+
+static bool isOrderedForDay(ListElement order, ListFilterKey key) {
+    assert(order);
+    int day = orderGetDay((Order)order);
+    return  day == *(int*)key;
 }

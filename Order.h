@@ -47,9 +47,6 @@ void orderDestroy(void* order);
 /** Allocates a new Order which is a copy of the argument */
 void* orderCopy(void* order);
 
-/** Get the order's faculty */
-OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
-
 /** Compare 2 orders by time only return 0 if equal */
 int orderCompare(Order order1, Order order2);
 
@@ -58,13 +55,17 @@ OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
 
 /**Get the ordered room.*/
 Room orderGetRoom(Order order);
+
 /**Get the Customer.*/
 Escaper orderGetEscaper(Order order);
-/**Get the price of an order*/
+
+/**Get the price of an order.*/
 long orderCalculatePrice(Order order);
-/**Get the order's number of people*/
+
+/**Get the order's number of people.*/
 int orderGetNumOfPeople(Order order);
 
+/***/
 OrderResult orderGetTimeAndDay(Order order,long* hour,long* day);
 
 #endif //EX3_ORDER_H
