@@ -311,8 +311,6 @@ int escapeTechnionGetDay(EscapeTechnion system){
     return system->day;
 }
 
-
-
 /**===================Static functions implementation=========================*/
 static bool isCompanyHasReservation(EscapeTechnion system, Company company){
     LIST_FOREACH(OrdersList,cur_order,system->orders){//for each order in sys

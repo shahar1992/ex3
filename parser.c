@@ -114,5 +114,4 @@ static MtmErrorCode reportDay(EscapeTechnion system,const FILE* output_c){
     MtmErrorCode result = EscapeTechnionOrdersNumByDay(system,day);
     mtmPrintDayHeader(output_c,day,orders_num);
     mtmPrintDayFooter(output_c,escapeTechnionGetDay(system));
-
 }
