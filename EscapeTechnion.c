@@ -276,24 +276,24 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
 }
 
 /**--------------Escape Technion  Recommended Room order---------------*/
-EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,char* mail,long num_ppl) {
-    Order Rec_order=NULL;
+EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
+                                                        char* mail,
+                                                        long num_ppl) {
+    Order Rec_order = NULL;
     long best_barometer = LONG_MAX;
     NULL_ARGUMENT_CHECK(system && mail);//not null
     Escaper client = getEscaper(system, mail);//find escaper
-    if(client==NULL){
+    if(client == NULL){
         return ESCAPE_TECHNION_CLIENT_EMAIL_DOES_NOT_EXIST;
     }
-    long skill_level = escaperGetSkillLevel(
-            client);//get the escaper skill_level
+    long skill_level = escaperGetSkillLevel(client);
     SET_FOREACH(Company, cur_company, system->companies) {//for each company
         RoomSet roomSet = companyGetRoomsSet((Company) cur_company);
         TechnionFaculty cur_company_faculty;
         companyGetFaculty((Company) cur_company, &cur_company_faculty);
-        SET_FOREACH(Room, cur_room, roomSet) {//for each room in cur_company
-            long cur_room_dif = roomGetDiffuclty((Room) cur_room);
-            long cur_room_recommended = roomGetRecommendedNumOfPeople(
-                    (Room) cur_room);
+        SET_FOREACH(Room,room,roomSet) {//for each room in cur_company
+            long cur_room_dif = roomGetDiffuclty(room);
+            long cur_room_recommended = roomGetRecommendedNumOfPeople(room);
             long barometer = CalculateRecommendedFormula(cur_room_recommended,
                                                          num_ppl, cur_room_dif,
                                                          skill_level);
@@ -301,16 +301,14 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,ch
             if (barometer < best_barometer) {//if it is better
                 best_barometer = barometer;//update best barometer
                 long available_hour, available_day;
-                GetRoomNextAvailabilty(system, (Room) cur_room, &available_hour,
+                GetRoomNextAvailabilty(system,room,&available_hour,
                                        &available_day);
                 //get avilabilty
                 orderDestroy((void *) Rec_order);//destroy previous order
-                orderCreate(num_ppl, available_hour,
-                            available_day,//replace order
-                            cur_company_faculty, (Room) cur_room, client,
+                orderCreate(num_ppl, available_hour, available_day,
+                            cur_company_faculty,room,client,
                             &Rec_order);
             }
-
         }
     }
     if(Rec_order!=NULL){
