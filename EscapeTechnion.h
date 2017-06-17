@@ -165,7 +165,10 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
 
 int escapeTechnionGetDay(EscapeTechnion system);
 
-EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
+EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
+                                                        char* mail,long num_ppl);
+
+        EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
                                                     TechnionFaculty faculty,
                                                     long* profit);
 

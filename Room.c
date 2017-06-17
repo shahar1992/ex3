@@ -106,7 +106,7 @@ long roomGetPrice(Room room){
     return room->price_per_person;
 }
 
-
+/**------------------------Room Get Recommended-------------------------------------*/
 
 int roomGetRecommendedNumOfPeople(Room room){
     if(!room){
@@ -114,6 +114,28 @@ int roomGetRecommendedNumOfPeople(Room room){
     }
     return room->num_ppl;
 }
+
+/**------------------------Room Get Difficulty-------------------------------------*/
+
+int roomGetDiffuclty(Room room){
+    if(!room){
+        return 0;
+    }
+    return room->difficulty;
+}
+
+/**------------------------Room Get OpenAndCloseHour-------------------------------------*/
+
+RoomResult roomGetOpenAndCloseHour(Room room,long* open_hour,long* close_hour){
+    if(!room||!open_hour||!close_hour){
+        return ROOM_NULL_ARGUMENT;
+    }
+    *open_hour=room->open_hour;
+    *close_hour=room->close_hour;
+    return ROOM_SUCCESS;
+}
+
+
 
 
 /**====================Static functions implementations=======================*/

@@ -169,6 +169,20 @@ static bool testAddOrder(){
 
     return  true;
 }
+
+static bool testRecommendedOrder(){
+    EscapeTechnion sys;
+    EscapeTechnionResult result;
+    ASSERT_TEST(escapeTechnionCreate(&sys)==ESCAPE_TECHNION_SUCCESS);
+    ASSERT_TEST(escapeTechnionAddCompany(sys,"check12@gmail.com",ELECTRICAL_ENGINEERING)==ESCAPE_TECHNION_SUCCESS);
+    ASSERT_TEST(escapeTechnionAddRoom(sys,"check12@gmail.com",7,4,4,0,24,5));
+    ASSERT_TEST(escapeTechnionAddClient(sys,"@",MEDICINE,5)==ESCAPE_TECHNION_SUCCESS);
+    ASSERT_TEST(escapeTechnionAddClient(sys,"1@",MEDICINE,5)==ESCAPE_TECHNION_SUCCESS);
+    ASSERT_TEST(escapeTechnionRecommendedRoomOrder(sys,"@",4)==ESCAPE_TECHNION_SUCCESS);
+    ASSERT_TEST(escapeTechnionAddOrder(sys,"1@",ELECTRICAL_ENGINEERING,7,0,0,4)==ESCAPE_TECHNION_ROOM_NOT_AVAILABLE);
+    //
+    return true;
+}
 int main (int argv, char** arc){
     RUN_TEST(testSysCreate);
     RUN_TEST(testSysAddCompany);
@@ -178,5 +192,6 @@ int main (int argv, char** arc){
     RUN_TEST(testAddClient);
     RUN_TEST(testRemoveClient);
     RUN_TEST(testAddOrder);
+    RUN_TEST(testRecommendedOrder);
     return 0;
 }
