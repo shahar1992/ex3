@@ -155,7 +155,7 @@ MtmErrorCode handleEscaperCommand(EscapeTechnion system,
         return ConvertResult(result);
     }
     return MTM_INVALID_COMMAND_LINE_PARAMETERS;
-}//
+}
 /*
 MtmErrorCode handleReportCommand(EscapeTechnion system, char* sub_command,
                                  const FILE* output_c) {
