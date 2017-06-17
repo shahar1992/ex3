@@ -308,6 +308,7 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,ch
                             cur_company_faculty, (Room) cur_room, client,
                             &Rec_order);
             }
+
         }
     }
     if(Rec_order!=NULL){
@@ -328,7 +329,7 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,ch
 /***/
 Company escapeTechnionFindCompanyByRoomAndFaculty(EscapeTechnion system,
                                                   Room room,
-                                                  TechnionFaculty* faculty){
+                                                  TechnionFaculty faculty){
     SET_FOREACH(Company,company,system->companies){
         TechnionFaculty company_faculty;
         companyGetFaculty(company,&company_faculty);
@@ -350,6 +351,13 @@ EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
     }
     *profit = system->faculty_profit[faculty];
     return ESCAPE_TECHNION_SUCCESS;
+}
+
+/**------------------------Escape Technion Increase Day-----------------------*/
+void escapeTechnionIncreaseDay(EscapeTechnion system){
+    assert(system);
+    system->day++;
+    return;
 }
 
 /**-----------------------Escape Technion Report Day------------------------------------------*/
@@ -403,7 +411,7 @@ EscapeTechnionResult escapeTechnionSortOrdersByDay(EscapeTechnion system){
 }
 
 /**----------------Escape Technion Get Today Orders List----------------------*/
-OrdersList escapeTechnionGetTodayOrdersLists(EscapeTechnion system){
+OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system){
     assert(system);
     ListResult result = listSort(system->orders,orderCompare);
     if(result == LIST_OUT_OF_MEMORY){
@@ -414,7 +422,7 @@ OrdersList escapeTechnionGetTodayOrdersLists(EscapeTechnion system){
         return NULL;
     }
     LIST_FOREACH(Order,order,system->orders){
-        if(orderGetTimeAndDay(order) > system->day){
+        if(orderGetDay(order) > system->day){
             break;
         }
         listRemoveCurrent(system->orders);

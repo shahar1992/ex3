@@ -10,8 +10,8 @@
 #define MAX_ARGUMENTS_NUM 6
 #define TAB_ASCII_CODE 11
 
-MtmErrorCode parserAnalyzeCommand(EscapeTechnion sys,char* buffer,
-                                  FILE* input_c,FILE* output_c);
+MtmErrorCode parserAnalyzeCommand(EscapeTechnion system,char* buffer,
+                                  const FILE* input_c,const FILE* output_c);
 MtmErrorCode handleCommand(EscapeTechnion sys,
                            char* command,char* sub_command,char**arg_Array);
 MtmErrorCode handleCompanyCommand(EscapeTechnion sys,
@@ -20,9 +20,12 @@ MtmErrorCode handleRoomCommand(EscapeTechnion sys,
                                char* sub_command,char**arg_Array);
 MtmErrorCode handleEscaperCommand(EscapeTechnion sys,
                                   char* sub_command,char**arg_Array);
-MtmErrorCode handleReportCommand(EscapeTechnion sys,
-                                 char* sub_command);
-static MtmErrorCode reportDay(EscapeTechnion system);
+MtmErrorCode handleReportCommand(EscapeTechnion system, char* sub_command,
+                                 const FILE* output_c);
+static MtmErrorCode reportDay(EscapeTechnion system, const FILE* output_c);
+static MtmErrorCode reportBest(EscapeTechnion system, const FILE* output_c);
+static MtmErrorCode orderPrint(EscapeTechnion system, Order order,
+                               FILE* output_c);
 
 
 /**-------------------- Command Interpreter-----------------------------------*/
@@ -107,26 +110,29 @@ MtmErrorCode handleReportCommand(EscapeTechnion system, char* sub_command,
 
 static MtmErrorCode reportDay(EscapeTechnion system,const FILE* output_c){
     assert(system);
+    FILE* output_channel = output_c;
     int day = escapeTechnionGetDay(system);
     OrdersList orders_list = escapeTechnionGetTodayOrdersLists(system);
     if(!orders_list){
         return MTM_OUT_OF_MEMORY;
     }
-    mtmPrintDayHeader(output_c,day,listGetSize(orders_list));
+    mtmPrintDayHeader(output_channel,day,listGetSize(orders_list));
     LIST_FOREACH(Order,order,orders_list){
-        printOrder(order,output_c);
+        orderPrint(system,order,output_channel);
     }
     listDestroy(orders_list);
-    mtmPrintDayFooter(output_c,escapeTechnionGetDay(system));
+    mtmPrintDayFooter(output_channel,escapeTechnionGetDay(system));
     escapeTechnionIncreaseDay(system);
     return MTM_SUCCESS;
 }
 
-static MtmErrorCode orderPrint(Order order,FILE* output_c){
+static MtmErrorCode orderPrint(EscapeTechnion system,Order order,
+                               FILE* output_c){
     Room room = orderGetRoom(order);
     TechnionFaculty room_faculty,escaper_faculty;
     orderGetFaculty(order,&room_faculty);
-    Company company = escapeTechnionFindCompanyByRoomAndFaculty(room,faculty);
+    Company company = escapeTechnionFindCompanyByRoomAndFaculty
+                                                (system,room,room_faculty);
     Escaper escaper = orderGetEscaper(order);
     char *email,*company_email;
     escaperGetEmail(escaper,&email);
