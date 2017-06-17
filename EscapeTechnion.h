@@ -167,7 +167,8 @@ EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
                                                     TechnionFaculty faculty,
                                                     long* profit);
 
-EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system);
+EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system,
+                                              const FILE* output_c);
 
 EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system);
 

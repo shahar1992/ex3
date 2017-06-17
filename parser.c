@@ -12,15 +12,15 @@
 MtmErrorCode parserAnalyzeCommand(EscapeTechnion sys,char* buffer,
                                   FILE* input_c,FILE* output_c);
 MtmErrorCode handleCommand(EscapeTechnion sys,
-                           char* command,char* subcomand,char**arg_Array);
+                           char* command,char* sub_command,char**arg_Array);
 MtmErrorCode handleCompanyCommand(EscapeTechnion sys,
-                                  char* subcomand,char**arg_Array);
+                                  char* sub_command,char**arg_Array);
 MtmErrorCode handleRoomCommand(EscapeTechnion sys,
-                               char* subcomand,char**arg_Array);
+                               char* sub_command,char**arg_Array);
 MtmErrorCode handleEscaperCommand(EscapeTechnion sys,
-                                  char* subcomand,char**arg_Array);
+                                  char* sub_command,char**arg_Array);
 MtmErrorCode handleReportCommand(EscapeTechnion sys,
-                                 char* subcomand);
+                                 char* sub_command);
 
 
 /**-------------------- Command Interpreter-----------------------------------*/
@@ -86,8 +86,10 @@ MtmErrorCode handleCompanyCommand(EscapeTechnion sys,
 }
 
 MtmErrorCode handleRoomCommand(EscapeTechnion sys,
-                               char* subcomand,char**arg_Array);
+                               char* sub_command,char**arg_Array);
 MtmErrorCode handleEscaperCommand(EscapeTechnion sys,
-                                  char* subcomand,char**arg_Array);
-MtmErrorCode handleReportCommand(EscapeTechnion sys,
-                                 char* subcomand);
+                                  char* sub_command,char**arg_Array);
+
+MtmErrorCode handleReportCommand(EscapeTechnion sys, char* sub_command){
+
+}

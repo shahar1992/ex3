@@ -269,6 +269,7 @@ EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
 }
 
 /**-----------------------Escape Technion Report Day------------------------------------------*/
+/*
 EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system, const FILE* output_c){
     NULL_ARGUMENT_CHECK(system);
     //mtmPrintDayFooter(,system->day);
@@ -289,7 +290,7 @@ EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system, const FILE*
     system->day++;
     return ESCAPE_TECHNION_SUCCESS;
 }
-
+*/
 /**--------------------Escape Technion Best Faculties-------------------------*/
 EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system){
     NULL_ARGUMENT_CHECK(system);
