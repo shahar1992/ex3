@@ -276,22 +276,24 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
 }
 
 /**--------------Escape Technion  Recommended Room order---------------*/
-EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,char* mail,long num_ppl) {
-    Order Rec_order=NULL;
+EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
+                                                        char* mail,
+                                                        long num_ppl) {
+    Order rec_order = NULL;
     long best_barometer = LONG_MAX;
     NULL_ARGUMENT_CHECK(system && mail);//not null
     Escaper client = getEscaper(system, mail);//find escaper
-    if(client==NULL){
+    if(client == NULL){
         return ESCAPE_TECHNION_CLIENT_EMAIL_DOES_NOT_EXIST;
     }
-    long skill_level = escaperGetSkillLevel(client);//get the escaper skill_level
+    long skill_level = escaperGetSkillLevel(client);
     SET_FOREACH(Company, cur_company, system->companies) {//for each company
         RoomSet roomSet = companyGetRoomsSet((Company) cur_company);
         TechnionFaculty cur_company_faculty;
         companyGetFaculty((Company) cur_company, &cur_company_faculty);
-        SET_FOREACH(Room, cur_room, roomSet) {//for each room in cur_company
-            long cur_room_dif = roomGetDiffuclty((Room) cur_room);
-            long cur_room_recommended = roomGetRecommendedNumOfPeople((Room)cur_room);
+        SET_FOREACH(Room,room,roomSet) {//for each room in cur_company
+            long cur_room_dif = roomGetDiffuclty(room);
+            long cur_room_recommended = roomGetRecommendedNumOfPeople(room);
             long barometer = CalculateRecommendedFormula(cur_room_recommended,
                                                          num_ppl, cur_room_dif,
                                                          skill_level);
@@ -299,25 +301,21 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,ch
             if (barometer < best_barometer) {//if it is better
                 best_barometer = barometer;//update best barometer
                 long available_hour, available_day;
-                GetRoomNextAvailabilty(system, (Room) cur_room, &available_hour,
+                GetRoomNextAvailabilty(system,room,&available_hour,
                                        &available_day);
                 //get avilabilty
-                orderDestroy((void *) Rec_order);//destroy previous order
-                orderCreate(num_ppl, available_hour,
-                            available_day,//replace order
-                            cur_company_faculty, (Room) cur_room, client,
-                            &Rec_order);
+                orderDestroy((void *) rec_order);//destroy previous order
+                orderCreate(num_ppl, available_hour, available_day,
+                            cur_company_faculty,room,client,&rec_order);
             }
-
         }
     }
-    if(Rec_order!=NULL){
+    if(rec_order!=NULL){
         TechnionFaculty faculty;
-        orderGetFaculty(Rec_order,&faculty);
-        long id,hour,day;
-        orderGetRoomId(Rec_order,&id);
-        orderGetTimeAndDay(Rec_order,&hour,&day);
-        escapeTechnionAddOrder(system,mail,faculty,id,day,hour,num_ppl);
+        orderGetFaculty(rec_order,&faculty);
+        long id = orderGetRoomId(rec_order);
+        escapeTechnionAddOrder(system,mail,faculty,id,orderGetDay(rec_order),
+                orderGetHour(rec_order),num_ppl);
         return ESCAPE_TECHNION_SUCCESS;
     }
     else{
@@ -704,16 +702,13 @@ static bool isRoomAvailable(EscapeTechnion system,long day,
                                             long hour,long id,Room room){
     assert(system);
     List filtered_list,temp_list;
-    LIST_FOREACH(Order,cur_order,system->orders){
-        Room orders_room=orderGetRoom((Order)cur_order);
-        if (room==orders_room){//same pointer
-            long cur_orders_hour,cur_orders_day;
-            assert(orderGetTimeAndDay(cur_order,&cur_orders_hour,&cur_orders_day)==ORDER_SUCCESS);
-            if(cur_orders_day==day&&cur_orders_hour==hour){
+    LIST_FOREACH(Order,order,system->orders){
+        Room current_room = orderGetRoom(order);
+        if (room == current_room){
+            if(orderGetDay(order) == day && orderGetHour(order) == hour){
                 return false;
             }
         }
-
     }
     return true;
     /*
@@ -755,13 +750,10 @@ inline static bool checkAddOrderInput(int day, int hour, int num_of_ppl,
 static bool isClientAvailable(EscapeTechnion system,long day,
                             long hour,Escaper client) {
     assert(system);
-    LIST_FOREACH(Order, cur_order, system->orders) {//for each order
-        Escaper orders_client = orderGetEscaper((Order) cur_order);
-        if (escaperCompare(orders_client,client)==0) {//same pointer
-            long cur_orders_hour, cur_orders_day;
-            assert(orderGetTimeAndDay(cur_order, &cur_orders_hour,
-                                      &cur_orders_day) == ORDER_SUCCESS);
-            if (cur_orders_day == day && cur_orders_hour == hour) {
+    LIST_FOREACH(Order, order, system->orders) {
+        Escaper current_client = orderGetEscaper(order);
+        if (escaperCompare(current_client,client)==0) {
+            if (orderGetDay(order) == day && orderGetHour(order) == hour) {
                 return false;
             }
         }
@@ -771,7 +763,7 @@ static bool isClientAvailable(EscapeTechnion system,long day,
 }
 
 
-static bool isOrderedForDay(ListElement order, ListFilterKey key) {
+static bool isOrderForDay(ListElement order, ListFilterKey key) {
     assert(order);
     int day = orderGetDay((Order)order);
     return  day == *(int*)key;
