@@ -176,7 +176,14 @@ EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system);
 
 EscapeTechnionResult escapeTechnionSortOrdersByDay(EscapeTechnion system);
 
-OrdersList escapeTechnionGetTodayOrdersLists(EscapeTechnion system);
+OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system);
+
+Company escapeTechnionFindCompanyByRoomAndFaculty(EscapeTechnion system,
+                                                  Room room,
+                                                  TechnionFaculty faculty);
+
+void escapeTechnionIncreaseDay(EscapeTechnion system);
+
 
 
 #endif //EX3_ESCAPETECHNION_H

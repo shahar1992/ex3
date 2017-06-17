@@ -91,10 +91,11 @@ void* orderCopy(void* order){
 }
 
 /**============OrderCmp===========================*/
-int orderCompare(Order order1, Order order2){
-    assert((order1 != NULL) && (order2 != NULL));
-    return (order1->day != order2->day) ? order1->day - order2->day
-                                        : order1->hour - order2->hour;
+int orderCompare(void* order1, void* order2){
+    assert(((Order)order1 != NULL) && ((Order)order2 != NULL));
+    return (((Order)order1)->day != ((Order)order2)->day) ?
+           (((Order)order1)->day - ((Order)order2)->day) :
+           ((Order)order1)->hour - ((Order)order2)->hour;
 }
 
 /**============OrderGetFaculty===========================================*/
@@ -140,14 +141,16 @@ int orderGetNumOfPeople(Order order){
     return order->num_ppl;
 }
 
-/**============OrderGetTimeAndDay=============================================*/
-OrderResult orderGetTimeAndDay(Order order,long* hour,long* day){
-    if(!order||!hour||!day){
-        return ORDER_NULL_ARGUMENT;
-    }
-    *hour=order->hour;
-    *day=order->day;
-    return ORDER_SUCCESS;
+/**----------------------Order Get Day----------------------------------------*/
+int orderGetDay(Order order){
+    assert(order);
+    return order->day;
+}
+
+/**---------------------Order Get Hour----------------------------------------*/
+int orderGetHour(Order order){
+    assert(order);
+    return order->hour;
 }
 
 /** ===============Static functions implementation============================*/

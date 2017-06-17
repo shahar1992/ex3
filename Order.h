@@ -48,7 +48,7 @@ void orderDestroy(void* order);
 void* orderCopy(void* order);
 
 /** Compare 2 orders by time only return 0 if equal */
-int orderCompare(Order order1, Order order2);
+int orderCompare(void* order1, void* order2);
 
 /**Get the faculty owns the ordered room*/
 OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
@@ -66,6 +66,9 @@ long orderCalculatePrice(Order order);
 int orderGetNumOfPeople(Order order);
 
 /***/
-OrderResult orderGetTimeAndDay(Order order,long* hour,long* day);
+int orderGetDay(Order order);
+
+/***/
+int orderGetHour(Order order);
 
 #endif //EX3_ORDER_H

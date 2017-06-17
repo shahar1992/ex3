@@ -273,7 +273,7 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
 /***/
 Company escapeTechnionFindCompanyByRoomAndFaculty(EscapeTechnion system,
                                                   Room room,
-                                                  TechnionFaculty* faculty){
+                                                  TechnionFaculty faculty){
     SET_FOREACH(Company,company,system->companies){
         TechnionFaculty company_faculty;
         companyGetFaculty(company,&company_faculty);
@@ -295,6 +295,13 @@ EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
     }
     *profit = system->faculty_profit[faculty];
     return ESCAPE_TECHNION_SUCCESS;
+}
+
+/**------------------------Escape Technion Increase Day-----------------------*/
+void escapeTechnionIncreaseDay(EscapeTechnion system){
+    assert(system);
+    system->day++;
+    return;
 }
 
 /**-----------------------Escape Technion Report Day------------------------------------------*/
@@ -348,7 +355,7 @@ EscapeTechnionResult escapeTechnionSortOrdersByDay(EscapeTechnion system){
 }
 
 /**----------------Escape Technion Get Today Orders List----------------------*/
-OrdersList escapeTechnionGetTodayOrdersLists(EscapeTechnion system){
+OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system){
     assert(system);
     ListResult result = listSort(system->orders,orderCompare);
     if(result == LIST_OUT_OF_MEMORY){
@@ -359,7 +366,7 @@ OrdersList escapeTechnionGetTodayOrdersLists(EscapeTechnion system){
         return NULL;
     }
     LIST_FOREACH(Order,order,system->orders){
-        if(orderGetTimeAndDay(order) > system->day){
+        if(orderGetDay(order) > system->day){
             break;
         }
         listRemoveCurrent(system->orders);
@@ -641,16 +648,13 @@ static bool isRoomAvailable(EscapeTechnion system,long day,
                                             long hour,long id,Room room){
     assert(system);
     List filtered_list,temp_list;
-    LIST_FOREACH(Order,cur_order,system->orders){
-        Room orders_room=orderGetRoom((Order)cur_order);
-        if (room==orders_room){//same pointer
-            long cur_orders_hour,cur_orders_day;
-            assert(orderGetTimeAndDay(cur_order,&cur_orders_hour,&cur_orders_day)==ORDER_SUCCESS);
-            if(cur_orders_day==day&&cur_orders_hour==hour){
+    LIST_FOREACH(Order,order,system->orders){
+        Room current_room = orderGetRoom(order);
+        if (room == current_room){
+            if(orderGetDay(order) == day && orderGetHour(order) == hour){
                 return false;
             }
         }
-
     }
     return true;
     /*
@@ -692,13 +696,10 @@ inline static bool checkAddOrderInput(int day, int hour, int num_of_ppl,
 static bool isClientAvailable(EscapeTechnion system,long day,
                             long hour,Escaper client) {
     assert(system);
-    LIST_FOREACH(Order, cur_order, system->orders) {//for each order
-        Escaper orders_client = orderGetEscaper((Order) cur_order);
-        if (escaperCompare(orders_client,client)==0) {//same pointer
-            long cur_orders_hour, cur_orders_day;
-            assert(orderGetTimeAndDay(cur_order, &cur_orders_hour,
-                                      &cur_orders_day) == ORDER_SUCCESS);
-            if (cur_orders_day == day && cur_orders_hour == hour) {
+    LIST_FOREACH(Order, order, system->orders) {
+        Escaper current_client = orderGetEscaper(order);
+        if (escaperCompare(current_client,client)==0) {
+            if (orderGetDay(order) == day && orderGetHour(order) == hour) {
                 return false;
             }
         }
