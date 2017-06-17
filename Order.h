@@ -25,6 +25,7 @@
  *  orderCalculatePrice             - Get the id of the ordered room.-Tested
  *  orderGetNumOfPeople           - Get the faculty owns the ordered room.-Tested
  *  OrderResult orderGetTimeAndDay - Get Order time and day
+ *  OrderResult OrderGetRoomId(Order order,long* id)
  */
 /** Type for defining an Order*/
 typedef struct Order_t* Order;
@@ -70,5 +71,7 @@ int orderGetDay(Order order);
 
 /***/
 int orderGetHour(Order order);
+
+OrderResult orderGetRoomId(Order order,long* id);
 
 #endif //EX3_ORDER_H

@@ -153,6 +153,17 @@ int orderGetHour(Order order){
     return order->hour;
 }
 
+/**============OrderGetRoomId===========================================*/
+OrderResult orderGetRoomId(Order order,long* id){
+    if(!order||!id){
+        return ORDER_NULL_ARGUMENT;
+    }
+    *id=roomGetId(orderGetRoom(order));
+    return ORDER_SUCCESS;
+}
+
+
+/** ===============Static functions implementation==========================*/
 /** ===============Static functions implementation============================*/
 
 static bool checkInput(int day, int hour, int num_of_ppl,TechnionFaculty faculty){

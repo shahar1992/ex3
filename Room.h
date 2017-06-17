@@ -28,6 +28,8 @@
 *   roomGetId                 -Get room id as and int-Tested
 *   roomGetPrice               -Get room price as and int-Tested
 *  roomGetRecommendedNumberOfPeople -Get rec_number_of_ppl as and int
+ *  roomGetDiffuclty              -get diffuclty
+ *   roomGetOpenAndCloseHour        -get open and close hour
 */
 
 /** Type for defining the set */
@@ -85,5 +87,9 @@ long roomGetId(Room room);
 long roomGetPrice(Room room);
 
 int roomGetRecommendedNumOfPeople(Room room);
+
+int roomGetDiffuclty(Room room);
+
+RoomResult roomGetOpenAndCloseHour(Room room,long* open_hour,long* close_hour);
 
 #endif //EX3_ROOMS_H
