@@ -10,14 +10,6 @@
 /**======================Macros and structs===================================*/
 #define MAX_LINE_SIZE 256
 
-#define KILL_PROG(error,system,output_c,input_c)\
-            mtmPrintErrorMessage((stderr),(error)); \
-          //  escapeTechnionDestroy((system)); \
-            fclose((output_c)); \
-            fclose((input_c)); \
-           // escapeTechnionDestroy((system)); \
-            return 0; \
-
 /**======================Static Functions Decleration ========================*/
 static MtmErrorCode getChannels(int args_c, char **args_v, FILE **input_c,
                                 FILE **output_c);
@@ -36,7 +28,12 @@ int main(int argc,  char** argv) {
     result = getChannels(5, array, &input_c, &output_c);///////////////////////////
    // result = getChannels(argc,argv,&input_c, &output_c);
     if(result != MTM_SUCCESS){//Invalid command or open file problem
-        KILL_PROG(result,system,output_c,input_c);
+        mtmPrintErrorMessage(stderr,result);
+            escapeTechnionDestroy(sys);
+            fclose(output_c);
+            fclose(input_c);
+            escapeTechnionDestroy(sys);
+            return 0;
     }
     char buffer[MAX_LINE_SIZE]={0};
     while(fgets(buffer,MAX_LINE_SIZE,input_c) != NULL){//while !EOF
@@ -45,7 +42,11 @@ int main(int argc,  char** argv) {
         if(result != MTM_SUCCESS){
             if(result==MTM_INVALID_COMMAND_LINE_PARAMETERS||
                     result==MTM_OUT_OF_MEMORY){
-                KILL_PROG(result,sys,output_c,input_c);
+                mtmPrintErrorMessage(stderr,result);
+                escapeTechnionDestroy(sys);
+                fclose(output_c);
+                fclose(input_c);
+                return 0;
             }
             mtmPrintErrorMessage(stderr,result);//print error msg
         }
