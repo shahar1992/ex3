@@ -8,7 +8,6 @@
 
 #define MAX_LINE_SIZE 256
 #define MAX_ARGUMENTS_NUM 6
-#define TAB_ASCII_CODE 11
 
 MtmErrorCode parserAnalyzeCommand(EscapeTechnion system,char* buffer,
                                   const FILE* input_c,const FILE* output_c);
@@ -92,6 +91,7 @@ MtmErrorCode handleCompanyCommand(EscapeTechnion system,
 
 MtmErrorCode handleRoomCommand(EscapeTechnion system,
                                char* sub_command,char**arg_Array);
+
 MtmErrorCode handleEscaperCommand(EscapeTechnion system,
                                   char* sub_command,char**arg_Array);
 
