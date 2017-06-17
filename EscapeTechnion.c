@@ -269,8 +269,7 @@ EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
 }
 
 /**-----------------------Escape Technion Report Day------------------------------------------*/
-/*
-EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system){
+EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system, const FILE* output_c){
     NULL_ARGUMENT_CHECK(system);
     //mtmPrintDayFooter(,system->day);
     ListResult result = listSort(system->orders,orderCompare);
@@ -290,7 +289,7 @@ EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system){
     system->day++;
     return ESCAPE_TECHNION_SUCCESS;
 }
-*/
+
 /**--------------------Escape Technion Best Faculties-------------------------*/
 EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system){
     NULL_ARGUMENT_CHECK(system);
@@ -303,6 +302,12 @@ EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system){
     }
     //mtmPrintFacultiesFooter();
     return ESCAPE_TECHNION_SUCCESS;
+}
+
+/**-----------------Escape Technion Get Day-----------------------------------*/
+int escapeTechnionGetDay(EscapeTechnion system){
+    assert(system);
+    return system->day;
 }
 
 

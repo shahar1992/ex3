@@ -84,6 +84,7 @@ MtmErrorCode handleCompanyCommand(EscapeTechnion sys,
         return escapeTechnionAddCompany(sys,arg_Array[0],faculty);
     }
 }
+
 MtmErrorCode handleRoomCommand(EscapeTechnion sys,
                                char* subcomand,char**arg_Array);
 MtmErrorCode handleEscaperCommand(EscapeTechnion sys,

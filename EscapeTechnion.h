@@ -27,6 +27,7 @@
  *   escapeTechnionGetFacultyProfit -
  *   escapeTechnionReportday -
  *   escapeTechnionBestFaculty -
+ *   escapeTechnionGetDay -
  *
  *
  *
