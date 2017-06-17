@@ -75,4 +75,6 @@ int orderGetHour(Order order);
 /***/
 long orderGetRoomId(Order order);
 
+long orderGetDifficulty(Order order);
+
 #endif //EX3_ORDER_H
