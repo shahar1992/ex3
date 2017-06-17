@@ -51,8 +51,12 @@ static void removeClientOrders(EscapeTechnion system, Escaper escaper);
 static Escaper getEscaper(EscapeTechnion system, char *email);
 static Room getRoom(EscapeTechnion system, TechnionFaculty faculty,long id);
 static EscapeTechnionResult convertFromOrderResult(OrderResult result);
-/*static EscapeTechnionResult checkIfRoomAvailable(
-        EscapeTechnion system,int day,int hour,long id,TechnionFaculty faculty);*/
+static bool isRoomAvailable(EscapeTechnion system,long day,
+                            long hour,long id,Room room);
+inline static bool checkAddOrderInput(int day, int hour, int num_of_ppl,
+                                      TechnionFaculty faculty,char* mail,long id);
+static bool isClientAvailable(EscapeTechnion system,long day,
+                              long hour,Escaper client);
 
 /**===================System ADT functions implementation=====================*/
 
@@ -162,7 +166,8 @@ EscapeTechnionResult escapeTechnionAddRoom(EscapeTechnion system, char *email,
 
 EscapeTechnionResult escapeTechnionRemoveRoom(EscapeTechnion system,
                                               TechnionFaculty faculty, long id){
-    if((faculty >= FACULTY_NUM) || (faculty < 0) || (id < 0)){//input check
+    if(system==NULL) return ESCAPE_TECHNION_NULL_PARAMETER;
+    if((faculty >= FACULTY_NUM) || (faculty < 0) || (id < 1)){//input check
         return ESCAPE_TECHNION_INVALID_PARAMETER;
     }
     SET_FOREACH(Company,current_company,system->companies){//for each company
@@ -227,35 +232,43 @@ EscapeTechnionResult escapeTechnionRemoveClient(EscapeTechnion system,
     escaperDestroy(escaper);
     return ESCAPE_TECHNION_SUCCESS;
 }
-/*
+
 EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
                                             TechnionFaculty faculty, long id,
                                             int day, int hour, int num_ppl) {
     NULL_ARGUMENT_CHECK(system && email);
+    if(!checkAddOrderInput(day,hour,num_ppl,faculty,email,id)){
+        return ESCAPE_TECHNION_INVALID_PARAMETER;
+    }
     Order order;
-    Escaper escaper = getEscaper(system, email);
-    Room room = getRoom(system,faculty,id);
+    Escaper escaper = getEscaper(system, email);//get the order's client
+    Room room = getRoom(system,faculty,id);//get the order's room
     EscapeTechnionResult result = convertFromOrderResult(
             orderCreate(num_ppl,hour,day,faculty,room,escaper,&order));
-    if(result == ESCAPE_TECHNION_NULL_PARAMETER){
+    if(result == ESCAPE_TECHNION_NULL_PARAMETER){//cannot create order
         assert(!escaper || !room);
         return (escaper == NULL) ? ESCAPE_TECHNION_CLIENT_EMAIL_DOES_NOT_EXIST
                                  : ESCAPE_TECHNION_ID_DOES_NOT_EXIST;
+        //is it an escaper problem? or a room problem?
     }
     if(result != ESCAPE_TECHNION_SUCCESS){
         return result;
     }
-    result = checkIfRoomAvailable(system,day,hour,id,faculty);
-    if(result != ESCAPE_TECHNION_SUCCESS) {
+    //order was created;
+    if(!isClientAvailable(system,day,hour,escaper)){//client unabailable
         orderDestroy(order);
-        return result;
+        return ESCAPE_TECHNION_CLIENT_IN_ROOM;
+    }
+    if(!isRoomAvailable(system,day,hour,id,room)) {//room unavailable
+        orderDestroy(order);
+        return ESCAPE_TECHNION_ROOM_NOT_AVAILABLE;
     }
     ListResult result1 = listInsertLast(system->orders,order);
     orderDestroy(order);
     return (result1 == LIST_OUT_OF_MEMORY) ? ESCAPE_TECHNION_OUT_OF_MEMORY
                                           : ESCAPE_TECHNION_SUCCESS;
 }
-*/
+
 /**------------------------Escape Technion Get Faculty Profit---------------*/
 EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
                                                     TechnionFaculty faculty,
@@ -579,12 +592,24 @@ static Room getRoom(EscapeTechnion system, TechnionFaculty faculty, long id){
     }
     return NULL;
 }
-/*
-static EscapeTechnionResult checkIfRoomAvailable(EscapeTechnion system, int day,
-                                                 int hour, long id,
-                                                 TechnionFaculty faculty){
+
+static bool isRoomAvailable(EscapeTechnion system,long day,
+                                            long hour,long id,Room room){
     assert(system);
     List filtered_list,temp_list;
+    LIST_FOREACH(Order,cur_order,system->orders){
+        Room orders_room=orderGetRoom((Order)cur_order);
+        if (room==orders_room){//same pointer
+            long cur_orders_hour,cur_orders_day;
+            assert(orderGetTimeAndDay(cur_order,&cur_orders_hour,&cur_orders_day)==ORDER_SUCCESS);
+            if(cur_orders_day==day&&cur_orders_hour==hour){
+                return false;
+            }
+        }
+
+    }
+    return true;
+    /*
     void* room_array[2] = {&faculty,&id};
     void* time_array[2] = {&day,&hour};
     filtered_list = listFilter(system->orders,orderFilterByFacultiesAndId,
@@ -603,6 +628,36 @@ static EscapeTechnionResult checkIfRoomAvailable(EscapeTechnion system, int day,
     }
     listDestroy(filtered_list);
     return ESCAPE_TECHNION_SUCCESS;
+     */
+}
+inline static bool checkAddOrderInput(int day, int hour, int num_of_ppl,
+                               TechnionFaculty faculty,char* mail,long id){
+    assert(mail!=NULL);
+    char* ptr=mail;
+    int counter=0;
+    while(*ptr){
+        if(*ptr=='@')counter++;
+        ptr++;
+    }
+    return ( (counter==1)&&(day >= 0) && (hour >= 0)
+             && (hour < MAX_HOUR) && (num_of_ppl > 0)
+             && (faculty<FACULTY_NUM)&&(faculty>=0)&& (id>0) );
 }
 
-*/
+static bool isClientAvailable(EscapeTechnion system,long day,
+                            long hour,Escaper client) {
+    assert(system);
+    LIST_FOREACH(Order, cur_order, system->orders) {//for each order
+        Escaper orders_client = orderGetEscaper((Order) cur_order);
+        if (escaperCompare(orders_client,client)==0) {//same pointer
+            long cur_orders_hour, cur_orders_day;
+            assert(orderGetTimeAndDay(cur_order, &cur_orders_hour,
+                                      &cur_orders_day) == ORDER_SUCCESS);
+            if (cur_orders_day == day && cur_orders_hour == hour) {
+                return false;
+            }
+        }
+
+    }
+    return true;
+}

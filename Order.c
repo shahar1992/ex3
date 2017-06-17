@@ -142,6 +142,16 @@ int orderGetNumOfPeople(Order order){
     return order->num_ppl;
 }
 
+/**============OrderGetTimeAndDay===========================================*/
+OrderResult orderGetTimeAndDay(Order order,long* hour,long* day){
+    if(!order||!hour||!day){
+        return ORDER_NULL_ARGUMENT;
+    }
+    *hour=order->hour;
+    *day=order->day;
+    return ORDER_SUCCESS;
+}
+
 /** ===============Static functions implementation==========================*/
 
 static bool checkInput(int day, int hour, int num_of_ppl,TechnionFaculty faculty){
