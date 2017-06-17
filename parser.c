@@ -96,7 +96,7 @@ MtmErrorCode handleEscaperCommand(EscapeTechnion system,
                                   char* sub_command,char**arg_Array);
 
 MtmErrorCode handleReportCommand(EscapeTechnion system, char* sub_command,
-                                 const FILE* output_c) {
+                                  const FILE* output_c) {
     assert(system);
     MtmErrorCode result = MTM_INVALID_COMMAND_LINE_PARAMETERS;
     if(strcmp(sub_command,"day") == 0){
@@ -132,7 +132,7 @@ static MtmErrorCode orderPrint(EscapeTechnion system,Order order,
     TechnionFaculty room_faculty,escaper_faculty;
     orderGetFaculty(order,&room_faculty);
     Company company = escapeTechnionFindCompanyByRoomAndFaculty
-                                                (system,room,room_faculty);
+            (system,room,room_faculty);
     Escaper escaper = orderGetEscaper(order);
     char *email,*company_email;
     escaperGetEmail(escaper,&email);
@@ -147,7 +147,7 @@ static MtmErrorCode orderPrint(EscapeTechnion system,Order order,
     escaperGetFaculty(escaper,&escaper_faculty);
     long price = orderCalculatePrice(order);
     mtmPrintOrder(output_c,email,escaperGetSkillLevel(escaper),escaper_faculty,
-    company_email,room_faculty,roomGetId(room),orderGetHour(order),
+                  company_email,room_faculty,roomGetId(room),orderGetHour(order),
                   orderGetDifficulty(order),orderGetNumOfPeople(order),price);
     return MTM_SUCCESS;
 }
