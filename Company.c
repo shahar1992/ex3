@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "Company.h"
+#include "set.h"
 
 /**======================Macros and structs===================================*/
 #define FACULTY_NUM 19
@@ -70,7 +71,6 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
 void companyDestroy(SetElement company){
     if(company != NULL){
         setDestroy(((Company)company)->rooms);
-        //
         if(((Company)company)->email != NULL) {
             free(((Company)company)->email);
         }

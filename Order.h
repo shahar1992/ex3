@@ -72,6 +72,7 @@ int orderGetDay(Order order);
 /***/
 int orderGetHour(Order order);
 
-OrderResult orderGetRoomId(Order order,long* id);
+/***/
+long orderGetRoomId(Order order);
 
 #endif //EX3_ORDER_H

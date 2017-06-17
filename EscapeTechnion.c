@@ -279,7 +279,7 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
 EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                                         char* mail,
                                                         long num_ppl) {
-    Order Rec_order = NULL;
+    Order rec_order = NULL;
     long best_barometer = LONG_MAX;
     NULL_ARGUMENT_CHECK(system && mail);//not null
     Escaper client = getEscaper(system, mail);//find escaper
@@ -304,20 +304,18 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                 GetRoomNextAvailabilty(system,room,&available_hour,
                                        &available_day);
                 //get avilabilty
-                orderDestroy((void *) Rec_order);//destroy previous order
+                orderDestroy((void *) rec_order);//destroy previous order
                 orderCreate(num_ppl, available_hour, available_day,
-                            cur_company_faculty,room,client,
-                            &Rec_order);
+                            cur_company_faculty,room,client,&rec_order);
             }
         }
     }
-    if(Rec_order!=NULL){
+    if(rec_order!=NULL){
         TechnionFaculty faculty;
-        orderGetFaculty(Rec_order,&faculty);
-        long id,hour,day;
-        orderGetRoomId(Rec_order,&id);
-        orderGetTimeAndDay(Rec_order,&hour,&day);
-        escapeTechnionAddOrder(system,mail,faculty,id,day,hour,num_ppl);
+        orderGetFaculty(rec_order,&faculty);
+        long id = orderGetRoomId(rec_order);
+        escapeTechnionAddOrder(system,mail,faculty,id,orderGetDay(rec_order),
+                orderGetHour(rec_order),num_ppl);
         return ESCAPE_TECHNION_SUCCESS;
     }
     else{
@@ -765,7 +763,7 @@ static bool isClientAvailable(EscapeTechnion system,long day,
 }
 
 
-static bool isOrderedForDay(ListElement order, ListFilterKey key) {
+static bool isOrderForDay(ListElement order, ListFilterKey key) {
     assert(order);
     int day = orderGetDay((Order)order);
     return  day == *(int*)key;
