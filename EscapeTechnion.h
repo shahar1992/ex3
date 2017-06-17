@@ -177,4 +177,9 @@ EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system,
 
 EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system);
 
+EscapeTechnionResult escapeTechnionSortOrdersByDay(EscapeTechnion system);
+
+OrdersList escapeTechnionGetTodayOrdersLists(EscapeTechnion system);
+
+
 #endif //EX3_ESCAPETECHNION_H

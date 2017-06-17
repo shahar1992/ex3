@@ -93,10 +93,8 @@ void* orderCopy(void* order){
 /**============OrderCmp===========================*/
 int orderCompare(Order order1, Order order2){
     assert((order1 != NULL) && (order2 != NULL));
-    if(order1->day != order2->day){
-        return order1->day - order2->day;
-    }
-    return  (order1->hour - order2->hour);
+    return (order1->day != order2->day) ? order1->day - order2->day
+                                        : order1->hour - order2->hour;
 }
 
 /**============OrderGetFaculty===========================================*/
@@ -134,7 +132,7 @@ long orderCalculatePrice(Order order){
            (total_price * DISCOUNT_FOT_FACULTY_MEMBERS) : total_price;
 }
 
-/**============OrderGetNumOFPeople===========================================*/
+/**=====================OrderGetNumOFPeople===================================*/
 int orderGetNumOfPeople(Order order){
     if(!order){
         return 0;
@@ -142,7 +140,7 @@ int orderGetNumOfPeople(Order order){
     return order->num_ppl;
 }
 
-/**============OrderGetTimeAndDay===========================================*/
+/**============OrderGetTimeAndDay=============================================*/
 OrderResult orderGetTimeAndDay(Order order,long* hour,long* day){
     if(!order||!hour||!day){
         return ORDER_NULL_ARGUMENT;
@@ -163,6 +161,7 @@ OrderResult orderGetRoomId(Order order,long* id){
 
 
 /** ===============Static functions implementation==========================*/
+/** ===============Static functions implementation============================*/
 
 static bool checkInput(int day, int hour, int num_of_ppl,TechnionFaculty faculty){
     return ( (day >= 0) && (hour >= 0) && (hour < MAX_HOUR) && (num_of_ppl > 0)
