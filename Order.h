@@ -24,6 +24,7 @@
  *  orderGetEscaper             - Get the company email of an order.-Tested
  *  orderCalculatePrice             - Get the id of the ordered room.-Tested
  *  orderGetNumOfPeople           - Get the faculty owns the ordered room.-Tested
+ *  OrderResult orderGetTimeAndDay - Get Order time and day
  */
 /** Type for defining an Order*/
 typedef struct Order_t* Order;
@@ -63,5 +64,7 @@ Escaper orderGetEscaper(Order order);
 long orderCalculatePrice(Order order);
 /**Get the order's number of people*/
 int orderGetNumOfPeople(Order order);
+
+OrderResult orderGetTimeAndDay(Order order,long* hour,long* day);
 
 #endif //EX3_ORDER_H
