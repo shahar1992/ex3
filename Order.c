@@ -159,6 +159,12 @@ long orderGetRoomId(Order order){
     return (order->room == NULL) ? 0 : roomGetId(order->room);
 }
 
+/**--------------------------Order Get Difficulty-----------------------------*/
+long orderGetDifficulty(Order order){
+    assert(order);
+    return roomGetDiffuclty(order->room);
+}
+
 /** ===============Static functions implementation==========================*/
 
 static bool checkInput(int day, int hour, int num_of_ppl,

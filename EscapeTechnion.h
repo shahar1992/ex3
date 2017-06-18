@@ -168,9 +168,8 @@ int escapeTechnionGetDay(EscapeTechnion system);
 EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                                         char* mail,long num_ppl);
 
-        EscapeTechnionResult escapeTechnionGetFacultyProfit(EscapeTechnion system,
-                                                    TechnionFaculty faculty,
-                                                    long* profit);
+long escapeTechnionGetFacultyProfit(EscapeTechnion system,
+                                    TechnionFaculty faculty);
 
 EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system,
                                               const FILE* output_c);
@@ -187,6 +186,13 @@ Company escapeTechnionFindCompanyByRoomAndFaculty(EscapeTechnion system,
 
 void escapeTechnionIncreaseDay(EscapeTechnion system);
 
+long escapeTechnionCalculateTotalRevenue(EscapeTechnion system);
+
+void escapeTechnionGetBestFaculties(EscapeTechnion system,
+                                    TechnionFaculty *faculties,
+                                    int best_faculties_num);
 
 
 #endif //EX3_ESCAPETECHNION_H
+
+

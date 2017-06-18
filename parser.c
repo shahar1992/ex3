@@ -11,7 +11,7 @@
 #define TAB_ASCII_CODE 11
 
 MtmErrorCode parserAnalyzeCommand(EscapeTechnion system,char* buffer,
-                                  const FILE* input_c,const FILE* output_c);
+                                  FILE* input_c, FILE* output_c);
 MtmErrorCode handleCommand(EscapeTechnion sys,
                            char* command,char* sub_command,char**arg_Array);
 MtmErrorCode handleCompanyCommand(EscapeTechnion sys,
@@ -21,20 +21,18 @@ MtmErrorCode handleRoomCommand(EscapeTechnion sys,
 
 MtmErrorCode handleEscaperCommand(EscapeTechnion sys,
                                   char* sub_command,char**arg_Array);
-/*
+
 MtmErrorCode handleReportCommand(EscapeTechnion system, char* sub_command,
-                                 const FILE* output_c);
-        static MtmErrorCode reportDay(EscapeTechnion system, const FILE* output_c);
-static MtmErrorCode reportBest(EscapeTechnion system, const FILE* output_c);
+                                 FILE* output_c);
+static MtmErrorCode reportDay(EscapeTechnion system, FILE* output_c);
+static MtmErrorCode reportBest(EscapeTechnion system, FILE* output_c);
 static MtmErrorCode orderPrint(EscapeTechnion system, Order order,
                                FILE* output_c);
-                               */
-
 static MtmErrorCode ConvertResult(EscapeTechnionResult result);
 /**-------------------- Command Interpreter-----------------------------------*/
 
 MtmErrorCode parserAnalyzeCommand(EscapeTechnion system, char* buffer,
-                                  const FILE* input_c,const FILE* output_c) {
+                                  FILE* input_c, FILE* output_c) {
     char* command;
     char* subCommand;
     char* arg_Array[MAX_ARGUMENTS_NUM]={0};
@@ -156,9 +154,9 @@ MtmErrorCode handleEscaperCommand(EscapeTechnion system,
     }
     return MTM_INVALID_COMMAND_LINE_PARAMETERS;
 }//
-/*
+
 MtmErrorCode handleReportCommand(EscapeTechnion system, char* sub_command,
-                                 const FILE* output_c) {
+                                  FILE* output_c) {
     assert(system);
     MtmErrorCode result = MTM_INVALID_COMMAND_LINE_PARAMETERS;
     if(strcmp(sub_command,"day") == 0){
@@ -172,18 +170,17 @@ MtmErrorCode handleReportCommand(EscapeTechnion system, char* sub_command,
 
 static MtmErrorCode reportDay(EscapeTechnion system, FILE* output_c){
     assert(system);
-    FILE* output_channel = output_c;
     int day = escapeTechnionGetDay(system);
-    OrdersList orders_list = escapeTechnionGetTodayOrdersLists(system);
+    OrdersList orders_list = escapeTechnionGetTodayOrdersList(system);
     if(!orders_list){
         return MTM_OUT_OF_MEMORY;
     }
-    mtmPrintDayHeader(output_channel,day,listGetSize(orders_list));
+    mtmPrintDayHeader(output_c,day,listGetSize(orders_list));
     LIST_FOREACH(Order,order,orders_list){
-        orderPrint(system,order,output_channel);
+        orderPrint(system,order,output_c);
     }
     listDestroy(orders_list);
-    mtmPrintDayFooter(output_channel,escapeTechnionGetDay(system));
+    mtmPrintDayFooter(output_c,escapeTechnionGetDay(system));
     escapeTechnionIncreaseDay(system);
     return MTM_SUCCESS;
 }
@@ -194,7 +191,7 @@ static MtmErrorCode orderPrint(EscapeTechnion system,Order order,
     TechnionFaculty room_faculty,escaper_faculty;
     orderGetFaculty(order,&room_faculty);
     Company company = escapeTechnionFindCompanyByRoomAndFaculty
-                                                (system,room,room_faculty);
+            (system,room,room_faculty);
     Escaper escaper = orderGetEscaper(order);
     char *email,*company_email;
     escaperGetEmail(escaper,&email);
@@ -209,12 +206,27 @@ static MtmErrorCode orderPrint(EscapeTechnion system,Order order,
     escaperGetFaculty(escaper,&escaper_faculty);
     long price = orderCalculatePrice(order);
     mtmPrintOrder(output_c,email,escaperGetSkillLevel(escaper),escaper_faculty,
-    company_email,room_faculty,roomGetId(room),orderGetHour(order),
+                  company_email,room_faculty,roomGetId(room),orderGetHour(order),
                   orderGetDifficulty(order),orderGetNumOfPeople(order),price);
     return MTM_SUCCESS;
 }
 
-*/
+static MtmErrorCode reportBest(EscapeTechnion system, FILE* output_c){
+    assert(system);
+    int best_faculties_num = 3;
+    long total_revenue = escapeTechnionCalculateTotalRevenue(system);
+    mtmPrintFacultiesHeader(
+            output_c,FACULTY_NUM,escapeTechnionGetDay(system),total_revenue);
+    TechnionFaculty faculties[best_faculties_num];
+    escapeTechnionGetBestFaculties(system,faculties,best_faculties_num);
+    for(int i = 0 ; i < 3 ; i++) {
+        mtmPrintFaculty(output_c, faculties[i],
+                        escapeTechnionGetFacultyProfit(system, faculties[i]));
+    }
+    mtmPrintFacultiesFooter(output_c);
+    return MTM_SUCCESS;
+}
+
 static MtmErrorCode ConvertResult(EscapeTechnionResult result){
     switch(result){
         case ESCAPE_TECHNION_SUCCESS:
