@@ -12,8 +12,8 @@
 
 MtmErrorCode parserAnalyzeCommand(EscapeTechnion system,char* buffer,
                                   FILE* input_c, FILE* output_c);
-MtmErrorCode handleCommand(EscapeTechnion sys,
-                           char* command,char* sub_command,char**arg_Array);
+MtmErrorCode handleCommand(EscapeTechnion system, FILE* output_c,
+                           char* command,char* subcomand,char**arg_Array);
 MtmErrorCode handleCompanyCommand(EscapeTechnion sys,
                                   char* sub_command,char**arg_Array);
 MtmErrorCode handleRoomCommand(EscapeTechnion sys,
@@ -21,7 +21,6 @@ MtmErrorCode handleRoomCommand(EscapeTechnion sys,
 
 MtmErrorCode handleEscaperCommand(EscapeTechnion sys,
                                   char* sub_command,char**arg_Array);
-
 MtmErrorCode handleReportCommand(EscapeTechnion system, char* sub_command,
                                  FILE* output_c);
 static MtmErrorCode reportDay(EscapeTechnion system, FILE* output_c);
@@ -30,7 +29,6 @@ static MtmErrorCode orderPrint(EscapeTechnion system, Order order,
                                FILE* output_c);
 static MtmErrorCode ConvertResult(EscapeTechnionResult result);
 /**-------------------- Command Interpreter-----------------------------------*/
-
 MtmErrorCode parserAnalyzeCommand(EscapeTechnion system, char* buffer,
                                   FILE* input_c, FILE* output_c) {
     char* command;
@@ -57,11 +55,11 @@ MtmErrorCode parserAnalyzeCommand(EscapeTechnion system, char* buffer,
         count++;
         token = strtok(NULL, delim);
     }
-    return handleCommand(system,command,subCommand,arg_Array);
+    return handleCommand(system,output_c,command,subCommand,arg_Array);
 
 }
 
-MtmErrorCode handleCommand(EscapeTechnion system,
+MtmErrorCode handleCommand(EscapeTechnion system, FILE* output_c,
                            char* command,char* subcomand,char**arg_Array){
     if(strcmp(command,"company")==0){
         return handleCompanyCommand(system,subcomand,arg_Array);
@@ -73,10 +71,10 @@ MtmErrorCode handleCommand(EscapeTechnion system,
     if(strcmp(command,"escaper")==0){
         return handleEscaperCommand(system,subcomand,arg_Array);
     }
-    /*
+
     if(strcmp(command,"report")==0){
-        return handleReportommand(system,subcomand,arg_Array);
-    }*/
+        return handleReportCommand(system,subcomand,output_c);
+    }
     return MTM_INVALID_COMMAND_LINE_PARAMETERS;
 }
 

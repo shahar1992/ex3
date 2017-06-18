@@ -24,8 +24,8 @@ int main(int argc,  char** argv) {
     escapeTechnionCreate(&sys);
     FILE *input_c,*output_c;
     MtmErrorCode result;
-    char* array[] = {"main","-i","test1.in","-o","output.txt"};///////////
-    result = getChannels(5, array, &input_c, &output_c);///////////////////////////
+    char* array[] = {"main","-i","test1.in","-o","output.txt"};
+    result = getChannels(5, array, &input_c, &output_c);
    // result = getChannels(argc,argv,&input_c, &output_c);
     if(result != MTM_SUCCESS){//Invalid command or open file problem
         mtmPrintErrorMessage(stderr,result);
