@@ -160,12 +160,13 @@ EscapeTechnionResult escapeTechnionAddRoom(EscapeTechnion system, char *email,
     }
     TechnionFaculty faculty;
     companyGetFaculty(company,&faculty);//get company's faculty
+    bool answer = isIdAlreadyExistInFaculty(system, faculty, id);
     result = convertFromCompanyResult(companyAddRoom(
             company, id, price, num_ppl, open_hour, close_hour,difficulty));
     if(result!=ESCAPE_TECHNION_SUCCESS) {
         return result;
     }
-    if(isIdAlreadyExistInFaculty(system, faculty, id)==true){
+    if(answer==true){
         result = convertFromCompanyResult(companyRemoveRoom(company,id));
         if(result!=ESCAPE_TECHNION_SUCCESS){
             return result;
