@@ -6,7 +6,7 @@
 #include "set.h"
 
 /**======================Macros and structs===================================*/
-#define FACULTY_NUM 18
+#define FACULTY_NUM ((int)UNKNOWN)
 
 #define NULL_ARGUMENT_CHECK(condition) {\
     if(!(condition)) {\
@@ -100,17 +100,13 @@ int companyCompare(SetElement company1, SetElement company2){
     return strcmp(((Company)company1)->email, ((Company)company2)->email);
 }
 
-CompanyResult companyAddRoom(Company company, long id, long price, int num_ppl,
-                             int open_hour, int close_hour, int difficult){
+CompanyResult companyAddRoom(Company company, Room room){
     assert(company);
-    Room room;
-    CompanyResult result = convertReturnTypeFromRoom(
-            roomCreate(id,price,num_ppl,open_hour,close_hour,difficult,&room));
-    if(result != COMPANY_SUCCESS){
-        return result;
+    if(!room){
+        return COMPANY_NULL_ARGUMENT;
     }
-    result = convertReturnTypeFromSet(setAdd(company->rooms, room));
-    roomDestroy(room);
+    CompanyResult result = convertReturnTypeFromSet(
+            setAdd(company->rooms, room));
     return result;
 }
 

@@ -1,12 +1,11 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
-#include <limits.h>
 
 #include "EscapeTechnion.h"
 
 /**===============================Macros======================================*/
-#define FACULTY_NUM 18
+#define FACULTY_NUM ((int)UNKNOWN)
 #define BEST_FACULTIES_NUM 3
 #define RANDOM_FACULTY ELECTRICAL_ENGINEERING
 
@@ -44,7 +43,7 @@ static bool doesRoomHaveOrders(EscapeTechnion sys, Room room,
                                                   Company company, long id);*/
 static EscapeTechnionResult convertFromCompanyResult( CompanyResult result);
 static EscapeTechnionResult convertFromEscaperResult(EscaperResult result);
-static EscapeTechnionResult convertFromRoomResult(EscaperResult result);
+static EscapeTechnionResult convertFromRoomResult(RoomResult result);
 static long calculate_total_profit(EscapeTechnion system);
 static void findBestFaculties(EscapeTechnion system, TechnionFaculty* faculty);
 static void removeClientOrders(EscapeTechnion system, Escaper escaper);
@@ -154,30 +153,29 @@ EscapeTechnionResult escapeTechnionAddRoom(EscapeTechnion system, char *email,
                                            int open_hour, int close_hour,
                                            int difficulty){
     NULL_ARGUMENT_CHECK(system && email);
-    Company company;
-    EscapeTechnionResult result = getCompany(system, email,&company);
+    Room room;
+    EscapeTechnionResult result = convertFromRoomResult(
+            roomCreate(id,price,num_ppl,open_hour,close_hour,difficulty,&room));
     if(result != ESCAPE_TECHNION_SUCCESS){
+        return result;
+    }
+    Company company;
+    result = getCompany(system, email, &company);
+    if(result != ESCAPE_TECHNION_SUCCESS){
+        roomDestroy(room);
         return result;
     }
     TechnionFaculty faculty;
     companyGetFaculty(company,&faculty);//get company's faculty
-    bool answer = isIdAlreadyExistInFaculty(system, faculty, id);
-    result = convertFromCompanyResult(companyAddRoom(
-            company, id, price, num_ppl, open_hour, close_hour,difficulty));
+    if(isIdAlreadyExistInFaculty(system, faculty, id)==true){
+        return ESCAPE_TECHNION_ID_ALREADY_EXIST;
+    }
+    result = convertFromCompanyResult(companyAddRoom(company,room));
     if(result!=ESCAPE_TECHNION_SUCCESS) {
+        roomDestroy(room);
         return result;
     }
-    if(answer==true){
-        result = convertFromCompanyResult(companyRemoveRoom(company,id));
-        if(result!=ESCAPE_TECHNION_SUCCESS){
-            return result;
-        }
-        return ESCAPE_TECHNION_ID_ALREADY_EXIST;//break if id exists in faculty
-    }
-
-    if(result != ESCAPE_TECHNION_SUCCESS){
-        return result;
-    }
+    roomDestroy(room);
     return ESCAPE_TECHNION_SUCCESS;
 }
 
@@ -652,7 +650,7 @@ static EscapeTechnionResult convertFromOrderResult(OrderResult result){
             return ESCAPE_TECHNION_NULL_PARAMETER;
     }
 }
-static EscapeTechnionResult convertFromRoomResult(EscaperResult result){
+static EscapeTechnionResult convertFromRoomResult(RoomResult result){
     switch (result){
         case ROOM_SUCCESS:
             return ESCAPE_TECHNION_SUCCESS;

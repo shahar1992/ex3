@@ -145,8 +145,8 @@ static bool inputCheck(long id, int price, int num_ppl, int open_hour,
                                 int close_hour, int difficulty){
     return ((id > 0)
             && (price > 0)
-            && (price %PRICE_MOUDLE == 0)
-            && (num_ppl >=MIN_PLAYERS_FOR_ROOM)
+            && (price %PRICE_MODULE == 0)
+            && (num_ppl >= MIN_PLAYERS_FOR_ROOM)
             && (open_hour >= MIN_HOUR)
             && (close_hour > open_hour)
             && (close_hour <= MAX_HOUR)
