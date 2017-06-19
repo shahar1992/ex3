@@ -284,7 +284,7 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                                         long num_ppl) {
     Order rec_order = NULL;
     long best_barometer = LONG_MAX;
-    NULL_ARGUMENT_CHECK(system && mail);//not null
+    NULL_ARGUMENT_CHECK(system && mail);//not null//
     Escaper client = getEscaper(system, mail);//find escaper
     if(client == NULL){
         return ESCAPE_TECHNION_CLIENT_EMAIL_DOES_NOT_EXIST;
