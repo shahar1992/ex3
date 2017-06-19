@@ -6,7 +6,7 @@
 #include "EscapeTechnion.h"
 #include "mtm_ex3.h"
 
-#define ERROR_CHANNEL "myerr7.err"
+#define ERROR_CHANNEL "myerr2.err"
 
 /**======================Macros and structs===================================*/
 #define MAX_LINE_SIZE 256
@@ -26,7 +26,7 @@ int main(int argc,  char** argv) {
     escapeTechnionCreate(&sys);
     FILE *input_c,*output_c;
     MtmErrorCode result;
-    char* array[] = {"main","-i","test1.in","-o","myout.out"};///////////
+    char* array[] = {"main","-i","test2.in","-o","test2.out"};///////////
     result = getChannels(5, array, &input_c, &output_c);///////
    // result = getChannels(argc,argv,&input_c, &output_c);
     if(result != MTM_SUCCESS){//Invalid command or open file problem
