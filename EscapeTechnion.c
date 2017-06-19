@@ -332,7 +332,8 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
         TechnionFaculty faculty;
         orderGetFaculty(rec_order,&faculty);
         long id = orderGetRoomId(rec_order);
-        escapeTechnionAddOrder(system,mail,faculty,id,orderGetDay(rec_order),
+        EscapeTechnionResult result;
+        result=escapeTechnionAddOrder(system,mail,faculty,id,orderGetDay(rec_order),
                 orderGetHour(rec_order),num_ppl);
         return ESCAPE_TECHNION_SUCCESS;
     }
@@ -748,7 +749,7 @@ static bool isRoomAvailable(EscapeTechnion system,long day,
     List filtered_list,temp_list;
     LIST_FOREACH(Order,order,system->orders){
         Room current_room = orderGetRoom(order);
-        if (room == current_room){
+        if (roomCompare(current_room,room)==0){
             if(orderGetDay(order) == day && orderGetHour(order) == hour){
                 return false;
             }
@@ -859,7 +860,7 @@ static bool isFacultyNearer(TechnionFaculty checked_faculty,
                             TechnionFaculty recommended_faculty,
                             TechnionFaculty escaper_faculty){
     int checked_faculty_distance=abs(escaper_faculty-checked_faculty);
-    int recommended_faculty_distance=abs(recommended_faculty-checked_faculty);
+    int recommended_faculty_distance=abs(recommended_faculty-escaper_faculty);
     if(checked_faculty_distance==recommended_faculty_distance){
         return (checked_faculty<recommended_faculty) ? true : false;
     }
