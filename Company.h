@@ -6,7 +6,7 @@
 #include "Room.h"
 #include "mtm_ex3.h"
 
-#define FACULTY_NUM 18
+#define FACULTY_NUM ((int)UNKNOWN)
 
 /**
  *  Abstract company.
