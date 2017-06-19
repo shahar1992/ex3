@@ -44,7 +44,6 @@ static bool doesRoomHaveOrders(EscapeTechnion sys, Room room,
 static EscapeTechnionResult convertFromCompanyResult( CompanyResult result);
 static EscapeTechnionResult convertFromEscaperResult(EscaperResult result);
 static EscapeTechnionResult convertFromRoomResult(RoomResult result);
-static long calculate_total_profit(EscapeTechnion system);
 static void findBestFaculties(EscapeTechnion system, TechnionFaculty* faculty);
 static void removeClientOrders(EscapeTechnion system, Escaper escaper);
 static Escaper getEscaper(EscapeTechnion system, char *email);
@@ -52,8 +51,6 @@ static Room getRoom(EscapeTechnion system, TechnionFaculty faculty,long id);
 static EscapeTechnionResult convertFromOrderResult(OrderResult result);
 static bool isRoomAvailable(EscapeTechnion system,long day,
                             long hour,long id,Room room,TechnionFaculty room_faculty);
-inline static bool checkAddOrderInput(int day, int hour, int num_of_ppl,
-                                      TechnionFaculty faculty,char* mail,long id);
 static bool isClientAvailable(EscapeTechnion system,long day,
                               long hour,Escaper client);
 static long CalculateRecommendedFormula(long P_r,long P_e,

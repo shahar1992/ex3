@@ -55,7 +55,10 @@ static CompanyResult convertReturnTypeFromRoom(RoomResult result);
 
 CompanyResult companyCreate(char *email, TechnionFaculty faculty,
                             Company* company){
-    NULL_ARGUMENT_CHECK(company && email);
+    assert(company);
+    if(!email){
+        return COMPANY_NULL_ARGUMENT;
+    }
     PARAMETER_CHECK(isInputLegal(email,faculty));
     *company = malloc(sizeof(**company));
     MEMORY_CHECK(*company,*company);
