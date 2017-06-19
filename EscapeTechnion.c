@@ -152,6 +152,7 @@ EscapeTechnionResult escapeTechnionAddRoom(EscapeTechnion system, char *email,
                                            int open_hour, int close_hour,
                                            int difficulty){
     NULL_ARGUMENT_CHECK(system && email);
+
     Company company = getCompany(system, email);//get Company by mail
     if(company==NULL){//if no company exists
         return ESCAPE_TECHNION_COMPANY_EMAIL_DOES_NOT_EXIST;
@@ -435,7 +436,6 @@ OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system){
             break;
         }
         listRemoveCurrent(system->orders);
-        listGetFirst(system->orders);
     }
     return list;
 }

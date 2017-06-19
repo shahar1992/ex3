@@ -76,7 +76,7 @@ MtmErrorCode handleCommand(EscapeTechnion system, FILE* output_c,
     if(strcmp(command,"report")==0){
         return handleReportCommand(system,subcomand,output_c);
     }//
-    return MTM_INVALID_COMMAND_LINE_PARAMETERS;
+    return MTM_SUCCESS;
 }
 
 MtmErrorCode handleCompanyCommand(EscapeTechnion system,
