@@ -25,7 +25,7 @@ int main(int argc,  char** argv) {
     FILE *input_c,*output_c;
     MtmErrorCode result;
     char* array[] = {"main","-i","test4.in"};///////////
-    result = getChannels(3, array, &input_c, &output_c);///////////////////////////
+    result = getChannels(3, array, &input_c, &output_c);///////
    // result = getChannels(argc,argv,&input_c, &output_c);
     if(result != MTM_SUCCESS){//Invalid command or open file problem
         mtmPrintErrorMessage(stderr,result);
