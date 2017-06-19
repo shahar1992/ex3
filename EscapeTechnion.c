@@ -2,13 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-
-#define LONG_MAX	2147483647L
 #include "EscapeTechnion.h"
 
 /**===============================Macros======================================*/
-
-#define FACULTY_NUM 19
+#define FACULTY_NUM 18
 #define BEST_FACULTIES_NUM 3
 #define RANDOM_FACULTY ELECTRICAL_ENGINEERING
 
@@ -441,6 +438,16 @@ long escapeTechnionCalculateTotalRevenue(EscapeTechnion system){
     return total_revenue;
 }
 
+
+void escapeTechnionIncreaseFacultyProfit(EscapeTechnion system,long profit,
+                                         TechnionFaculty faculty){
+    assert(system);
+    if(facultyCheck(faculty)){
+        system->faculty_profit[(int)faculty]+=profit;
+    }
+    return;
+}
+
 /**===================Static functions implementation=========================*/
 static bool isCompanyHasReservation(EscapeTechnion system, Company company){
     LIST_FOREACH(Order,cur_order,system->orders){//for each order in sys
@@ -641,19 +648,23 @@ void escapeTechnionGetBestFaculties(EscapeTechnion system,
                                                     TechnionFaculty *faculties,
                                                     int best_faculties_num){
     assert(system);
+    long faculties_profit[FACULTY_NUM];
+    for(int i=0; i<FACULTY_NUM ;i++){
+        faculties_profit[i] = system->faculty_profit[i];
+    }
     long best_profit[best_faculties_num];
     for(int i = 0 ; i < best_faculties_num ; i++){
-        best_profit[i] = -1;
-    }
-    for(int i = 0 ; i < FACULTY_NUM ; i++){
-        for(int j = 0 ; j < best_faculties_num ; j++) {
-            if (system->faculty_profit[i] > best_profit[i]) {
-                for(int h = best_faculties_num - 1 ; h >= j+1 ; h--){
-                    *(faculties+h) = *(faculties+h-1);
-                }
-                *(faculties+j) = (TechnionFaculty)i;
+        for(int j=0 ; j < FACULTY_NUM ; j++){
+            if(j == 0){
+                best_profit[i] = faculties_profit[j];
+                faculties[i] = (TechnionFaculty)j;
+            }
+            else if(faculties_profit[j] > best_profit[i]){
+                best_profit[i] = faculties_profit[j];
+                faculties[i] = (TechnionFaculty)j;
             }
         }
+        faculties_profit[(int)faculties[i]] = -1;
     }
     return ;
 }

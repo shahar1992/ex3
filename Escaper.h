@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "mtm_ex3.h"
 
-#define FACULTY_NUM 19
+#define FACULTY_NUM 18
 #define MIN_SKILL_LEVEL 1
 #define MAX_SKILL_LEVEL 10
 

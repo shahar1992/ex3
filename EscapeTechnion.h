@@ -192,6 +192,8 @@ void escapeTechnionGetBestFaculties(EscapeTechnion system,
                                     TechnionFaculty *faculties,
                                     int best_faculties_num);
 
+void escapeTechnionIncreaseFacultyProfit(EscapeTechnion system,long profit,
+                                         TechnionFaculty faculty);
 
 #endif //EX3_ESCAPETECHNION_H
 

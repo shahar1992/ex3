@@ -177,6 +177,10 @@ static MtmErrorCode reportDay(EscapeTechnion system, FILE* output_c){
     mtmPrintDayHeader(output_c,day,listGetSize(orders_list));
     LIST_FOREACH(Order,order,orders_list){
         orderPrint(system,order,output_c);
+        long profit = orderCalculatePrice(order);
+        TechnionFaculty faculty;
+        orderGetFaculty(order,&faculty);
+        escapeTechnionIncreaseFacultyProfit(system,profit,faculty);
     }
     listDestroy(orders_list);
     mtmPrintDayFooter(output_c,escapeTechnionGetDay(system));
