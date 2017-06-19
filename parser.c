@@ -73,10 +73,9 @@ MtmErrorCode handleCommand(EscapeTechnion system,
     if(strcmp(command,"escaper")==0){
         return handleEscaperCommand(system,subcomand,arg_Array);
     }
-    /*
     if(strcmp(command,"report")==0){
-        return handleReportommand(system,subcomand,arg_Array);
-    }*/
+        return handleReportCommand(system,subcomand,stdout);
+    }//
     return MTM_INVALID_COMMAND_LINE_PARAMETERS;
 }
 

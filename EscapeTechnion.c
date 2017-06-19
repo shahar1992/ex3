@@ -1,8 +1,9 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
-#include <limits.h>
 
+
+#define LONG_MAX	2147483647L
 #include "EscapeTechnion.h"
 
 /**===============================Macros======================================*/
@@ -64,7 +65,7 @@ static long CalculateRecommendedFormula(long P_r,long P_e,
 static void GetRoomNextAvailabilty(EscapeTechnion system,Room room,
                                    long *next_available_hour,long* next_avialable_day);
 static bool isOrderForDay(ListElement order, ListFilterKey key);
-
+static bool isEmailLegal(char* email);
 /**===================System ADT functions implementation=====================*/
 
 /**-------------------------System Create-------------------------------------*/
@@ -127,7 +128,7 @@ EscapeTechnionResult escapeTechnionRemoveCompany(EscapeTechnion system,
     EscapeTechnionResult result = convertFromCompanyResult(
             companyCreate(email,RANDOM_FACULTY,&company));
     if(result!=ESCAPE_TECHNION_SUCCESS){
-        companyDestroy(company);
+       // companyDestroy(company);
         return result;
     }
     if(!setIsIn(system->companies,company)){
@@ -226,7 +227,7 @@ EscapeTechnionResult escapeTechnionRemoveClient(EscapeTechnion system,
     NULL_ARGUMENT_CHECK(system && email);
     Escaper escaper;
     EscapeTechnionResult result = convertFromEscaperResult(escaperCreate(
-            email, ELECTRICAL_ENGINEERING, 1, &escaper));
+            email, ELECTRICAL_ENGINEERING,1, &escaper));//random input
     if(result != ESCAPE_TECHNION_SUCCESS){
         return result;
     }
@@ -247,6 +248,7 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
     if(!checkAddOrderInput(day,hour,num_ppl,faculty,email,id)){
         return ESCAPE_TECHNION_INVALID_PARAMETER;
     }
+    day=day+escapeTechnionGetDay(system);
     Order order;
     Escaper escaper = getEscaper(system, email);//get the order's client
     Room room = getRoom(system,faculty,id);//get the order's room
@@ -306,7 +308,7 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                        &available_day);
                 //get avilabilty
                 orderDestroy((void *) rec_order);//destroy previous order
-                orderCreate(num_ppl, available_hour, available_day,
+                orderCreate(num_ppl, available_hour, available_day-escapeTechnionGetDay(system),
                             cur_company_faculty,room,client,&rec_order);
             }
         }
@@ -585,7 +587,6 @@ static  EscapeTechnionResult convertFromCompanyResult(CompanyResult result){
             return ESCAPE_TECHNION_NULL_PARAMETER;
     }
 }
-
 static EscapeTechnionResult convertFromEscaperResult(EscaperResult result){
     switch (result){
         case ESCAPER_INVALID_PARAMETER:
@@ -701,6 +702,11 @@ static Room getRoom(EscapeTechnion system, TechnionFaculty faculty, long id){
 static bool isRoomAvailable(EscapeTechnion system,long day,
                                             long hour,long id,Room room){
     assert(system);
+    long open_hour,close_hour;
+    roomGetOpenAndCloseHour(room,&open_hour,&close_hour);
+    if(hour<open_hour||hour>=close_hour){
+        return false;
+    }
     List filtered_list,temp_list;
     LIST_FOREACH(Order,order,system->orders){
         Room current_room = orderGetRoom(order);
@@ -744,7 +750,7 @@ inline static bool checkAddOrderInput(int day, int hour, int num_of_ppl,
     }
     return ( (counter==1)&&(day >= 0) && (hour >= 0)
              && (hour < MAX_HOUR) && (num_of_ppl > 0)
-             && (faculty<FACULTY_NUM)&&(faculty>=0)&& (id>0) );
+             && (faculty<FACULTY_NUM-1)&&(faculty>=0)&& (id>0) );
 }
 
 static bool isClientAvailable(EscapeTechnion system,long day,
@@ -781,7 +787,7 @@ static long CalculateRecommendedFormula(long P_r,long P_e,
 
 static void GetRoomNextAvailabilty(EscapeTechnion system,Room room,
                             long *next_available_hour,long* next_avialable_day) {
-    long wanted_hour, close_hour, day = 0, open_hour, id;
+    long wanted_hour, close_hour, day = escapeTechnionGetDay(system), open_hour, id;
     roomGetOpenAndCloseHour((Room) room, &open_hour, &close_hour);
     id = roomGetId(room);
     wanted_hour = open_hour;
@@ -796,4 +802,17 @@ static void GetRoomNextAvailabilty(EscapeTechnion system,Room room,
     }
     *next_available_hour = wanted_hour;
     *next_avialable_day = day;
+}
+
+static bool isEmailLegal(char* email){
+    assert(email);
+    char* ptr=email;
+    int counter=0;
+    while(*ptr){
+        if((*ptr) == '@'){
+            counter++;
+        }
+        ptr++;
+    }
+    return (counter==1)?true:false;
 }

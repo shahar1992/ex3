@@ -221,7 +221,7 @@ static CompanyResult convertReturnTypeFromRoom(RoomResult result){
 
 static bool isInputLegal(char* email, TechnionFaculty faculty){
     assert(email);
-    return (isEmailLegal(email) && (faculty >= 0) && (faculty < FACULTY_NUM));
+    return (isEmailLegal(email) && (faculty >= 0) && (faculty < FACULTY_NUM-1));
 }
 
 static bool isEmailLegal(char* email){

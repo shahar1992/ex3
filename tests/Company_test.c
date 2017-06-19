@@ -33,7 +33,6 @@ static bool testCompanyCreate() {
     companyDestroy(company);
     return true;
 }
-
 static bool testCompanyCopy() {
     Company company;
     companyCreate("shahar92@campux.technion.ac.il",ELECTRICAL_ENGINEERING,&company);
