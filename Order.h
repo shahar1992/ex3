@@ -26,6 +26,7 @@
  *  orderGetNumOfPeople           - Get the faculty owns the ordered room.-Tested
  *  OrderResult orderGetTimeAndDay - Get Order time and day
  *  OrderResult OrderGetRoomId(Order order,long* id)
+ *  OrderCmpByFaculty              -
  */
 /** Type for defining an Order*/
 typedef struct Order_t* Order;
@@ -76,5 +77,7 @@ int orderGetHour(Order order);
 long orderGetRoomId(Order order);
 
 long orderGetDifficulty(Order order);
+
+int orderCompareByFaculty(void* order1, void* order2);
 
 #endif //EX3_ORDER_H
