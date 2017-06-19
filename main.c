@@ -6,6 +6,7 @@
 #include "EscapeTechnion.h"
 #include "mtm_ex3.h"
 
+#define ERROR_CHANNEL stderr
 
 /**======================Macros and structs===================================*/
 #define MAX_LINE_SIZE 256
@@ -24,11 +25,11 @@ int main(int argc,  char** argv) {
     escapeTechnionCreate(&sys);
     FILE *input_c,*output_c;
     MtmErrorCode result;
-    char* array[] = {"main","-i","test4.in"};///////////
-    result = getChannels(3, array, &input_c, &output_c);///////
+    char* array[] = {"main","-i","test1.in","-o","output.txt"};///////////
+    result = getChannels(5, array, &input_c, &output_c);///////
    // result = getChannels(argc,argv,&input_c, &output_c);
     if(result != MTM_SUCCESS){//Invalid command or open file problem
-        mtmPrintErrorMessage(stderr,result);
+        mtmPrintErrorMessage(ERROR_CHANNEL,result);
             escapeTechnionDestroy(sys);
             fclose(output_c);
             fclose(input_c);
@@ -42,13 +43,13 @@ int main(int argc,  char** argv) {
         if(result != MTM_SUCCESS){
             if(result==MTM_INVALID_COMMAND_LINE_PARAMETERS||
                     result==MTM_OUT_OF_MEMORY){
-                mtmPrintErrorMessage(stderr,result);
+                mtmPrintErrorMessage(ERROR_CHANNEL,result);
                 escapeTechnionDestroy(sys);
                 fclose(output_c);
                 fclose(input_c);
                 return 0;
             }
-            mtmPrintErrorMessage(stderr,result);//print error msg
+            mtmPrintErrorMessage(ERROR_CHANNEL,result);//print error msg
         }
     }
     escapeTechnionDestroy(sys);
@@ -144,7 +145,7 @@ static MtmErrorCode getTwoChannels(char** argv,FILE** input_c,FILE** output_c){
             fclose(*input_c);
             return MTM_CANNOT_OPEN_FILE;
         }
-        return MTM_SUCCESS;
     }
+    return MTM_SUCCESS;
 }
 
