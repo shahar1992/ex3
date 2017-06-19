@@ -252,32 +252,22 @@ EscapeTechnionResult escapeTechnionRemoveClient(EscapeTechnion system,
 
 EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
                                             TechnionFaculty faculty, long id,
-                                            int day, int hour, int num_ppl) {
+                                            int day_left, int hour, int num_ppl) {
     NULL_ARGUMENT_CHECK(system && email);
-    if(!checkAddOrderInput(day,hour,num_ppl,faculty,email,id)){
-        return ESCAPE_TECHNION_INVALID_PARAMETER;
-    }
-    day=day+escapeTechnionGetDay(system);
     Order order;
     Escaper escaper = getEscaper(system, email);//get the order's client
     Room room = getRoom(system,faculty,id);//get the order's room
     EscapeTechnionResult result = convertFromOrderResult(
-            orderCreate(num_ppl,hour,day,faculty,room,escaper,&order));
-    if(result == ESCAPE_TECHNION_NULL_PARAMETER){//cannot create order
-        assert(!escaper || !room);
-        return (escaper == NULL) ? ESCAPE_TECHNION_CLIENT_EMAIL_DOES_NOT_EXIST
-                                 : ESCAPE_TECHNION_ID_DOES_NOT_EXIST;
-        //is it an escaper problem? or a room problem?
-    }
+            orderCreate(num_ppl,hour,day_left+system->day,faculty,room,escaper,
+                        &order));
     if(result != ESCAPE_TECHNION_SUCCESS){
         return result;
     }
-    //order was created;
-    if(!isClientAvailable(system,day,hour,escaper)){//client unabailable
+    if(!isClientAvailable(system,day_left,hour,escaper)){
         orderDestroy(order);
         return ESCAPE_TECHNION_CLIENT_IN_ROOM;
     }
-    if(!isRoomAvailable(system,day,hour,id,room,faculty)) {//room unavailable
+    if(!isRoomAvailable(system,day_left,hour,id,room,faculty)) {
         orderDestroy(order);
         return ESCAPE_TECHNION_ROOM_NOT_AVAILABLE;
     }
@@ -291,7 +281,7 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
 EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                                         char* mail,
                                                         long num_ppl) {
-    Order rec_order =NULL;
+    Order recommended_order =NULL;
     long best_barometer = LONG_MAX;
     NULL_ARGUMENT_CHECK(system && mail);//not null//
     Escaper client = getEscaper(system, mail);//find escaper
@@ -310,30 +300,32 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                                          num_ppl, cur_room_dif,
                                                          skill_level);
             TechnionFaculty checked_faculty,recommended_faculty,escaper_faculty;
-            orderGetFaculty(rec_order,&recommended_faculty);
+            orderGetFaculty(recommended_order,&recommended_faculty);
             companyGetFaculty(cur_company,&checked_faculty);
             escaperGetFaculty(client,&escaper_faculty);
             //calculate barometer for current room
             if ((barometer < best_barometer)||
-                    ((barometer==best_barometer)&&isFacultyNearer(checked_faculty,recommended_faculty,escaper_faculty))){//if it is better
+                    ((barometer==best_barometer)&&isFacultyNearer(
+                            checked_faculty,recommended_faculty,
+                            escaper_faculty))){//if it is better
                 best_barometer = barometer;//update best barometer
                 long available_hour, available_day;
                 GetRoomNextAvailabilty(system,room,&available_hour,
                                        &available_day,checked_faculty);
                 //get avilabilty
-                orderDestroy((void *) rec_order);//destroy previous order
+                orderDestroy((void *) recommended_order);//destroy previous order
                 orderCreate(num_ppl, available_hour, available_day-escapeTechnionGetDay(system),
-                            cur_company_faculty,room,client,&rec_order);
+                            cur_company_faculty,room,client,&recommended_order);
             }
         }
     }
-    if(rec_order!=NULL){
+    if(recommended_order!=NULL){
         TechnionFaculty faculty;
-        orderGetFaculty(rec_order,&faculty);
-        long id = orderGetRoomId(rec_order);
+        orderGetFaculty(recommended_order,&faculty);
+        long id = orderGetRoomId(recommended_order);
         EscapeTechnionResult result;
-        result=escapeTechnionAddOrder(system,mail,faculty,id,orderGetDay(rec_order),
-                orderGetHour(rec_order),num_ppl);
+        result=escapeTechnionAddOrder(system,mail,faculty,id,orderGetDay(recommended_order),
+                orderGetHour(recommended_order),num_ppl);
         return ESCAPE_TECHNION_SUCCESS;
     }
     else{
@@ -645,6 +637,10 @@ static EscapeTechnionResult convertFromOrderResult(OrderResult result){
             return ESCAPE_TECHNION_INVALID_PARAMETER;
         case ORDER_OUT_OF_MEMORY:
             return ESCAPE_TECHNION_OUT_OF_MEMORY;
+        case ORDER_ESCAPER_IS_NULL:
+            return ESCAPE_TECHNION_CLIENT_EMAIL_DOES_NOT_EXIST;
+        case ORDER_ROOM_IS_NULL:
+            return ESCAPE_TECHNION_ID_DOES_NOT_EXIST;
 
         default:
             return ESCAPE_TECHNION_NULL_PARAMETER;
@@ -710,6 +706,9 @@ static void removeClientOrders(EscapeTechnion system, Escaper escaper){
 
 static Escaper getEscaper(EscapeTechnion system, char *email){
     assert(system);
+    if(!isEmailLegal(email)){
+        return NULL;
+    }
     SET_FOREACH(Escaper,escaper,system->escapers){
         char* escaper_email;
         escaperGetEmail(escaper,&escaper_email);
@@ -723,7 +722,9 @@ static Escaper getEscaper(EscapeTechnion system, char *email){
 
 static Room getRoom(EscapeTechnion system, TechnionFaculty faculty, long id){
     assert(system);
-    assert(faculty >= 0 && faculty < FACULTY_NUM && id > 0);
+    if((faculty < 0) || (faculty >= (UNKNOWN)) || (id < 0)){
+        return NULL;
+    }
     Room room;
     SET_FOREACH(Company,company,system->companies){
         TechnionFaculty company_faculty;
