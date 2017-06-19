@@ -175,5 +175,10 @@ static bool checkInput(int day, int hour, int num_of_ppl,
 
 int orderCompareByFaculty(void* order1, void* order2){
     assert(((Order)order1 != NULL) && ((Order)order2 != NULL));
-    return (((Order)order2)->faculty - ((Order)order1)->faculty);
+    return (((Order)order1)->faculty < ((Order)order2)->faculty);
+}
+
+int orderCompareByRoomId(void* order1, void* order2){
+    assert(((Order)order1 != NULL) && ((Order)order2 != NULL));
+    return orderGetRoomId(order1)-orderGetRoomId(order2);
 }

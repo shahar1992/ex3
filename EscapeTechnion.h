@@ -195,6 +195,8 @@ void escapeTechnionGetBestFaculties(EscapeTechnion system,
 void escapeTechnionIncreaseFacultyProfit(EscapeTechnion system,long profit,
                                          TechnionFaculty faculty);
 
+int orderCompareByRoomId(void* order1, void* order2);
+
 #endif //EX3_ESCAPETECHNION_H
 
 

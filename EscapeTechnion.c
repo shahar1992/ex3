@@ -52,7 +52,7 @@ static Escaper getEscaper(EscapeTechnion system, char *email);
 static Room getRoom(EscapeTechnion system, TechnionFaculty faculty,long id);
 static EscapeTechnionResult convertFromOrderResult(OrderResult result);
 static bool isRoomAvailable(EscapeTechnion system,long day,
-                            long hour,long id,Room room);
+                            long hour,long id,Room room,TechnionFaculty room_faculty);
 inline static bool checkAddOrderInput(int day, int hour, int num_of_ppl,
                                       TechnionFaculty faculty,char* mail,long id);
 static bool isClientAvailable(EscapeTechnion system,long day,
@@ -60,7 +60,8 @@ static bool isClientAvailable(EscapeTechnion system,long day,
 static long CalculateRecommendedFormula(long P_r,long P_e,
                                           long difficulty,long skill_level);
 static void GetRoomNextAvailabilty(EscapeTechnion system,Room room,
-                                   long *next_available_hour,long* next_avialable_day);
+                                   long *next_available_hour,long* next_avialable_day,
+                                   TechnionFaculty faculty);
 static bool isOrderForDay(ListElement order, ListFilterKey key);
 static bool isEmailLegal(char* email);
 static bool isFacultyNearer(TechnionFaculty checked_faculty,
@@ -278,7 +279,7 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
         orderDestroy(order);
         return ESCAPE_TECHNION_CLIENT_IN_ROOM;
     }
-    if(!isRoomAvailable(system,day,hour,id,room)) {//room unavailable
+    if(!isRoomAvailable(system,day,hour,id,room,faculty)) {//room unavailable
         orderDestroy(order);
         return ESCAPE_TECHNION_ROOM_NOT_AVAILABLE;
     }
@@ -320,7 +321,7 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                 best_barometer = barometer;//update best barometer
                 long available_hour, available_day;
                 GetRoomNextAvailabilty(system,room,&available_hour,
-                                       &available_day);
+                                       &available_day,checked_faculty);
                 //get avilabilty
                 orderDestroy((void *) rec_order);//destroy previous order
                 orderCreate(num_ppl, available_hour, available_day-escapeTechnionGetDay(system),
@@ -434,6 +435,7 @@ OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system){
         return NULL;
     }
     OrdersList list = listFilter(system->orders,isOrderForDay,&system->day);
+    listSort(list,orderCompareByRoomId);
     listSort(list,orderCompareByFaculty);
     listSort(list,orderCompare);
     if(!list){
@@ -739,7 +741,7 @@ static Room getRoom(EscapeTechnion system, TechnionFaculty faculty, long id){
 }
 
 static bool isRoomAvailable(EscapeTechnion system,long day,
-                                            long hour,long id,Room room){
+                                            long hour,long id,Room room,TechnionFaculty faculty){
     assert(system);
     long open_hour,close_hour;
     roomGetOpenAndCloseHour(room,&open_hour,&close_hour);
@@ -749,7 +751,9 @@ static bool isRoomAvailable(EscapeTechnion system,long day,
     List filtered_list,temp_list;
     LIST_FOREACH(Order,order,system->orders){
         Room current_room = orderGetRoom(order);
-        if (roomCompare(current_room,room)==0){
+        TechnionFaculty orders_faculty;
+        orderGetFaculty(order,&orders_faculty);
+        if ((roomCompare(current_room,room)==0)&&(faculty==orders_faculty)){
             if(orderGetDay(order) == day && orderGetHour(order) == hour){
                 return false;
             }
@@ -825,13 +829,14 @@ static long CalculateRecommendedFormula(long P_r,long P_e,
 }
 
 static void GetRoomNextAvailabilty(EscapeTechnion system,Room room,
-                            long *next_available_hour,long* next_avialable_day) {
+                            long *next_available_hour,long* next_avialable_day,
+                                   TechnionFaculty faculty) {
     long wanted_hour, close_hour, day = escapeTechnionGetDay(system), open_hour, id;
     roomGetOpenAndCloseHour((Room) room, &open_hour, &close_hour);
     id = roomGetId(room);
     wanted_hour = open_hour;
     while (!isRoomAvailable(system, day, wanted_hour, id,
-                            room)) {//find next avilability
+                            room,faculty)) {//find next avilability
         if (wanted_hour < close_hour) {
             wanted_hour++;
         } else {
