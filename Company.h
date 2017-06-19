@@ -77,8 +77,7 @@ int companyCompare(SetElement company1, SetElement company2);
  *      COMPANY_OUT_OF_MEMORY if allocate failed.
  *      COMPANY_SUCCESS otherwise.
  */
-CompanyResult companyAddRoom(Company company, long id, long price, int num_ppl,
-                             int open_hour, int close_hour, int difficult);
+CompanyResult companyAddRoom(Company company, Room room);
 
 /**
  * This function remove a room from the company rooms list.

@@ -5,7 +5,7 @@
 #include "list.h"
 #include "mtm_ex3.h"
 
-#define PRICE_MOUDLE 4
+#define PRICE_MODULE 4
 #define MIN_DIFFICULTY_LEVEL 1
 #define MAX_DIFFICULTY_LEVEL 10
 #define MIN_HOUR 0
