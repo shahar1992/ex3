@@ -6,7 +6,7 @@
 #include "set.h"
 
 /**======================Macros and structs===================================*/
-#define FACULTY_NUM 19
+#define FACULTY_NUM 18
 
 #define NULL_ARGUMENT_CHECK(condition) {\
     if(!(condition)) {\

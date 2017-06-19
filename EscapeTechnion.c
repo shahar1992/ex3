@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include "EscapeTechnion.h"
 
@@ -63,7 +64,7 @@ static void GetRoomNextAvailabilty(EscapeTechnion system,Room room,
                                    long *next_available_hour,long* next_avialable_day);
 static bool isOrderForDay(ListElement order, ListFilterKey key);
 static bool isEmailLegal(char* email);
-static bool isFacultynearer(TechnionFaculty checked_faculty,
+static bool isFacultyNearer(TechnionFaculty checked_faculty,
                             TechnionFaculty recommended_faculty,
                             TechnionFaculty escaper_faculty);
 
@@ -307,7 +308,7 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
             escaperGetFaculty(client,&escaper_faculty);
             //calculate barometer for current room
             if ((barometer < best_barometer)||
-                    ((barometer==best_barometer)&&isFacultynearer(checked_faculty,recommended_faculty,escaper_faculty))){//if it is better
+                    ((barometer==best_barometer)&&isFacultyNearer(checked_faculty,recommended_faculty,escaper_faculty))){//if it is better
                 best_barometer = barometer;//update best barometer
                 long available_hour, available_day;
                 GetRoomNextAvailabilty(system,room,&available_hour,
