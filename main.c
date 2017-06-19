@@ -6,7 +6,7 @@
 #include "EscapeTechnion.h"
 #include "mtm_ex3.h"
 
-#define ERROR_CHANNEL "myerr.err"
+#define ERROR_CHANNEL "myerr7.err"
 
 /**======================Macros and structs===================================*/
 #define MAX_LINE_SIZE 256

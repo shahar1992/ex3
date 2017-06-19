@@ -36,7 +36,6 @@ struct EscapeTechnion_t{
 static bool facultyCheck(TechnionFaculty faculty);
 static bool isEmailAlreadyExist(EscapeTechnion system, char* email);
 static bool isCompanyHasReservation(EscapeTechnion system, Company company);
-static Company getCompany(EscapeTechnion system, char *email);
 static bool isIdAlreadyExistInFaculty(EscapeTechnion system,
                                       TechnionFaculty faculty, long id);
 static bool doesRoomHaveOrders(EscapeTechnion sys, Room room,
@@ -67,6 +66,8 @@ static bool isEmailLegal(char* email);
 static bool isFacultyNearer(TechnionFaculty checked_faculty,
                             TechnionFaculty recommended_faculty,
                             TechnionFaculty escaper_faculty);
+static EscapeTechnionResult getCompany(EscapeTechnion system, char *email,
+                                Company *company);
 
 /**===================System ADT functions implementation=====================*/
 
@@ -152,24 +153,29 @@ EscapeTechnionResult escapeTechnionAddRoom(EscapeTechnion system, char *email,
                                            int open_hour, int close_hour,
                                            int difficulty){
     NULL_ARGUMENT_CHECK(system && email);
-
-    Company company = getCompany(system, email);//get Company by mail
-    if(company==NULL){//if no company exists
-        return ESCAPE_TECHNION_COMPANY_EMAIL_DOES_NOT_EXIST;
-    }
-    TechnionFaculty faculty;
-    companyGetFaculty(company,&faculty);//get company's faculty
-    if(isIdAlreadyExistInFaculty(system, faculty, id)==true){
-        return ESCAPE_TECHNION_ID_ALREADY_EXIST;//break if id exists in faculty
-    }
-    CompanyResult com_res;
-    com_res=companyAddRoom(company, id, price, num_ppl, open_hour, close_hour,
-                           difficulty);
-    EscapeTechnionResult result = convertFromCompanyResult(com_res);
+    Company company;
+    EscapeTechnionResult result = getCompany(system, email,&company);
     if(result != ESCAPE_TECHNION_SUCCESS){
         return result;
     }
+    TechnionFaculty faculty;
+    companyGetFaculty(company,&faculty);//get company's faculty
+    result = convertFromCompanyResult(companyAddRoom(
+            company, id, price, num_ppl, open_hour, close_hour,difficulty));
+    if(result!=ESCAPE_TECHNION_SUCCESS) {
+        return result;
+    }
+    if(isIdAlreadyExistInFaculty(system, faculty, id)==true){
+        result = convertFromCompanyResult(companyRemoveRoom(company,id));
+        if(result!=ESCAPE_TECHNION_SUCCESS){
+            return result;
+        }
+        return ESCAPE_TECHNION_ID_ALREADY_EXIST;//break if id exists in faculty
+    }
 
+    if(result != ESCAPE_TECHNION_SUCCESS){
+        return result;
+    }
     return ESCAPE_TECHNION_SUCCESS;
 }
 
@@ -563,16 +569,24 @@ static EscapeTechnionResult checkRoomReservations(EscapeTechnion system,
     return ESCAPE_TECHNION_SUCCESS;
 }
 */
-static Company getCompany(EscapeTechnion system, char *email){
-    assert(system && email);
+static EscapeTechnionResult getCompany(EscapeTechnion system, char *email,
+                                Company *company){
+    assert(system);
+    if(!email || !company){
+        return ESCAPE_TECHNION_NULL_PARAMETER;
+    }
+    if(!isEmailLegal(email)){
+        return ESCAPE_TECHNION_INVALID_PARAMETER;
+    }
     SET_FOREACH(Company,current_company,system->companies){
         char *cur_company_mail;
         companyGetEmail((Company)current_company,&cur_company_mail);
         if(strcmp(cur_company_mail,email) == 0){
-            return current_company;
+            *company = current_company;
+            return ESCAPE_TECHNION_SUCCESS;
         }
     }
-    return NULL;
+    return ESCAPE_TECHNION_COMPANY_EMAIL_DOES_NOT_EXIST;
 }
 
 static bool isIdAlreadyExistInFaculty(EscapeTechnion system, TechnionFaculty faculty, long id){

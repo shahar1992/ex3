@@ -102,14 +102,13 @@ int companyCompare(SetElement company1, SetElement company2){
 
 CompanyResult companyAddRoom(Company company, long id, long price, int num_ppl,
                              int open_hour, int close_hour, int difficult){
-
+    assert(company);
     Room room;
     CompanyResult result = convertReturnTypeFromRoom(
             roomCreate(id,price,num_ppl,open_hour,close_hour,difficult,&room));
     if(result != COMPANY_SUCCESS){
         return result;
     }
-    NULL_ARGUMENT_CHECK(company);
     result = convertReturnTypeFromSet(setAdd(company->rooms, room));
     roomDestroy(room);
     return result;
