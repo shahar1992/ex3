@@ -291,7 +291,7 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
 EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                                         char* mail,
                                                         long num_ppl) {
-    Order rec_order = NULL;
+    Order rec_order =NULL;
     long best_barometer = LONG_MAX;
     NULL_ARGUMENT_CHECK(system && mail);//not null//
     Escaper client = getEscaper(system, mail);//find escaper
