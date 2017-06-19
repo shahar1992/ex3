@@ -679,12 +679,12 @@ void escapeTechnionGetBestFaculties(EscapeTechnion system,
     return ;
 }
 
-static void removeClientOrders(EscapeTechnion system,
-                                               Escaper escaper){
+static void removeClientOrders(EscapeTechnion system, Escaper escaper){
     assert(system && escaper);
     LIST_FOREACH(Order,order,system->orders){
         if(escaperCompare(orderGetEscaper(order),escaper) == 0){
             listRemoveCurrent(system->orders);
+            listGetFirst(system->orders);
         }
     }
     return ;
