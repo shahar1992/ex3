@@ -6,11 +6,11 @@
 #include "EscapeTechnion.h"
 #include "mtm_ex3.h"
 
-
+#define ERROR_CHANNEL "myerr.err"
 
 /**======================Macros and structs===================================*/
 #define MAX_LINE_SIZE 256
-#define ERROR_CHANNEL "myerr8.err"
+
 /**======================Static Functions Decleration ========================*/
 static MtmErrorCode getChannels(int args_c, char **args_v, FILE **input_c,
                                 FILE **output_c);
@@ -21,15 +21,16 @@ static MtmErrorCode getTwoChannels(char** argv,FILE** input_c,FILE** output_c);
 /** -----------------------Main-Function------------------------------------**/
 
 int main(int argc,  char** argv) {
+    FILE* error_ch=fopen(ERROR_CHANNEL,"w");
     EscapeTechnion sys;
     escapeTechnionCreate(&sys);
-    FILE *input_c,*output_c,*error_c = fopen(ERROR_CHANNEL,"w");
+    FILE *input_c,*output_c;
     MtmErrorCode result;
-    char* array[] = {"main","-i","test8.in","-o","test8.out"};///////////
+    char* array[] = {"main","-i","test2.in","-o","myout.out"};///////////
     result = getChannels(5, array, &input_c, &output_c);///////
    // result = getChannels(argc,argv,&input_c, &output_c);
     if(result != MTM_SUCCESS){//Invalid command or open file problem
-        mtmPrintErrorMessage(error_c,result);
+        mtmPrintErrorMessage(error_ch,result);
             escapeTechnionDestroy(sys);
             fclose(output_c);
             fclose(input_c);
@@ -43,19 +44,19 @@ int main(int argc,  char** argv) {
         if(result != MTM_SUCCESS){
             if(result==MTM_INVALID_COMMAND_LINE_PARAMETERS||
                     result==MTM_OUT_OF_MEMORY){
-                mtmPrintErrorMessage(error_c,result);
+                mtmPrintErrorMessage(error_ch,result);
                 escapeTechnionDestroy(sys);
                 fclose(output_c);
                 fclose(input_c);
                 return 0;
             }
-            mtmPrintErrorMessage(error_c,result);//print error msg
+            mtmPrintErrorMessage(error_ch,result);//print error msg
         }
     }
     escapeTechnionDestroy(sys);
     fclose(output_c);
     fclose(input_c);
-    fclose(error_c);
+    fclose(error_ch);//
     return 0;
 }
 

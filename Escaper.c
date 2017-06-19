@@ -102,7 +102,7 @@ int escaperCompare(void* escaper1, void* escaper2){
 
 /**=====EscaperGetEmail==================================*/
 EscaperResult escaperGetEmail(Escaper escaper,char** mail){
-    if(!escaper || !mail){
+    if(!escaper || !mail||escaper->email==NULL){
         return ESCAPER_NULL_ARGUMENT;
     }
     *mail=malloc(sizeof(char)*(strlen(escaper->email) +1));

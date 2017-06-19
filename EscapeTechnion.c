@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #include "EscapeTechnion.h"
 
@@ -424,6 +425,8 @@ OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system){
         return NULL;
     }
     OrdersList list = listFilter(system->orders,isOrderForDay,&system->day);
+    listSort(list,orderCompareByFaculty);
+    listSort(list,orderCompare);
     if(!list){
         return NULL;
     }

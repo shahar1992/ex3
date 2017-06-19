@@ -172,3 +172,8 @@ static bool checkInput(int day, int hour, int num_of_ppl,
     return ( (day >= 0) && (hour >= 0) && (hour < MAX_HOUR) && (num_of_ppl > 0)
     && (faculty<FACULTY_NUM)&&(faculty>=0) );
 }
+
+int orderCompareByFaculty(void* order1, void* order2){
+    assert(((Order)order1 != NULL) && ((Order)order2 != NULL));
+    return (((Order)order2)->faculty - ((Order)order1)->faculty);
+}
