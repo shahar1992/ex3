@@ -837,13 +837,13 @@ static bool isEmailLegal(char* email){
     return (counter==1)?true:false;
 }
 
-static bool isFacultynearer(TechnionFaculty checked_faculty,
+static bool isFacultyNearer(TechnionFaculty checked_faculty,
                             TechnionFaculty recommended_faculty,
                             TechnionFaculty escaper_faculty){
     int checked_faculty_distance=abs(escaper_faculty-checked_faculty);
     int recommended_faculty_distance=abs(recommended_faculty-checked_faculty);
     if(checked_faculty_distance==recommended_faculty_distance){
-        return (checked_faculty<recommended_faculty)?true:false;
+        return (checked_faculty<recommended_faculty) ? true : false;
     }
     if(checked_faculty_distance<recommended_faculty_distance)return true;
     return false;
