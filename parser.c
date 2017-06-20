@@ -146,12 +146,12 @@ MtmErrorCode handleEscaperCommand(EscapeTechnion system, char* sub_command,
                                         faculty,id,day,hour,num_ppl);
         return ConvertResult(result);
     }
-    if(strcmp(sub_command,"recommend")==0){
+/*    if(strcmp(sub_command,"recommend")==0){
         char *ptr;
         long num_ppl=strtol(arg_Array[1],&ptr,10);
         result=escapeTechnionRecommendedRoomOrder(system,arg_Array[0],num_ppl);
         return ConvertResult(result);
-    }
+    }*/
     return MTM_INVALID_COMMAND_LINE_PARAMETERS;
 }
 
@@ -179,9 +179,8 @@ static MtmErrorCode reportDay(EscapeTechnion system, FILE* output_c){
     LIST_FOREACH(Order,order,orders_list){
         orderPrint(system,order,output_c);
         long profit = orderCalculatePrice(order);
-        TechnionFaculty faculty;
-        orderGetFaculty(order,&faculty);
-        escapeTechnionIncreaseFacultyProfit(system,profit,faculty);
+        TechnionFaculty faculty = orderGetFaculty(order);
+        escapeTechnionAddProfitToFaculty(system,profit,faculty);
     }
     listDestroy(orders_list);
     mtmPrintDayFooter(output_c,escapeTechnionGetDay(system));
@@ -192,8 +191,7 @@ static MtmErrorCode reportDay(EscapeTechnion system, FILE* output_c){
 static MtmErrorCode orderPrint(EscapeTechnion system,Order order,
                                FILE* output_c){
     Room room = orderGetRoom(order);
-    TechnionFaculty room_faculty,escaper_faculty;
-    orderGetFaculty(order,&room_faculty);
+    TechnionFaculty room_faculty = orderGetFaculty(order);
     Company company = escapeTechnionFindCompanyByRoomAndFaculty
             (system,room,room_faculty);
     Escaper escaper = orderGetEscaper(order);
@@ -207,7 +205,7 @@ static MtmErrorCode orderPrint(EscapeTechnion system,Order order,
         free(email);
         return MTM_OUT_OF_MEMORY;
     }
-    escaperGetFaculty(escaper,&escaper_faculty);
+    TechnionFaculty escaper_faculty = escaperGetFaculty(escaper);
     long price = orderCalculatePrice(order);
     mtmPrintOrder(output_c,email,escaperGetSkillLevel(escaper),escaper_faculty,
                   company_email,room_faculty,roomGetId(room),orderGetHour(order),

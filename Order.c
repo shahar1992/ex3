@@ -31,21 +31,23 @@ if(!(condition)){ \
 }
 /**====================End of Macros==============================*/
 
+
+
+
 /**=====================Static functions declarations=========================*/
-/** List of static functions and its usage
- * GetTime          -gets time in time format and returns both wanted hour and
- *                   number of days left in pointers;
- *  MailCheck        -checks if a mail is valid (only 1 @)
- *  TimeCheck         - checks if time is valid (betwenn 0 and 23 including)
- */
-static bool checkInput(int day, int hour, int num_of_ppl,TechnionFaculty faculty);
+
+static bool checkInput(int day, int hour, int num_of_ppl,
+                       TechnionFaculty faculty);
 
 /**===================End of static function declarations.====================*/
+
+
+
 
 /**===================Order ADT functions implementation====================*/
 
 
-/**============OrderCreate===========================*/
+/**-----------------------Order Create----------------------------------------*/
 
 OrderResult orderCreate(int num_of_ppl, int hour, int day,
                         TechnionFaculty faculty, Room room, Escaper escaper,
@@ -61,12 +63,18 @@ OrderResult orderCreate(int num_of_ppl, int hour, int day,
         return ORDER_ROOM_IS_NULL;
     }
     *order = malloc(sizeof(**order));
-    MEMORY_CHECK(*order, *order);
+    if(!*order){
+        return ORDER_OUT_OF_MEMORY;
+    }
+    (*order)->room = roomCopy(room);
+    (*order)->escaper = escaperCopy(escaper);
+    if(!(*order)->room || !(*order)->escaper){
+        orderDestroy(*order);
+        return ORDER_OUT_OF_MEMORY;
+    }
     (*order)->day = day;
     (*order)->hour = hour;
     (*order)->num_ppl = num_of_ppl;
-    (*order)->room = room;
-    (*order)->escaper = escaper;
     (*order)->faculty = faculty;
     return ORDER_SUCCESS;
 
@@ -76,24 +84,25 @@ OrderResult orderCreate(int num_of_ppl, int hour, int day,
 
 void orderDestroy(void* order){
     if(order != NULL) {
+        escaperDestroy(((Order)order)->escaper);
+        roomDestroy(((Order)order)->room);
         free(order);
     }
     return;
-
 }
 
 /**============OrderCopy===========================*/
 void* orderCopy(void* order){
-    if(!order){
-        return NULL;
-    }
+    assert(order);
     Order new_order;
-    OrderResult result = orderCreate(((Order)order)->num_ppl,
-                                     ((Order)order)->hour,((Order)order)->day,
-                                     ((Order)order)->faculty,
-                                     ((Order)order)->room,
-                                     ((Order)order)->escaper,&(new_order));
-    return (result != ORDER_SUCCESS) ? NULL : new_order;
+#ifndef NDEBUG
+    OrderResult result =
+#endif
+    orderCreate(((Order)order)->num_ppl, ((Order)order)->hour,
+                ((Order)order)->day, ((Order)order)->faculty,
+                ((Order)order)->room, ((Order)order)->escaper, &(new_order));
+    assert(result != ROOM_INVALID_PARAMETER);
+    return (!new_order) ? NULL : new_order;
 }
 
 /**============OrderCmp===========================*/
@@ -105,45 +114,35 @@ int orderCompare(void* order1, void* order2){
 }
 
 /**============OrderGetFaculty===========================================*/
-OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty){
-    if(!order || !faculty){
-        return ORDER_NULL_ARGUMENT;
-    }
-    *faculty = order->faculty;
-    return ORDER_SUCCESS;
+TechnionFaculty orderGetFaculty(Order order){
+    assert(order);
+    return order->faculty;
 }
 
 /**============OrderGetRoom===========================================*/
 Room orderGetRoom(Order order){
-    if(!order){
-        return NULL;
-    }
+    assert(order);
+    assert(order->room);
     return order->room;
 }
 /**============OrderGetEscaper===========================================*/
 Escaper orderGetEscaper(Order order){
-    if(!order){
-        return NULL;
-    }
+    assert(order);
+    assert(order->escaper);
     return order->escaper;
 }
 /**============OrderCalculateprice===========================================*/
 long orderCalculatePrice(Order order){
-    if(!order){
-        return 0;
-    }
+    assert(order);
     long total_price = order->num_ppl * roomGetPrice(order->room);
-    TechnionFaculty escaper_faculty;
-    escaperGetFaculty(order->escaper,&escaper_faculty);
+    TechnionFaculty escaper_faculty = escaperGetFaculty(order->escaper);
     return (order->faculty == escaper_faculty) ?
            (total_price * DISCOUNT_FOT_FACULTY_MEMBERS) : total_price;
 }
 
 /**=====================OrderGetNumOFPeople===================================*/
 int orderGetNumOfPeople(Order order){
-    if(!order){
-        return 0;
-    }
+    assert(order);
     return order->num_ppl;
 }
 
@@ -171,12 +170,24 @@ long orderGetDifficulty(Order order){
     return roomGetDiffuclty(order->room);
 }
 
+bool orderIsSameFaculty(void* order, void* compared_faculty){
+    assert(order);
+    assert(compared_faculty);
+    return (((Order)order)->faculty == *(TechnionFaculty*)compared_faculty);
+}
+
+bool orderIsSameId(void* order, void* id_to_compare){
+    assert(order);
+    assert(id_to_compare);
+    return (roomGetId(((Order)order)->room) == *(long*)id_to_compare);
+}
+
 /** ===============Static functions implementation==========================*/
 
 static bool checkInput(int day, int hour, int num_of_ppl,
                        TechnionFaculty faculty){
     return ( (day >= 0) && (hour >= 0) && (hour < MAX_HOUR) && (num_of_ppl > 0)
-    && (faculty<FACULTY_NUM)&&(faculty>=0) );
+    && (faculty < FACULTY_NUM) && (faculty >= 0));
 }
 
 int orderCompareByFaculty(void* order1, void* order2){
@@ -187,4 +198,9 @@ int orderCompareByFaculty(void* order1, void* order2){
 int orderCompareByRoomId(void* order1, void* order2){
     assert(((Order)order1 != NULL) && ((Order)order2 != NULL));
     return orderGetRoomId(order2)-orderGetRoomId(order1);
+}
+
+bool orderNotBelongToClient(void* order , void* escaper){
+    Escaper order_escaper = ((Order)order)->escaper;
+    return (escaperCompare(order_escaper,escaper) == 0);
 }

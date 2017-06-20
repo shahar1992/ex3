@@ -43,11 +43,14 @@ static bool inputCheck(long id, int price, int num_ppl, int open_hour,
 /**------------------------Room Create----------------------------------------*/
 RoomResult roomCreate(long id, int price, int num_ppl, int open_hour,
                   int close_hour, int difficulty, Room* room){
-    NULL_CHECK(room);
-    PARAMETER_CHECK(inputCheck(id,price,num_ppl,open_hour,close_hour,
-                               difficulty));
+    assert(room != NULL);
+    if(!inputCheck(id,price,num_ppl,open_hour,close_hour,difficulty)){
+        return ROOM_INVALID_PARAMETER;
+    }
     *room = malloc(sizeof(**room));
-    MEMORY_CHECK_NULL(*room, *room);
+    if(!*room){
+        return ROOM_OUT_OF_MEMORY;
+    }
     (*room)->id = id;
     (*room)->difficulty = difficulty;
     (*room)->open_hour = open_hour;
@@ -68,15 +71,12 @@ void* roomCopy(void* room){
                 ((Room)room)->num_ppl, ((Room)room)->open_hour,
                 ((Room)room)->close_hour, ((Room)room)->difficulty, &new_room);
     assert(result != ROOM_INVALID_PARAMETER);
-    if(!new_room){
-        return NULL;
-    }
-    return new_room;
+    return (!new_room) ? NULL : new_room;
 }
 
 /**-------------------------Room Destroy--------------------------------------*/
 void roomDestroy(void* room){
-    if(room != NULL) {
+    if(room != NULL){
         free(room);
     }
     return;
@@ -87,56 +87,47 @@ int roomCompare(void* room1, void* room2){
     assert((room1 != NULL) && (room2 != NULL));
     assert(roomGetId(room1) > 0 );
     assert(roomGetId(room2) > 0 );
-    return roomGetId((Room)room1) - roomGetId((Room)room2);
+    return roomGetId((Room)room2) - roomGetId((Room)room1);
 }
 
 /**-------------------------Room Get Id---------------------------------------*/
 long roomGetId(Room room){
-    if(!room){
-        return 0;
-    }
+    assert(room);
     return room->id;
 }
 
 /**------------------------Room Get Price-------------------------------------*/
 long roomGetPrice(Room room){
-    if(!room){
-        return 0;
-    }
+    assert(room);
     return room->price_per_person;
 }
 
 /**------------------------Room Get Recommended-------------------------------------*/
 
 int roomGetRecommendedNumOfPeople(Room room){
-    if(!room){
-        return 0;
-    }
+    assert(room);
     return room->num_ppl;
 }
 
 /**------------------------Room Get Difficulty-------------------------------------*/
 
 int roomGetDiffuclty(Room room){
-    if(!room){
-        return 0;
-    }
+    assert(room);
     return room->difficulty;
 }
 
-/**------------------------Room Get OpenAndCloseHour-------------------------------------*/
+/**------------------------Room Get Open Hour---------------------------------*/
 
-RoomResult roomGetOpenAndCloseHour(Room room,long* open_hour,long* close_hour){
-    if(!room||!open_hour||!close_hour){
-        return ROOM_NULL_ARGUMENT;
-    }
-    *open_hour=room->open_hour;
-    *close_hour=room->close_hour;
-    return ROOM_SUCCESS;
+long roomGetOpenHour(Room room){
+    assert(room);
+    return room->open_hour;
 }
 
-
-
+/**------------------------Room Get Close Hour--------------------------------*/
+long roomGetCloseHour(Room room){
+    assert(room);
+    return room->close_hour;
+}
 
 /**====================Static functions implementations=======================*/
 
@@ -153,4 +144,3 @@ static bool inputCheck(long id, int price, int num_ppl, int open_hour,
             && (difficulty >= MIN_DIFFICULTY_LEVEL)
             && (difficulty <= MAX_DIFFICULTY_LEVEL));
 }
-

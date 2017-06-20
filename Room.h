@@ -90,6 +90,8 @@ int roomGetRecommendedNumOfPeople(Room room);
 
 int roomGetDiffuclty(Room room);
 
-RoomResult roomGetOpenAndCloseHour(Room room,long* open_hour,long* close_hour);
+long roomGetOpenHour(Room room);
+
+long roomGetCloseHour(Room room);
 
 #endif //EX3_ROOMS_H
