@@ -145,13 +145,12 @@ MtmErrorCode handleEscaperCommand(EscapeTechnion system, char* sub_command,
         result = escapeTechnionAddOrder(system,arg_Array[0],
                                         faculty,id,day,hour,num_ppl);
         return ConvertResult(result);
-    }
-/*    if(strcmp(sub_command,"recommend")==0){
+    }if(strcmp(sub_command,"recommend")==0){
         char *ptr;
         long num_ppl=strtol(arg_Array[1],&ptr,10);
         result=escapeTechnionRecommendedRoomOrder(system,arg_Array[0],num_ppl);
         return ConvertResult(result);
-    }*/
+    }
     return MTM_INVALID_COMMAND_LINE_PARAMETERS;
 }
 

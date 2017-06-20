@@ -127,7 +127,7 @@ int escaperGetSkillLevel(Escaper escaper){
 
 /**===================Static functions implementaion==========================*/
 static bool mailCheck(char *email){
-    assert(email);
+    assert(email!=NULL);
     char* ptr = email;
     int counter =0;
     while(*ptr!=0){

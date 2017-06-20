@@ -137,4 +137,6 @@ CompanyResult companySearchRoom(Company company, long id);
  */
 RoomSet companyGetRoomsSet(Company company);
 
+bool companyInputCheck(char* email, TechnionFaculty faculty);
+
 #endif //EX3_COMPANY_H
