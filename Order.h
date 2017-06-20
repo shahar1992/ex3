@@ -36,7 +36,9 @@ typedef enum OrderResult_t {
     ORDER_SUCCESS,
     ORDER_OUT_OF_MEMORY,
     ORDER_NULL_ARGUMENT,
-    ORDER_INVALID_PARAMETER
+    ORDER_INVALID_PARAMETER,
+    ORDER_ESCAPER_IS_NULL,
+    ORDER_ROOM_IS_NULL
 } OrderResult;
 
 /** Allocates a new Order */

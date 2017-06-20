@@ -50,9 +50,15 @@ static bool checkInput(int day, int hour, int num_of_ppl,TechnionFaculty faculty
 OrderResult orderCreate(int num_of_ppl, int hour, int day,
                         TechnionFaculty faculty, Room room, Escaper escaper,
                         Order* order){
-    NULL_CHECK(order && room && escaper);
+    assert(order);
     if(!checkInput(day, hour, num_of_ppl,faculty)){
         return ORDER_INVALID_PARAMETER;
+    }
+    if(!escaper){
+        return ORDER_ESCAPER_IS_NULL;
+    }
+    if(!room){
+        return ORDER_ROOM_IS_NULL;
     }
     *order = malloc(sizeof(**order));
     MEMORY_CHECK(*order, *order);

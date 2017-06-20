@@ -120,8 +120,8 @@ MtmErrorCode handleRoomCommand(EscapeTechnion system,
     return MTM_INVALID_COMMAND_LINE_PARAMETERS;
 }
 
-MtmErrorCode handleEscaperCommand(EscapeTechnion system,
-                                  char* sub_command,char**arg_Array){
+MtmErrorCode handleEscaperCommand(EscapeTechnion system, char* sub_command,
+                                  char**arg_Array){
     EscapeTechnionResult result;
     if(strcmp(sub_command,"add")==0){
         char *ptr;
@@ -142,7 +142,8 @@ MtmErrorCode handleEscaperCommand(EscapeTechnion system,
         ptr++;
         long hour=strtol(ptr,&(ptr),10);
         long num_ppl=strtol(arg_Array[4],&ptr,10);
-        result=escapeTechnionAddOrder(system,arg_Array[0],faculty,id,day,hour,num_ppl);
+        result = escapeTechnionAddOrder(system,arg_Array[0],
+                                        faculty,id,day,hour,num_ppl);
         return ConvertResult(result);
     }
     if(strcmp(sub_command,"recommend")==0){
@@ -152,7 +153,7 @@ MtmErrorCode handleEscaperCommand(EscapeTechnion system,
         return ConvertResult(result);
     }
     return MTM_INVALID_COMMAND_LINE_PARAMETERS;
-}//
+}
 
 MtmErrorCode handleReportCommand(EscapeTechnion system, char* sub_command,
                                   FILE* output_c) {
