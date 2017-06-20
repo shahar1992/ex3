@@ -36,8 +36,7 @@ if(!(condition)){ \
 
 /**=====================Static functions declarations=========================*/
 
-static bool checkInput(int day, int hour, int num_of_ppl,
-                       TechnionFaculty faculty);
+
 
 /**===================End of static function declarations.====================*/
 
@@ -53,7 +52,7 @@ OrderResult orderCreate(int num_of_ppl, int hour, int day,
                         TechnionFaculty faculty, Room room, Escaper escaper,
                         Order* order){
     assert(order);
-    if(!checkInput(day, hour, num_of_ppl,faculty)){
+    if(!ordercheckInput(day, hour, num_of_ppl,faculty)){
         return ORDER_INVALID_PARAMETER;
     }
     if(!escaper){
@@ -184,7 +183,7 @@ bool orderIsSameId(void* order, void* id_to_compare){
 
 /** ===============Static functions implementation==========================*/
 
-static bool checkInput(int day, int hour, int num_of_ppl,
+ bool ordercheckInput(int day, int hour, int num_of_ppl,
                        TechnionFaculty faculty){
     return ( (day >= 0) && (hour >= 0) && (hour < MAX_HOUR) && (num_of_ppl > 0)
     && (faculty < FACULTY_NUM) && (faculty >= 0));
@@ -198,6 +197,23 @@ int orderCompareByFaculty(void* order1, void* order2){
 int orderCompareByRoomId(void* order1, void* order2){
     assert(((Order)order1 != NULL) && ((Order)order2 != NULL));
     return orderGetRoomId(order2)-orderGetRoomId(order1);
+}
+int orderCompareByHour(void* order1, void* order2){
+    assert(((Order)order1 != NULL) && ((Order)order2 != NULL));
+    return orderGetHour(order2)-orderGetHour(order1);
+}
+int orderCompareByCritiria(void* order1, void* order2){
+    assert(((Order)order1 != NULL) && ((Order)order2 != NULL));
+    int result=orderCompareByHour(order2,order1);
+    if(result==0){//same time
+        result=orderCompareByFaculty(order1,order2);
+        if(result==0){//same faculty
+            result=orderCompareByRoomId(order1,order2);
+            return result*-1;
+        }
+        return result;
+    }
+    else return result;
 }
 
 bool orderNotBelongToClient(void* order , void* escaper){

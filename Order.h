@@ -88,4 +88,11 @@ bool orderIsSameId(void* order, void* id_to_compare);
 
 bool orderNotBelongToClient(void* order , void* escaper);
 
+bool ordercheckInput(int day, int hour, int num_of_ppl,
+                     TechnionFaculty faculty);
+
+int orderCompareByCritiria(void* order1, void* order2);
+
+int orderCompareByHour(void* order1, void* order2);
+
 #endif //EX3_ORDER_H

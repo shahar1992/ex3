@@ -94,4 +94,7 @@ long roomGetOpenHour(Room room);
 
 long roomGetCloseHour(Room room);
 
+bool roominputCheck(long id, int price, int num_ppl, int open_hour,
+                    int close_hour, int difficulty);
+
 #endif //EX3_ROOMS_H

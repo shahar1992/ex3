@@ -42,7 +42,7 @@ struct company_t{
 
 /**converts the result type from set result to comapny result*/
 static  CompanyResult convertReturnTypeFromSet(SetResult result);
-static bool inputCheck(char* email, TechnionFaculty faculty);
+
 static bool isEmailLegal(char* email);
 static CompanyResult convertReturnTypeFromRoom(RoomResult result);
 
@@ -59,7 +59,7 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
     if(!email){
         return COMPANY_NULL_ARGUMENT;
     }
-    if(!inputCheck(email,faculty)){
+    if(!companyInputCheck(email,faculty)){
         return COMPANY_INVALID_PARAMETER;
     }
     *company = malloc(sizeof(**company));
@@ -224,7 +224,7 @@ static CompanyResult convertReturnTypeFromRoom(RoomResult result){
     }
 }
 
-static bool inputCheck(char* email, TechnionFaculty faculty){
+ bool companyInputCheck(char* email, TechnionFaculty faculty){
     assert(email);
     return (isEmailLegal(email) && (faculty >= 0) && (faculty < FACULTY_NUM));
 }

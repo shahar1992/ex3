@@ -34,8 +34,7 @@ struct room_t {
 };
 
 /**=======================Static functions declarations=======================*/
-static bool inputCheck(long id, int price, int num_ppl, int open_hour,
-                int close_hour, int difficulty);
+
 
 
 /**======================ADT functions implementations========================*/
@@ -44,7 +43,7 @@ static bool inputCheck(long id, int price, int num_ppl, int open_hour,
 RoomResult roomCreate(long id, int price, int num_ppl, int open_hour,
                   int close_hour, int difficulty, Room* room){
     assert(room != NULL);
-    if(!inputCheck(id,price,num_ppl,open_hour,close_hour,difficulty)){
+    if(!roominputCheck(id,price,num_ppl,open_hour,close_hour,difficulty)){
         return ROOM_INVALID_PARAMETER;
     }
     *room = malloc(sizeof(**room));
@@ -132,7 +131,7 @@ long roomGetCloseHour(Room room){
 /**====================Static functions implementations=======================*/
 
 /**--------------------------Input Check--------------------------------------*/
-static bool inputCheck(long id, int price, int num_ppl, int open_hour,
+ bool roominputCheck(long id, int price, int num_ppl, int open_hour,
                                 int close_hour, int difficulty){
     return ((id > 0)
             && (price > 0)

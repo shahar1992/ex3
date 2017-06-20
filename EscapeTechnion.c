@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "EscapeTechnion.h"
+#include <limits.h>
 
 /**===============================Macros======================================*/
 #define FACULTY_NUM ((int)UNKNOWN)
@@ -46,38 +47,29 @@ static EscapeTechnionResult getEscaper(EscapeTechnion system, char *email,
 static EscapeTechnionResult getRoom(
         EscapeTechnion system, TechnionFaculty faculty, long id, Room* room);
 static EscapeTechnionResult convertFromOrderResult(OrderResult result);
-static bool isRoomAvailable(EscapeTechnion system,long day, long hour,
-                            long id,Room room, TechnionFaculty room_faculty);
+static bool isRoomAvailable(EscapeTechnion system,long system_day,
+                            long hour,long id,Room room,TechnionFaculty room_faculty);
 static bool isClientAvailable(EscapeTechnion system,long day,
                               long hour,Escaper client);
 static long CalculateRecommendedFormula(long P_r,long P_e,
                                           long difficulty,long skill_level);
 static void GetRoomNextAvailabilty(EscapeTechnion system,Room room,
-                                   long *next_available_hour,
-                                   long* next_avialable_day,
+                                   long *next_available_hour,long* next_avialable_day,
                                    TechnionFaculty faculty);
 static bool isOrderForDay(ListElement order, ListFilterKey key);
 static bool isOrderNotForDay(ListElement order, ListFilterKey key);
 static bool isEmailLegal(char* email);
-static bool isFacultyNearer(TechnionFaculty checked_faculty,
-                            TechnionFaculty recommended_faculty,
-                            TechnionFaculty escaper_faculty);
+static bool isBetterMatch(TechnionFaculty checked_faculty,
+                          TechnionFaculty recommended_faculty,
+                          TechnionFaculty escaper_faculty,long checked_room_id,long rec_room_id);
 static EscapeTechnionResult getCompany(EscapeTechnion system, char *email,
                                 Company *company);
-static long calculateRoomBarometer(Room room,Escaper escaper,int num_of_people);
-long getFirstRoomBarometer(EscapeTechnion system,Escaper escaper,int num_ppl);
-static Room pickRecommendedRoom(Room room1, Room room2,
-                                TechnionFaculty faculty1,
-                                TechnionFaculty faculty2,
-                                TechnionFaculty escaper_faculty);
-static void getRoomFirstAvailableHour(EscapeTechnion system, Room room,
-                                      int* day,int *hour);
 
 /**===================System ADT functions implementation=====================*/
 
 /**-------------------------System Create-------------------------------------*/
 EscapeTechnionResult escapeTechnionCreate(EscapeTechnion *system){
-    assert(*system);
+    assert(system);
     *system = malloc(sizeof(**system));
     if(!*system){
         return ESCAPE_TECHNION_OUT_OF_MEMORY;
@@ -136,13 +128,16 @@ EscapeTechnionResult escapeTechnionRemoveCompany(EscapeTechnion system,
     if(!email){
         return ESCAPE_TECHNION_NULL_PARAMETER;
     }
-    SET_FOREACH(Company,company,system->companies){
+    if(!isEmailLegal(email)){
+        return ESCAPE_TECHNION_INVALID_PARAMETER;
+    }
+    SET_FOREACH(Company,company,system->companies){//for each company
         char* company_email = NULL;
-        convertFromCompanyResult(companyGetEmail(company,&company_email));
+        convertFromCompanyResult(companyGetEmail(company,&company_email));//get mail
         if(!company_email){
             return ESCAPE_TECHNION_OUT_OF_MEMORY;
         }
-        if(strcmp(company_email,email) == 0){
+        if(strcmp(company_email,email) == 0){//if we found the company
             free(company_email);
             EscapeTechnionResult result =
                     isCompanyHasReservation(system,company);
@@ -271,16 +266,17 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
     if(!email){
         return ESCAPE_TECHNION_NULL_PARAMETER;
     }
+    if(!ordercheckInput(day_left,hour,num_ppl,faculty)||id<=0){
+        return ESCAPE_TECHNION_INVALID_PARAMETER;
+    }
     Escaper escaper;
     EscapeTechnionResult result = getEscaper(system, email, &escaper);
-    if(result != ESCAPE_TECHNION_SUCCESS &&
-            result != ESCAPE_TECHNION_CLIENT_EMAIL_DOES_NOT_EXIST){
+    if(result != ESCAPE_TECHNION_SUCCESS ){
         return result;
     }
     Room room;
     result = getRoom(system,faculty,id,&room);
-    if(result != ESCAPE_TECHNION_SUCCESS &&
-            result != ESCAPE_TECHNION_ID_DOES_NOT_EXIST){
+    if(result != ESCAPE_TECHNION_SUCCESS){
         return result;
     }
     Order order;
@@ -292,11 +288,11 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
     if(result != ESCAPE_TECHNION_SUCCESS){
         return result;
     }
-    if(!isClientAvailable(system,day_left,hour,orderGetEscaper(order))){
+    if(!isClientAvailable(system,day_left+system->day,hour,orderGetEscaper(order))){
         orderDestroy(order);
         return ESCAPE_TECHNION_CLIENT_IN_ROOM;
     }
-    if(!isRoomAvailable(system,day_left,hour,id,orderGetRoom(order),faculty)) {
+    if(!isRoomAvailable(system,day_left+system->day,hour,id,orderGetRoom(order),faculty)) {
         orderDestroy(order);
         return ESCAPE_TECHNION_ROOM_NOT_AVAILABLE;
     }
@@ -310,16 +306,16 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
 EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                                         char* mail,
                                                         long num_ppl) {
-    assert(system);
-    Order recommended_order = NULL;
-    long best_barometer = LONG_MAX;
-    if(!mail){
-        return ESCAPE_TECHNION_NULL_PARAMETER;
+    Order recommended_order =NULL;
+    if(num_ppl<=0){
+        return ESCAPE_TECHNION_INVALID_PARAMETER;
     }
-    Escaper client;
-    EscapeTechnionResult result = getEscaper(system,mail,&client);
-    if(result != ESCAPE_TECHNION_SUCCESS){
-        return result;
+    long best_barometer = LONG_MAX;
+    NULL_ARGUMENT_CHECK(system && mail);//not null//
+    Escaper client ;//find escaper
+    EscapeTechnionResult res=getEscaper(system,mail,&client);
+    if(res!=ESCAPE_TECHNION_SUCCESS){
+        return res;
     }
     long skill_level = escaperGetSkillLevel(client);
     SET_FOREACH(Company, company, system->companies) {//for each company
@@ -332,16 +328,17 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                                          num_ppl, cur_room_dif,
                                                          skill_level);
             TechnionFaculty checked_faculty,recommended_faculty,escaper_faculty;
-            if(recommended_order != NULL) {
+            long order_room_id=0;
+            if(recommended_order!=NULL){
                 recommended_faculty = orderGetFaculty(recommended_order);
+                order_room_id=orderGetRoomId(recommended_order);
             }
             checked_faculty = companyGetFaculty(company);
             escaper_faculty = escaperGetFaculty(client);
             //calculate barometer for current room
             if ((barometer < best_barometer)||
-                    ((barometer==best_barometer)&&isFacultyNearer(
-                            checked_faculty,recommended_faculty,
-                            escaper_faculty))){//if it is better
+                    ((barometer==best_barometer)&& isBetterMatch(checked_faculty,
+             recommended_faculty,escaper_faculty,roomGetId(room),order_room_id))){//if it is better
                 best_barometer = barometer;//update best barometer
                 long available_hour, available_day;
                 GetRoomNextAvailabilty(system,room,&available_hour,
@@ -356,6 +353,7 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
     if(recommended_order!=NULL){
         TechnionFaculty faculty = orderGetFaculty(recommended_order);
         long id = orderGetRoomId(recommended_order);
+        EscapeTechnionResult result;
         result=escapeTechnionAddOrder(system,mail,faculty,id,orderGetDay(recommended_order),
                 orderGetHour(recommended_order),num_ppl);
         return ESCAPE_TECHNION_SUCCESS;
@@ -365,87 +363,6 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
     }
 }
 
-/*
-EscapeTechnionResult escapeTechnionRecommendedRoomOrder2(EscapeTechnion system,
-                                                        char* email,
-                                                        long num_ppl) {
-    assert(system);
-    if(!email){
-        return ESCAPE_TECHNION_NULL_PARAMETER;
-    }
-    if(num_ppl <= 0 ){
-        return ESCAPE_TECHNION_INVALID_PARAMETER;
-    }
-    Escaper escaper;
-    EscapeTechnionResult result = getEscaper(system,email,&escaper);
-    if(result != ESCAPE_TECHNION_SUCCESS){
-        escaperDestroy(escaper);
-        return result;
-    }
-    long best_barometer = getFirstRoomBarometer(system,escaper,num_ppl)+1;
-    if(best_barometer < 0){
-        escaperDestroy(escaper);
-        return ESCAPE_TECHNION_OUT_OF_MEMORY;
-    }
-    Room recommended_Room = NULL;
-    TechnionFaculty recommended_faculty = UNKNOWN;
-    SET_FOREACH(Company,company,system->companies){
-        RoomSet room_set = companyGetRoomsSet(company);
-        if(!room_set){
-            escaperDestroy(escaper);
-            return ESCAPE_TECHNION_OUT_OF_MEMORY;
-        }
-        SET_FOREACH(Room,room,room_set){
-            long current_barometer =
-                    calculateRoomBarometer(room,escaper,num_ppl);
-            if(recommended_Room == NULL){
-                recommended_Room = roomCopy(room);
-                if(!recommended_Room){
-                    setDestroy(room_set);
-                    return ESCAPE_TECHNION_OUT_OF_MEMORY;
-                }
-                recommended_faculty = companyGetFaculty(company);
-                best_barometer = current_barometer;
-            }
-            else if(current_barometer < best_barometer){
-                best_barometer = current_barometer;
-                roomDestroy(recommended_Room);
-                recommended_Room = roomCopy(room);
-                if(!recommended_Room){
-                    setDestroy(room_set);
-                    return ESCAPE_TECHNION_OUT_OF_MEMORY;
-                }
-                recommended_faculty = companyGetFaculty(company);
-            }
-            else if(current_barometer == best_barometer){
-                Room temp_recommended_room = roomCopy(recommended_Room);
-                if(!temp_recommended_room){
-                    setDestroy(room_set);
-                    return ESCAPE_TECHNION_OUT_OF_MEMORY;
-                }
-                roomDestroy(recommended_Room);
-                recommended_Room = roomCopy(pickRecommendedRoom(
-                        temp_recommended_room,room,recommended_faculty,
-                        companyGetFaculty(company),escaperGetFaculty(escaper)));
-                roomDestroy(temp_recommended_room);
-                if(!recommended_Room){
-                    setDestroy(room_set);
-                    return ESCAPE_TECHNION_OUT_OF_MEMORY;
-                }
-            }
-        }
-        setDestroy(room_set);
-    }
-    int day,hour;
-    getRoomFirstAvailableHour(system,recommended_Room,&day,&hour);
-    Order order;
-    result = convertFromOrderResult(orderCreate(
-            num_ppl,hour,day, recommended_faculty,recommended_Room,escaper,
-            &order));
-    escaperDestroy(escaper);
-    return result;
-}
-*/
 /**--------------Escape Technion Get Company By Room And Faculty--------------*/
 Company escapeTechnionFindCompanyByRoomAndFaculty(EscapeTechnion system,
                                                   Room room,
@@ -491,13 +408,14 @@ OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system){
                                           &system->day);
     if(!filtered_list){
         return NULL;
-    }
+    }/*
     if(listSort(filtered_list,orderCompareByRoomId) != LIST_SUCCESS ||
             listSort(filtered_list,orderCompareByFaculty) != LIST_SUCCESS ||
             listSort(filtered_list,orderCompare) != LIST_SUCCESS){
         listDestroy(filtered_list);
         return NULL;
-    }
+    }*/
+    listSort(filtered_list,orderCompareByCritiria);
     OrdersList new_system_list = listFilter(
             system->orders,isOrderNotForDay,&system->day);
     if(!new_system_list){
@@ -534,14 +452,18 @@ static EscapeTechnionResult isCompanyHasReservation(EscapeTechnion system,
                                                     Company company){
     TechnionFaculty company_faculty = companyGetFaculty(company);
     OrdersList list = listFilter(system->orders,orderIsSameFaculty,
-                                 &company_faculty);
-    if(!list){
+                                 &company_faculty);//filter orders list by faculty
+    if(!list){//memory problem
         return ESCAPE_TECHNION_OUT_OF_MEMORY;
     }
-    if(listGetSize(list) == 0){
+    long list_size=listGetSize(list);
+    if(list_size== 0){//no orders for this faculty
         listDestroy(list);
         return ESCAPE_TECHNION_SUCCESS;
     }
+    /*else
+        return ESCAPE_TECHNION_RESERVATION_EXISTS;*/
+
     RoomSet rooms_set = companyGetRoomsSet(company);
     if(!rooms_set){
         listDestroy(list);
@@ -566,6 +488,7 @@ static EscapeTechnionResult isCompanyHasReservation(EscapeTechnion system,
     listDestroy(list);
     setDestroy(rooms_set);
     return ESCAPE_TECHNION_SUCCESS;
+
 }
 
 static bool isRoomHasReservations(EscapeTechnion sys, Room room,
@@ -740,6 +663,7 @@ static EscapeTechnionResult removeClientOrders(EscapeTechnion system,
     assert(system && escaper);
     OrdersList new_list = listFilter(system->orders,orderNotBelongToClient,
                                      escaper);
+    long new_list_size=listGetSize(new_list);
     if(!new_list){
         return ESCAPE_TECHNION_OUT_OF_MEMORY;
     }
@@ -778,7 +702,7 @@ static EscapeTechnionResult getRoom(
         EscapeTechnion system, TechnionFaculty faculty, long id, Room* room){
     assert(system);
     EscapeTechnionResult result;
-    if((faculty < 0) || (faculty >= (UNKNOWN)) || (id < 0)){
+    if((faculty < 0) || (faculty >= (UNKNOWN)) || (id <= 0)){
         *room = NULL;
         return ESCAPE_TECHNION_INVALID_PARAMETER;
     }
@@ -794,23 +718,22 @@ static EscapeTechnionResult getRoom(
     return ESCAPE_TECHNION_ID_DOES_NOT_EXIST;
 }
 
-static bool isRoomAvailable(EscapeTechnion system, long day, long hour,
+static bool isRoomAvailable(EscapeTechnion system, long system_day, long hour,
                             long id, Room room, TechnionFaculty faculty){
     assert(system);
     long open_hour = roomGetOpenHour(room),close_hour = roomGetCloseHour(room);
     if(hour < open_hour || hour >= close_hour){
         return false;
     }
-    List filtered_list,temp_list;
-    LIST_FOREACH(Order,order,system->orders){
-        Room current_room = orderGetRoom(order);
-        TechnionFaculty orders_faculty = orderGetFaculty(order);
-        if ((roomCompare(current_room,room)==0)&&(faculty==orders_faculty)){
-            if(orderGetDay(order) == day && orderGetHour(order) == hour){
+    LIST_FOREACH(Order,cur_order,system->orders){
+        Room current_room = orderGetRoom(cur_order);
+        TechnionFaculty orders_faculty = orderGetFaculty(cur_order);
+        if ((orderGetRoomId(cur_order)==id)&&(faculty==orders_faculty)){
+            if((orderGetDay(cur_order)==system_day)&&(orderGetHour(cur_order)==hour)){
                 return false;
             }
         }
-    }
+    }//
     return true;
 }
 
@@ -897,92 +820,19 @@ static bool isEmailLegal(char* email){
     return (counter==1)?true:false;
 }
 
-static bool isFacultyNearer(TechnionFaculty checked_faculty,
-                            TechnionFaculty recommended_faculty,
-                            TechnionFaculty escaper_faculty){
+static bool isBetterMatch(TechnionFaculty checked_faculty,
+                          TechnionFaculty recommended_faculty,
+                          TechnionFaculty escaper_faculty,long checked_room_id,long rec_room_id){
     int checked_faculty_distance=abs(escaper_faculty-checked_faculty);
     int recommended_faculty_distance=abs(recommended_faculty-escaper_faculty);
     if(checked_faculty_distance==recommended_faculty_distance){
+        if(checked_faculty==recommended_faculty){
+            return ((checked_room_id<rec_room_id) ? true:false);
+        }
         return (checked_faculty<recommended_faculty) ? true : false;
     }
     if(checked_faculty_distance<recommended_faculty_distance)return true;
     return false;
 
 
-}
-
-static long calculateRoomBarometer(Room room,Escaper escaper,int num_of_people){
-    assert(room);
-    int recommended_people = roomGetRecommendedNumOfPeople(room);
-    int skill_level = escaperGetSkillLevel(escaper);
-    int difficulty = roomGetDiffuclty(room);
-    long temp_barometer =
-            (difficulty - skill_level) * (difficulty - skill_level);
-    temp_barometer += ((recommended_people - num_of_people)*
-            (recommended_people - num_of_people));
-    return temp_barometer;
-}
-
-long getFirstRoomBarometer(EscapeTechnion system, Escaper escaper, int num_ppl){
-    assert(system && escaper);
-    Company company = setGetFirst(system->companies);
-    if(!company){
-        return -1;
-    }
-    RoomSet company_rooms_set = companyGetRoomsSet(company);
-    if(!company_rooms_set){
-        return -1;
-    }
-    Room room = setGetFirst(company_rooms_set);
-    if(!room){
-        return -1;
-    }
-    return calculateRoomBarometer(room,escaper,num_ppl);
-}
-
-static Room pickRecommendedRoom(Room room1, Room room2,
-                                TechnionFaculty faculty1,
-                                TechnionFaculty faculty2,
-                                TechnionFaculty escaper_faculty){
-    int distance_from_escaper_faculty1 = abs(faculty1 - escaper_faculty);
-    int distance_from_escaper_faculty2 = abs(faculty2 - escaper_faculty);
-    if(distance_from_escaper_faculty1 == distance_from_escaper_faculty2){
-        if(faculty1 == faculty2){
-            return (roomGetId(room1) < roomGetId(room2)) ? room1 : room2;
-        }
-        return (faculty1 < faculty2) ? room1 : room2;
-    }
-    return (distance_from_escaper_faculty1 < distance_from_escaper_faculty2) ?
-           room1 : room2;
-}
-
-
-static void getRoomFirstAvailableHour(EscapeTechnion system,
-                                               Room room, int* day,int *hour){
-    assert(system && room && day && hour);
-    bool time_has_found = false;
-    *day = system->day;
-    *hour = 0;
-    if(listGetSize(system->orders) == 0){
-        return ;
-    }
-    while(time_has_found != true) {
-        LIST_FOREACH(Order,order,system->orders){
-            if(roomCompare(room,orderGetRoom(order)) == 0){
-                time_has_found = true;
-                if(orderGetDay(order) == *day){
-                    if(orderGetHour(order) == *hour){
-                        (*hour)++;
-                        if(*hour > 23){
-                            *hour = 0;
-                            (*day)++;
-                        }
-                        time_has_found = false;
-                        continue;
-                    }
-                }
-            }
-        }
-    }
-    return ;
 }
