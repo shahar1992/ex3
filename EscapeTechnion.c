@@ -432,20 +432,20 @@ OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system){
     }
     if(sort_answer){
         return NULL;
-    }//
+    }/*
     OrdersList new_orders_list=listFilter(system->orders,isOrderNotForDay,&system->day);
     listClear(system->orders);
     LIST_FOREACH(OrdersList,cur_order,new_orders_list){
         listInsertLast(system->orders,cur_order);
     }
     listDestroy(new_orders_list);
-/*
+*/
     LIST_FOREACH(Order,order,system->orders){
         if(orderGetDay(order) > system->day){
             break;
         }
         listRemoveCurrent(system->orders);
-    }*/
+    }
     return list;
 
 }
