@@ -93,9 +93,9 @@ void* escaperCopy(void* void_escaper){
 
 /**---------------------Escaper Compare---------------------------------------*/
 int escaperCompare(void* escaper1, void* escaper2){
-    assert(escaper1 && escaper2);
+    assert(escaper1!=NULL && escaper2!=NULL);
     Escaper escaper1_ptr = escaper1, escaper2_ptr = escaper2;
-    return (strcmp(escaper1_ptr->email,escaper2_ptr->email));
+    return (strcmp(((Escaper)escaper1)->email,((Escaper)escaper2)->email));
 }
 
 /**---------------------Escaper Get Email-------------------------------------*/
