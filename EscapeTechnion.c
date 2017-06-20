@@ -62,6 +62,7 @@ static void GetRoomNextAvailabilty(EscapeTechnion system,Room room,
                                    long *next_available_hour,long* next_avialable_day,
                                    TechnionFaculty faculty);
 static bool isOrderForDay(ListElement order, ListFilterKey key);
+static bool isOrderNotForDay(ListElement order, ListFilterKey key);
 static bool isEmailLegal(char* email);
 static bool isFacultyNearer(TechnionFaculty checked_faculty,
                             TechnionFaculty recommended_faculty,
@@ -428,24 +429,36 @@ EscapeTechnionResult escapeTechnionSortOrdersByDay(EscapeTechnion system){
 /**----------------Escape Technion Get Today Orders List----------------------*/
 OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system){
     assert(system);
-    ListResult result = listSort(system->orders,orderCompare);
-    if(result == LIST_OUT_OF_MEMORY){
-        return NULL;
-    }
     OrdersList list = listFilter(system->orders,isOrderForDay,&system->day);
-    listSort(list,orderCompareByRoomId);
-    listSort(list,orderCompareByFaculty);
-    listSort(list,orderCompare);
     if(!list){
         return NULL;
     }
+    bool sort_answer = true;
+    if(listSort(list,orderCompareByRoomId) != LIST_OUT_OF_MEMORY) {
+        if(listSort(list, orderCompareByFaculty)!=LIST_OUT_OF_MEMORY) {
+            if(listSort(list, orderCompare)!=LIST_OUT_OF_MEMORY){
+                sort_answer = false;
+            }
+        }
+    }
+    if(sort_answer){
+        return NULL;
+    }//
+    OrdersList new_orders_list=listFilter(system->orders,isOrderNotForDay,&system->day);
+    listClear(system->orders);
+    LIST_FOREACH(OrdersList,cur_order,new_orders_list){
+        listInsertLast(system->orders,cur_order);
+    }
+    listDestroy(new_orders_list);
+/*
     LIST_FOREACH(Order,order,system->orders){
         if(orderGetDay(order) > system->day){
             break;
         }
         listRemoveCurrent(system->orders);
-    }
+    }*/
     return list;
+
 }
 
 long escapeTechnionCalculateTotalRevenue(EscapeTechnion system){
@@ -700,9 +713,10 @@ void escapeTechnionGetBestFaculties(EscapeTechnion system,
 static void removeClientOrders(EscapeTechnion system, Escaper escaper){
     assert(system && escaper);
     LIST_FOREACH(Order,order,system->orders){
+        Escaper orders_escaper=orderGetEscaper(order);//
         if(escaperCompare(orderGetEscaper(order),escaper) == 0){
             listRemoveCurrent(system->orders);
-            listGetFirst(system->orders);
+           // listGetFirst(system->orders);
         }
     }
     return ;
@@ -814,6 +828,12 @@ static bool isOrderForDay(ListElement order, ListFilterKey key) {
     assert(order);
     int day = orderGetDay((Order)order);
     return  day == *(int*)key;
+}
+
+static bool isOrderNotForDay(ListElement order, ListFilterKey key) {
+    assert(order);
+    int day = orderGetDay((Order)order);
+    return  day != *(int*)key;
 }
 
 static long CalculateRecommendedFormula(long P_r,long P_e,
