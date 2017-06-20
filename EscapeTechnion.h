@@ -192,8 +192,8 @@ void escapeTechnionGetBestFaculties(EscapeTechnion system,
                                     TechnionFaculty *faculties,
                                     int best_faculties_num);
 
-void escapeTechnionIncreaseFacultyProfit(EscapeTechnion system,long profit,
-                                         TechnionFaculty faculty);
+void escapeTechnionAddProfitToFaculty(EscapeTechnion system, long profit,
+                                      TechnionFaculty faculty);
 
 int orderCompareByRoomId(void* order1, void* order2);
 

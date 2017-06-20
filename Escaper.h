@@ -54,10 +54,10 @@ int escaperCompare(void* escaper1, void* escaper2);
 
 /** Gets an escaper and returns a pointer to the mail address.
  */
-EscaperResult escaperGetEmail(Escaper escaper,char** mail);
+EscaperResult escaperGetEmail(Escaper escaper,char** email);
 
 /**Returns the faculty of the escaper*/
-EscaperResult escaperGetFaculty(Escaper escaper, TechnionFaculty* faculty);
+TechnionFaculty escaperGetFaculty(Escaper escaper);
 
 /**Gets an escaper skill level*/
 int escaperGetSkillLevel(Escaper escaper);

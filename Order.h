@@ -55,7 +55,7 @@ void* orderCopy(void* order);
 int orderCompare(void* order1, void* order2);
 
 /**Get the faculty owns the ordered room*/
-OrderResult orderGetFaculty(Order order, TechnionFaculty* faculty);
+TechnionFaculty orderGetFaculty(Order order);
 
 /**Get the ordered room.*/
 Room orderGetRoom(Order order);
@@ -81,5 +81,11 @@ long orderGetRoomId(Order order);
 long orderGetDifficulty(Order order);
 
 int orderCompareByFaculty(void* order1, void* order2);
+
+bool orderIsSameFaculty(void* order, void* faculty_to_compare);
+
+bool orderIsSameId(void* order, void* id_to_compare);
+
+bool orderNotBelongToClient(void* order , void* escaper);
 
 #endif //EX3_ORDER_H

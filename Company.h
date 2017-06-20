@@ -87,7 +87,7 @@ CompanyResult companyAddRoom(Company company, Room room);
  *      COMPANY_NULL_ARGUMENT if 'company' or 'room' are null.
  *      COMPANY_SUCCESS otherwise.
  */
-CompanyResult companyRemoveRoom(Company company, long id);
+CompanyResult companyRemoveRoom(Company company, Room room);
 
 /**
  *  This function return in parameter the faculty that owns the company.
@@ -96,7 +96,7 @@ CompanyResult companyRemoveRoom(Company company, long id);
  *      The faculty of current company.
  */
 
-CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
+TechnionFaculty companyGetFaculty(Company company);
 /**
  * This function return the email of a company.
  * @param company The relevant company.
@@ -104,7 +104,7 @@ CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty);
  *      NULL if company mail is null.
  *      pointer to company mail otherwise.
  */
-CompanyResult companyGetEmail(Company company,char** mail);//
+CompanyResult companyGetEmail(Company company,char** email);//
 
 
 

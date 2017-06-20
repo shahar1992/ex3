@@ -29,24 +29,23 @@ struct Escaper_t{
 
 
 /**=====================Static functions declarations=========================*/
-/** List of static functions and its usage
- * MailCheck          -checks if a given mail is valid;
- * Facultycheck       -checks if a given faculty is valid;
- */
-static bool mailCheck(char *mail);
+static bool mailCheck(char *email);
 static bool facultyCheck(TechnionFaculty faculty);
 static bool skillLevelCheck(int skill_level);
 static bool inputCheck(char* email, TechnionFaculty faculty, int skill_level);
 
 /**===================End of static function declarations.====================*/
 
+
+
 /**===================Escaper ADT functions implementation====================*/
 
 
-/**============EscaperCreate===========================*/
+/**----------------------Escaper Create---------------------------------------*/
 EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
                             int skill_level, Escaper* escaper){
-    if(!email || !escaper){
+    assert(escaper);
+    if(!email){
         return ESCAPER_NULL_ARGUMENT;
     }
     if(!inputCheck(email,faculty,skill_level)){
@@ -67,75 +66,69 @@ EscaperResult escaperCreate(char *email, TechnionFaculty faculty,
     return ESCAPER_SUCCESS;
 }
 
-/**=====EscaperDestroy==================================*/
+/**---------------------Escaper Destroy---------------------------------------*/
 void escaperDestroy(void* escaper){
     if(escaper != NULL) {
-        if(((Escaper)escaper)->email != NULL) {
-            free(((Escaper)escaper)->email);
+        if (((Escaper) escaper)->email != NULL) {
+            free(((Escaper) escaper)->email);
         }
-        free((Escaper)escaper);
+        free((Escaper) escaper);
     }
     return;
 }
 
-/**=====EscaperCopy==================================*/
-void* escaperCopy(void* escaper){
-    if(!escaper){
-        return NULL;
-    }
-    Escaper escaper1 = escaper;
-    Escaper  new_escaper;
-    EscaperResult result = escaperCreate(escaper1->email, escaper1->faculty,
-                                         escaper1->skill_level, &new_escaper);
-    if(result != ESCAPER_SUCCESS){
-        return NULL;
-    }
-    return new_escaper;
+/**---------------------Escaper Copy------------------------------------------*/
+void* escaperCopy(void* void_escaper){
+    assert(void_escaper);
+    Escaper escaper = void_escaper;
+    Escaper new_escaper;
+#ifndef NDEBUG
+    EscaperResult result =
+#endif
+     escaperCreate(escaper->email, escaper->faculty,escaper->skill_level,
+                   &new_escaper);
+    assert(result != ESCAPER_INVALID_PARAMETER);
+    return (!new_escaper) ? NULL : new_escaper;
 }
 
-/**=====EscaperCmp==================================*/
+/**---------------------Escaper Compare---------------------------------------*/
 int escaperCompare(void* escaper1, void* escaper2){
     assert(escaper1 && escaper2);
     Escaper escaper1_ptr = escaper1, escaper2_ptr = escaper2;
     return (strcmp(escaper1_ptr->email,escaper2_ptr->email));
 }
 
-/**=====EscaperGetEmail==================================*/
-EscaperResult escaperGetEmail(Escaper escaper,char** mail){
-    if(!escaper || !mail||escaper->email==NULL){
+/**---------------------Escaper Get Email-------------------------------------*/
+EscaperResult escaperGetEmail(Escaper escaper,char** email){
+    assert(escaper);
+    assert(escaper->email != NULL);
+    if(!email){
         return ESCAPER_NULL_ARGUMENT;
     }
-    *mail=malloc(sizeof(char)*(strlen(escaper->email) +1));
-    if(!*mail){
+    *email=malloc(sizeof(char)*(strlen(escaper->email) +1));
+    if(!*email){
         return ESCAPER_OUT_OF_MEMORY;
     }
-    strcpy(*mail,escaper->email);
+    strcpy(*email,escaper->email);
     return ESCAPER_SUCCESS;
 }
 
-/**=====EscaperGetFaculty=========================*/
-EscaperResult escaperGetFaculty(Escaper escaper, TechnionFaculty* faculty){
-    if(!escaper || !faculty){
-        return ESCAPER_NULL_ARGUMENT;
-    }
-    *faculty = escaper->faculty;
-    return ESCAPER_SUCCESS;
+/**---------------------Escaper Get Faculty-----------------------------------*/
+TechnionFaculty escaperGetFaculty(Escaper escaper){
+    assert(escaper);
+    return escaper->faculty;
 }
 
 /**---------------------Escaper Get Skill Level-------------------------------*/
 int escaperGetSkillLevel(Escaper escaper){
-    if(!escaper){
-        return 0;
-    }
+    assert(escaper);
     return escaper->skill_level;
 }
 
-/** ===============Static functions implementaion==========================*/
-static bool mailCheck(char *mail){
-    if(mail==NULL){
-        return false;
-    }
-    char* ptr=mail;
+/**===================Static functions implementaion==========================*/
+static bool mailCheck(char *email){
+    assert(email);
+    char* ptr = email;
     int counter =0;
     while(*ptr!=0){
         if(*ptr=='@') counter++;
@@ -148,19 +141,9 @@ static bool facultyCheck(TechnionFaculty faculty){
     return (((int)faculty >= 0) &&((int)faculty < FACULTY_NUM));
 }
 
-/*static EscaperResult GetTime(char *time_format,long* hour,long* days_left){
-    assert(time_format&&hour&&days_left);
-    char *ptr;
-    long ret;
-    ret = strtol(time_format, &ptr, 10);
-    *days_left=ret;
-    ret=strtol(ptr+1,&ptr,10);
-    *hour=ret;
-    return  Escaper_SUCCESS;
-}
-*/
 static bool skillLevelCheck(int skill_level){
-    return ( (skill_level>=MIN_SKILL_LEVEL) && (skill_level<=MAX_SKILL_LEVEL) );
+    return ((skill_level >= MIN_SKILL_LEVEL) &&
+            (skill_level <= MAX_SKILL_LEVEL));
 }
 
 static bool inputCheck(char* email, TechnionFaculty faculty, int skill_level){

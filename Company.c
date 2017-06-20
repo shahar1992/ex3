@@ -42,7 +42,7 @@ struct company_t{
 
 /**converts the result type from set result to comapny result*/
 static  CompanyResult convertReturnTypeFromSet(SetResult result);
-static bool isInputLegal(char* email, TechnionFaculty faculty);
+static bool inputCheck(char* email, TechnionFaculty faculty);
 static bool isEmailLegal(char* email);
 static CompanyResult convertReturnTypeFromRoom(RoomResult result);
 
@@ -59,30 +59,40 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
     if(!email){
         return COMPANY_NULL_ARGUMENT;
     }
-    PARAMETER_CHECK(isInputLegal(email,faculty));
+    if(!inputCheck(email,faculty)){
+        return COMPANY_INVALID_PARAMETER;
+    }
     *company = malloc(sizeof(**company));
-    MEMORY_CHECK(*company,*company);
+    if(!*company){
+        return COMPANY_OUT_OF_MEMORY;
+    }
     (*company)->email = malloc(sizeof(char)*(strlen(email)+1));
-    MEMORY_CHECK((*company)->email,*company);
+    if(!(*company)->email){
+        companyDestroy(*company);
+        return COMPANY_OUT_OF_MEMORY;
+    }
     strcpy((*company)->email, email);
     (*company)->faculty = faculty;
     (*company)->rooms = setCreate(roomCopy, roomDestroy,roomCompare);
-    MEMORY_CHECK((*company)->rooms,*company);
+    if(!(*company)->rooms){
+        companyDestroy(*company);
+        return COMPANY_OUT_OF_MEMORY;
+    }
     return COMPANY_SUCCESS;
 }
 
-void companyDestroy(SetElement company){
-    if(company != NULL){
-        setDestroy(((Company)company)->rooms);
-        if(((Company)company)->email != NULL) {
-            free(((Company)company)->email);
+void companyDestroy(void* company){
+    if(company != NULL) {
+        setDestroy(((Company) company)->rooms);
+        if (((Company) company)->email != NULL) {
+            free(((Company) company)->email);
         }
         free(company);
     }
     return;
 }
 
-SetElement companyCopy(SetElement company){
+void* companyCopy(void* company){
     Company new_company;
 #ifndef NDEBUG
     CompanyResult result =
@@ -90,11 +100,14 @@ SetElement companyCopy(SetElement company){
     companyCreate(((Company)company)->email,((Company)company)->faculty,
                   &new_company);
     assert(result != COMPANY_INVALID_PARAMETER);
-    if(result != COMPANY_SUCCESS) {
+    if(!new_company) {
         return NULL;
     }
     new_company->rooms = setCopy(((Company)company)->rooms);
-    MEMORY_CHECK(new_company->rooms,new_company);
+    if(!new_company->rooms){
+        companyDestroy(new_company);
+        return NULL;
+    }
     return new_company;
 }
 
@@ -113,49 +126,45 @@ CompanyResult companyAddRoom(Company company, Room room){
     return result;
 }
 
-CompanyResult companyRemoveRoom(Company company, long id){
-    NULL_ARGUMENT_CHECK(company);
-    if(id < 0){
-        return COMPANY_INVALID_PARAMETER;
-    }
-    CompanyResult result;
-    SET_FOREACH(Room, room, company->rooms){
-        if(roomGetId(room) == id){
-            result = convertReturnTypeFromSet(setRemove(company->rooms,room));
-            if(result != COMPANY_ROOM_DOES_NOT_EXIST){
-                return result;
-            }
-        }
-    }
-    return COMPANY_ROOM_DOES_NOT_EXIST;
-}
-
-CompanyResult companyGetFaculty(Company company, TechnionFaculty* faculty){
-    NULL_ARGUMENT_CHECK(company && faculty);
-    *faculty = company->faculty;
-    return COMPANY_SUCCESS;
-}
-
-CompanyResult companyGetEmail(Company company,char** mail){
-    if(!company){
+CompanyResult companyRemoveRoom(Company company, Room room){
+    assert(company);
+    assert(company->rooms);
+    if(!room){
         return COMPANY_NULL_ARGUMENT;
     }
-    *mail=malloc(sizeof(**mail)*(strlen(company->email)+1));
-    if(mail==NULL){
+    return (setRemove(company->rooms,room) == SET_SUCCESS) ? COMPANY_SUCCESS :
+           COMPANY_ROOM_DOES_NOT_EXIST;
+}
+
+TechnionFaculty companyGetFaculty(Company company){
+    assert(company);
+    return company->faculty;
+}
+
+CompanyResult companyGetEmail(Company company,char** email){
+    assert(company);
+    *email = malloc(sizeof(**email)*(strlen(company->email)+1));
+    if(!*email){
         return COMPANY_OUT_OF_MEMORY;
     }
-    assert(*mail!=NULL);
-    strcpy(*mail,company->email);
+    strcpy(*email,company->email);
     return COMPANY_SUCCESS;
 }
 
 CompanyResult companyFindRoom(Company company, long id, Room* room){
-    PARAMETER_CHECK(id > 0);
-    NULL_ARGUMENT_CHECK(company && room);
+    assert(company);
+    if(!room){
+        return COMPANY_NULL_ARGUMENT;
+    }
+    if(id < 0){
+        return COMPANY_INVALID_PARAMETER;
+    }
     SET_FOREACH(Room,current_room,company->rooms){
-        assert(current_room != NULL);
         if(roomGetId(current_room) == id){
-            *room = current_room;
+            *room = roomCopy(current_room);
+            if(!*room){
+                return COMPANY_OUT_OF_MEMORY;
+            }
             return COMPANY_SUCCESS;
         }
     }
@@ -164,8 +173,8 @@ CompanyResult companyFindRoom(Company company, long id, Room* room){
 }
 
 CompanyResult companySearchRoom(Company company, long id){
-    NULL_ARGUMENT_CHECK(company);
-    SET_FOREACH(RoomSet , current_room,company->rooms){
+    assert(company);
+    SET_FOREACH(RoomSet, current_room, company->rooms){
         if(roomGetId((Room)current_room) == id){
             return COMPANY_SUCCESS;
         }
@@ -174,10 +183,8 @@ CompanyResult companySearchRoom(Company company, long id){
 }
 
 RoomSet companyGetRoomsSet(Company company){
-    if(!company){
-        return NULL;
-    }
-    return  setCopy(company->rooms);
+    assert(company);
+    return setCopy(company->rooms);
 }
 
 /**==================END of company ADT functions implementation==============*/
@@ -217,9 +224,9 @@ static CompanyResult convertReturnTypeFromRoom(RoomResult result){
     }
 }
 
-static bool isInputLegal(char* email, TechnionFaculty faculty){
+static bool inputCheck(char* email, TechnionFaculty faculty){
     assert(email);
-    return (isEmailLegal(email) && (faculty >= 0) && (faculty < FACULTY_NUM-1));
+    return (isEmailLegal(email) && (faculty >= 0) && (faculty < FACULTY_NUM));
 }
 
 static bool isEmailLegal(char* email){
@@ -232,7 +239,7 @@ static bool isEmailLegal(char* email){
         }
         ptr++;
     }
-    return (counter==1)?true:false;
+    return (counter==1);
 }
 
 
