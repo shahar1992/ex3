@@ -301,12 +301,14 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
 EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                                         char* mail,
                                                         long num_ppl) {
-    Order recommended_order =NULL;
+    assert(system);
+    Order recommended_order = NULL;
     long best_barometer = LONG_MAX;
-    NULL_ARGUMENT_CHECK(system && mail);//not null//
-    Escaper client = getEscaper(system, mail);//find escaper
-    if(client == NULL){
-        return ESCAPE_TECHNION_CLIENT_EMAIL_DOES_NOT_EXIST;
+    NULL_ARGUMENT_CHECK(mail);//not null//
+    Escaper client;
+    EscapeTechnionResult result = getEscaper(system,mail,&client);
+    if(result != ESCAPE_TECHNION_SUCCESS){
+        return result;
     }
     long skill_level = escaperGetSkillLevel(client);
     SET_FOREACH(Company, company, system->companies) {//for each company
@@ -319,7 +321,9 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                                                          num_ppl, cur_room_dif,
                                                          skill_level);
             TechnionFaculty checked_faculty,recommended_faculty,escaper_faculty;
-            recommended_faculty = orderGetFaculty(recommended_order);
+            if(recommended_order != NULL) {
+                recommended_faculty = orderGetFaculty(recommended_order);
+            }
             checked_faculty = companyGetFaculty(company);
             escaper_faculty = escaperGetFaculty(client);
             //calculate barometer for current room
@@ -341,7 +345,6 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
     if(recommended_order!=NULL){
         TechnionFaculty faculty = orderGetFaculty(recommended_order);
         long id = orderGetRoomId(recommended_order);
-        EscapeTechnionResult result;
         result=escapeTechnionAddOrder(system,mail,faculty,id,orderGetDay(recommended_order),
                 orderGetHour(recommended_order),num_ppl);
         return ESCAPE_TECHNION_SUCCESS;

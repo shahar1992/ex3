@@ -202,5 +202,5 @@ int orderCompareByRoomId(void* order1, void* order2){
 
 bool orderNotBelongToClient(void* order , void* escaper){
     Escaper order_escaper = ((Order)order)->escaper;
-    return (escaperCompare(order_escaper,escaper) == 0);
+    return (escaperCompare(order_escaper,escaper) != 0);
 }
