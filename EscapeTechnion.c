@@ -139,7 +139,7 @@ EscapeTechnionResult escapeTechnionRemoveCompany(EscapeTechnion system,
             return ESCAPE_TECHNION_OUT_OF_MEMORY;
         }
         if(strcmp(company_email,email) == 0){//if we found the company
-            free(company_email);
+            free(company_email);//
             EscapeTechnionResult result =
                     isCompanyHasReservation(system,company);
             if(result != ESCAPE_TECHNION_SUCCESS) {
@@ -365,9 +365,13 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
         escapeTechnionAddOrder(system,mail,faculty,id,
                                orderGetDay(recommended_order),
                 orderGetHour(recommended_order),num_ppl);
+        escaperDestroy(client);
+        orderDestroy(recommended_order);
         return ESCAPE_TECHNION_SUCCESS;
     }
     else{
+        escaperDestroy(client);
+        orderDestroy(recommended_order);
         return ESCAPE_TECHNION_NO_ROOMS_AVAILABLE;
     }
 }

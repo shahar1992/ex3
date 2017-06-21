@@ -21,11 +21,6 @@
     } \
 }
 
-#define PARAMETER_CHECK(condition){ \
-    if(!(condition)){ \
-        return COMPANY_INVALID_PARAMETER; \
-    } \
-}
 
 struct company_t{
     char* email;
@@ -80,7 +75,7 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
     }
     return COMPANY_SUCCESS;
 }
-
+//
 void companyDestroy(void* company){
     if(company != NULL) {
         setDestroy(((Company) company)->rooms);
