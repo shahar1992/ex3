@@ -15,7 +15,8 @@ set(SOURCE_FILES
         EscapeTechnion.h
         EscapeTechnion.c
         mtm_ex3.h
-        tests/Room_tests.c)
+        parser.c
+        main.c)
 
 add_executable(ex3 ${SOURCE_FILES})
 target_link_libraries(ex3 ${CMAKE_SOURCE_DIR}//libmtm/win64/libmtm.a)
