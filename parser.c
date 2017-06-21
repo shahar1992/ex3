@@ -10,8 +10,7 @@
 #define MAX_ARGUMENTS_NUM 6
 #define TAB_ASCII_CODE 11
 
-MtmErrorCode parserAnalyzeCommand(EscapeTechnion system,char* buffer,
-                                  FILE* input_c, FILE* output_c);
+
 MtmErrorCode handleCommand(EscapeTechnion sys, FILE* output_c,
                            char* command,char* sub_command,char**arg_Array);
 MtmErrorCode handleCompanyCommand(EscapeTechnion sys,
@@ -209,6 +208,7 @@ static MtmErrorCode orderPrint(EscapeTechnion system,Order order,
     mtmPrintOrder(output_c,email,escaperGetSkillLevel(escaper),escaper_faculty,
                   company_email,room_faculty,roomGetId(room),orderGetHour(order),
                   orderGetDifficulty(order),orderGetNumOfPeople(order),price);
+    free(company_email);
     return MTM_SUCCESS;
 }
 
@@ -256,6 +256,7 @@ static MtmErrorCode ConvertResult(EscapeTechnionResult result){
             return MTM_RESERVATION_EXISTS;
         case ESCAPE_TECHNION_OUT_OF_MEMORY:
             return MTM_OUT_OF_MEMORY;
-
+        default:
+            return ESCAPE_TECHNION_SUCCESS;
     }
 }

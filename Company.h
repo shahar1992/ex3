@@ -28,9 +28,10 @@
 
 /** Type for defining the Company */
 typedef struct company_t *Company;
-
+#ifndef ROOMSET
+#define ROOMSET
 typedef Set RoomSet;
-
+#endif
 /** Type used for returning error codes from company functions */
 typedef enum CompanyResult_t {
 

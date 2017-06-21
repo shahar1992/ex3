@@ -6,7 +6,7 @@
 #include "list.h"
 #include "set.h"
 #include "Company.h"
-#include "order.h"
+#include "Order.h"
 #include "Escaper.h"
 #include "Room.h"
 
@@ -40,8 +40,10 @@ typedef struct EscapeTechnion_t *EscapeTechnion;
 typedef Set CompanySet;
 typedef List OrdersList;
 typedef Set EscaperSet;
+#ifndef ROOMSET
+#define ROOMSET
 typedef Set RoomSet;
-
+#endif
 
 typedef enum {
     ESCAPE_TECHNION_OUT_OF_MEMORY,

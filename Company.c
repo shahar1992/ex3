@@ -44,7 +44,7 @@ struct company_t{
 static  CompanyResult convertReturnTypeFromSet(SetResult result);
 
 static bool isEmailLegal(char* email);
-static CompanyResult convertReturnTypeFromRoom(RoomResult result);
+//static CompanyResult convertReturnTypeFromRoom(RoomResult result);
 
 /**===================End of static function declarations.====================*/
 
@@ -209,7 +209,7 @@ static  CompanyResult convertReturnTypeFromSet(SetResult result){
             return COMPANY_NULL_ARGUMENT;
     }
 }
-
+/*
 static CompanyResult convertReturnTypeFromRoom(RoomResult result){
     switch (result){
         case ROOM_SUCCESS:
@@ -223,6 +223,7 @@ static CompanyResult convertReturnTypeFromRoom(RoomResult result){
             return COMPANY_NULL_ARGUMENT;
     }
 }
+ */
 
  bool companyInputCheck(char* email, TechnionFaculty faculty){
     assert(email);

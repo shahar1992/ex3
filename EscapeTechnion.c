@@ -344,17 +344,18 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
                 GetRoomNextAvailabilty(system,room,&available_hour,
                                        &available_day,checked_faculty);
                 //get avilabilty
-                orderDestroy((void *) recommended_order);//destroy previous order
+                orderDestroy(recommended_order);//destroy previous order
                 orderCreate(num_ppl, available_hour, available_day-escapeTechnionGetDay(system),
                             current_company_faculty,room,client,&recommended_order);
             }
         }
+        setDestroy(roomSet);
     }
+
     if(recommended_order!=NULL){
         TechnionFaculty faculty = orderGetFaculty(recommended_order);
         long id = orderGetRoomId(recommended_order);
-        EscapeTechnionResult result;
-        result=escapeTechnionAddOrder(system,mail,faculty,id,orderGetDay(recommended_order),
+        escapeTechnionAddOrder(system,mail,faculty,id,orderGetDay(recommended_order),
                 orderGetHour(recommended_order),num_ppl);
         return ESCAPE_TECHNION_SUCCESS;
     }
@@ -542,8 +543,10 @@ static EscapeTechnionResult getCompany(EscapeTechnion system, char *email,
         companyGetEmail(current_company,&current_company_mail);
         if(strcmp(current_company_mail,email) == 0){
             *company = current_company;
+            free(current_company_mail);
             return ESCAPE_TECHNION_SUCCESS;
         }
+        free(current_company_mail);
     }
     return ESCAPE_TECHNION_COMPANY_EMAIL_DOES_NOT_EXIST;
 }
@@ -623,7 +626,7 @@ static EscapeTechnionResult convertFromRoomResult(RoomResult result){
             return ESCAPE_TECHNION_NULL_PARAMETER;
     }
 }
-
+/*
 static long calculate_total_profit(EscapeTechnion system){
     assert(system);
     long profit = 0;
@@ -632,7 +635,7 @@ static long calculate_total_profit(EscapeTechnion system){
     }
     return profit;
 }
-
+*/
 void escapeTechnionGetBestFaculties(EscapeTechnion system,
                                                     TechnionFaculty *faculties,
                                                     int best_faculties_num){
@@ -663,7 +666,7 @@ static EscapeTechnionResult removeClientOrders(EscapeTechnion system,
     assert(system && escaper);
     OrdersList new_list = listFilter(system->orders,orderNotBelongToClient,
                                      escaper);
-    long new_list_size=listGetSize(new_list);
+    //long new_list_size=listGetSize(new_list);
     if(!new_list){
         return ESCAPE_TECHNION_OUT_OF_MEMORY;
     }
@@ -726,7 +729,7 @@ static bool isRoomAvailable(EscapeTechnion system, long system_day, long hour,
         return false;
     }
     LIST_FOREACH(Order,cur_order,system->orders){
-        Room current_room = orderGetRoom(cur_order);
+        //Room current_room = orderGetRoom(cur_order);
         TechnionFaculty orders_faculty = orderGetFaculty(cur_order);
         if ((orderGetRoomId(cur_order)==id)&&(faculty==orders_faculty)){
             if((orderGetDay(cur_order)==system_day)&&(orderGetHour(cur_order)==hour)){
