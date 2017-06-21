@@ -208,6 +208,7 @@ static MtmErrorCode orderPrint(EscapeTechnion system,Order order,
     mtmPrintOrder(output_c,email,escaperGetSkillLevel(escaper),escaper_faculty,
                   company_email,room_faculty,roomGetId(room),orderGetHour(order),
                   orderGetDifficulty(order),orderGetNumOfPeople(order),price);
+    free(email);
     free(company_email);
     return MTM_SUCCESS;
 }
