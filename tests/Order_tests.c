@@ -7,18 +7,8 @@ static bool testOrderCreate() {
     ASSERT_TEST(escaperCreate("check12@gmail.com",FACULTY_NUM-1,MIN_SKILL_LEVEL,&escaper)==
                 ESCAPER_SUCCESS);
     Room room;
-    ASSERT_TEST(roomCreate(1,PRICE_MOUDLE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
+    ASSERT_TEST(roomCreate(1,PRICE_MODULE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
                 ==ROOM_SUCCESS);
-
-    //NULL CHECKS
-    ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,10,UNKNOWN,NULL,NULL,NULL)
-                        ==ORDER_NULL_ARGUMENT);
-    ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,10,UNKNOWN,room,escaper,NULL)
-                ==ORDER_NULL_ARGUMENT);
-    ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,10,UNKNOWN,room,NULL,&order)
-                ==ROOM_NULL_ARGUMENT);
-    ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,10,UNKNOWN,NULL,escaper,&order)
-                ==ORDER_NULL_ARGUMENT);
     //PEOPLE CHECK
     ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM-1,MIN_HOUR,10,UNKNOWN,room,escaper,&order)
                 ==ORDER_INVALID_PARAMETER);
@@ -51,7 +41,7 @@ static bool testOrderCopy(){
     Room room;
     ASSERT_TEST(escaperCreate("check12@gmail.com",FACULTY_NUM-1,MIN_SKILL_LEVEL,&escaper)==
                 ESCAPER_SUCCESS);
-    ASSERT_TEST(roomCreate(1,PRICE_MOUDLE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
+    ASSERT_TEST(roomCreate(1,PRICE_MODULE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
                 ==ROOM_SUCCESS);
     ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,0,FACULTY_NUM-1,room,escaper,&order)
                 ==ORDER_SUCCESS);
@@ -69,7 +59,7 @@ static bool testorderCmp(){
     Room room;
     ASSERT_TEST(escaperCreate("check12@gmail.com",FACULTY_NUM-1,MIN_SKILL_LEVEL,
                               &escaper)== ESCAPER_SUCCESS);
-    ASSERT_TEST(roomCreate(1,PRICE_MOUDLE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,
+    ASSERT_TEST(roomCreate(1,PRICE_MODULE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,
                            MIN_DIFFICULTY_LEVEL,&room) ==ROOM_SUCCESS);
     ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,0,FACULTY_NUM-1,room,
                             escaper,&order1) ==ORDER_SUCCESS);
@@ -98,14 +88,12 @@ static bool testOrderGetFaculty(){
     Room room;
     ASSERT_TEST(escaperCreate("check12@gmail.com",FACULTY_NUM-1,MIN_SKILL_LEVEL,&escaper)==
                 ESCAPER_SUCCESS);
-    ASSERT_TEST(roomCreate(1,PRICE_MOUDLE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
+    ASSERT_TEST(roomCreate(1,PRICE_MODULE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
                 ==ROOM_SUCCESS);
     ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,0,COMPUTER_SCIENCE,room,escaper,&order)
                 ==ORDER_SUCCESS);
     TechnionFaculty faculty=COMPUTER_SCIENCE;
-    ASSERT_TEST(orderGetFaculty(NULL,&faculty)==ORDER_NULL_ARGUMENT);
-    ASSERT_TEST(orderGetFaculty(order,NULL)==ORDER_NULL_ARGUMENT);
-    ASSERT_TEST(orderGetFaculty(order,&faculty)==ORDER_SUCCESS);
+    ASSERT_TEST(orderGetFaculty(order)==COMPUTER_SCIENCE);
     ASSERT_TEST(faculty==COMPUTER_SCIENCE);
     roomDestroy(room);
     escaperDestroy(escaper);
@@ -119,12 +107,10 @@ static bool testOrderGetRoom(){
     Room room;
     ASSERT_TEST(escaperCreate("check12@gmail.com",FACULTY_NUM-1,MIN_SKILL_LEVEL,&escaper)==
                 ESCAPER_SUCCESS);
-    ASSERT_TEST(roomCreate(1,PRICE_MOUDLE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
+    ASSERT_TEST(roomCreate(1,PRICE_MODULE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
                 ==ROOM_SUCCESS);
     ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,0,COMPUTER_SCIENCE,room,escaper,&order)
                 ==ORDER_SUCCESS);
-    ASSERT_TEST(orderGetRoom(order)==room);
-    ASSERT_TEST(orderGetRoom(NULL)==NULL);
     roomDestroy(room);
     escaperDestroy(escaper);
     orderDestroy(order);
@@ -137,12 +123,11 @@ static bool testOrderGetEscaper(){
     Room room;
     ASSERT_TEST(escaperCreate("check12@gmail.com",FACULTY_NUM-1,MIN_SKILL_LEVEL,&escaper)==
                 ESCAPER_SUCCESS);
-    ASSERT_TEST(roomCreate(1,PRICE_MOUDLE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
+    ASSERT_TEST(roomCreate(1,PRICE_MODULE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
                 ==ROOM_SUCCESS);
     ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,0,COMPUTER_SCIENCE,room,escaper,&order)
                 ==ORDER_SUCCESS);
-    ASSERT_TEST(orderGetEscaper(order)==escaper);
-    ASSERT_TEST(orderGetEscaper(NULL)==NULL);
+    ASSERT_TEST(escaperCompare(orderGetEscaper(order),escaper)==0);
     roomDestroy(room);
     escaperDestroy(escaper);
     orderDestroy(order);
@@ -155,18 +140,17 @@ static bool testOrderCalculatePrice(){
     Room room;
     ASSERT_TEST(escaperCreate("check12@gmail.com",ELECTRICAL_ENGINEERING,MIN_SKILL_LEVEL,&escaper)==
                 ESCAPER_SUCCESS);
-    ASSERT_TEST(roomCreate(1,PRICE_MOUDLE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
+    ASSERT_TEST(roomCreate(1,PRICE_MODULE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
                 ==ROOM_SUCCESS);
     ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,0,ELECTRICAL_ENGINEERING,room,escaper,&order)
                 ==ORDER_SUCCESS);
-    ASSERT_TEST(orderCalculatePrice(NULL)==0);
     ASSERT_TEST(orderCalculatePrice(order)==
-                        MIN_PLAYERS_FOR_ROOM*PRICE_MOUDLE*DISCOUNT_FOT_FACULTY_MEMBERS);
+                        MIN_PLAYERS_FOR_ROOM*PRICE_MODULE*DISCOUNT_FOT_FACULTY_MEMBERS);
     orderDestroy(order);
     ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,0,CHEMICAL_ENGINEERING,room,escaper,&order)
                 ==ORDER_SUCCESS);
     ASSERT_TEST(orderCalculatePrice(order)==
-                MIN_PLAYERS_FOR_ROOM*PRICE_MOUDLE);
+                MIN_PLAYERS_FOR_ROOM*PRICE_MODULE);
     roomDestroy(room);
     escaperDestroy(escaper);
     orderDestroy(order);
@@ -179,12 +163,11 @@ static bool testOrderGetNumOfPeople(){
     Room room;
     ASSERT_TEST(escaperCreate("check12@gmail.com",FACULTY_NUM-1,MIN_SKILL_LEVEL,&escaper)==
                 ESCAPER_SUCCESS);
-    ASSERT_TEST(roomCreate(1,PRICE_MOUDLE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
+    ASSERT_TEST(roomCreate(1,PRICE_MODULE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room)
                 ==ROOM_SUCCESS);
     ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM,MIN_HOUR,0,COMPUTER_SCIENCE,room,escaper,&order)
                 ==ORDER_SUCCESS);
     ASSERT_TEST(orderGetNumOfPeople(order)==MIN_PLAYERS_FOR_ROOM);
-    ASSERT_TEST(orderGetNumOfPeople(NULL)==0);
     roomDestroy(room);
     escaperDestroy(escaper);
     orderDestroy(order);

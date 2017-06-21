@@ -135,7 +135,7 @@ long roomGetCloseHour(Room room){
                                 int close_hour, int difficulty){
     return ((id > 0)
             && (price > 0)
-            && (price %PRICE_MODULE == 0)
+            && ((price%PRICE_MODULE)==0)
             && (num_ppl >= MIN_PLAYERS_FOR_ROOM)
             && (open_hour >= MIN_HOUR)
             && (close_hour > open_hour)
