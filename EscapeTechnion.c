@@ -516,15 +516,19 @@ static bool isEmailAlreadyExist(EscapeTechnion system, char* email){
         char* company_email;
         companyGetEmail(company,&company_email);
         if(strcmp(company_email,email) == 0 ){
+            free(company_email);
             return true;
         }
+        free(company_email);
     }
     SET_FOREACH(Escaper, escaper, system->escapers){
         char* escaper_email;
         escaperGetEmail(escaper,&escaper_email);
         if(strcmp(escaper_email,email) == 0 ){
+            free(escaper_email);
             return true;
         }
+        free(escaper_email);
     }
     return false;
 }
