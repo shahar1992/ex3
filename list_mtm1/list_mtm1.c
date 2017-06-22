@@ -231,12 +231,61 @@ ListElement listGetNext(List list){
 
 /**======================listSort=============================================*/
 ListResult listSort(List list, CompareListElements compareElement){
-
+    LIST_NULL_ARGUMENT_CHECK(list);
+    List sorted_list = listCreate(list->copy_function,list->free_function);
+    ListResult result;
+    if(!sorted_list) {
+        return LIST_OUT_OF_MEMORY;
+    }
+    LIST_FOREACH(ListElement,list_element,list){
+        if(list_element == list->list_elements->element) {
+            result = listInsertFirst(sorted_list,list_element);
+            if(result != LIST_SUCCESS) {
+                listDestroy(sorted_list);
+                return result;
+            }
+        }
+        else{
+            bool is_element_entered = false;
+            LIST_FOREACH(ListElement,element_to_compare,sorted_list) {
+                if (compareElement(list_element,element_to_compare) < 0 ) {
+                    result = listInsertBeforeCurrent(sorted_list, list_element);
+                    if(result != LIST_SUCCESS){
+                        listDestroy(sorted_list);
+                        return result;
+                    }
+                    break;
+                }
+            }
+            result = listInsertLast(sorted_list,list_element);
+            if(result != LIST_SUCCESS){
+                listDestroy(sorted_list);
+                return result;
+            }
+        }
+    }
+    listDestroy(list);
+    list = sorted_list;
+    return LIST_SUCCESS;
 }
 
 /**======================listFilter===========================================*/
 List listFilter(List list, FilterListElement filterElement, ListFilterKey key){
-
+    LIST_NULL_ARGUMENT_CHECK(list && filterElement);
+    List new_list = listCreate(list->copy_function,list->free_function);
+    if(!new_list){
+        return NULL;
+    }
+    LIST_FOREACH(ListElement,element,list){
+        if(filterElement(element,key)){
+            ListResult result = listInsertLast(new_list,element);
+            if(result != LIST_SUCCESS){
+                listDestroy(new_list);
+                return result;
+            }
+        }
+    }
+    return LIST_SUCCESS;
 }
 
 /**======================listClear============================================*/

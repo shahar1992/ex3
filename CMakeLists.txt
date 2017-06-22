@@ -16,6 +16,8 @@ set(SOURCE_FILES
         EscapeTechnion.c
         mtm_ex3.h
         parser.c
+        ./list_mtm1/list_mtm1.c
+        ./list_mtm1/list_mtm1.h
         main.c)
 
 add_executable(ex3 ${SOURCE_FILES})
