@@ -50,7 +50,7 @@ List listCreate(CopyListElement copyElement, FreeListElement freeElement){
     List new_list = malloc(sizeof(*new_list));
     NULL_CHECK(new_list);
     new_list->list_elements = NULL;
-    new_list->current_element = new_list->list_elements;
+    new_list->current_element = NULL;
     new_list->copy_function = copyElement;
     new_list->free_function = freeElement;
     new_list->list_size = 0;
@@ -59,11 +59,11 @@ List listCreate(CopyListElement copyElement, FreeListElement freeElement){
 
 /**======================listDestroy==========================================*/
 void listDestroy(List list){
-    if(!list) {
-        return;
+    if(list != NULL) {
+        listClear(list);
+        free(list);
     }
-    listClear(list);
-    free(list);
+    return;
 }
 
 /**======================listCopy=============================================*/
@@ -72,7 +72,7 @@ List listCopy(List list){
     List new_list = listCreate(list->copy_function,list->free_function);
     NULL_CHECK(new_list);
     LIST_FOREACH(ListElement, current_element, list){
-            ListResult result = listInsertLast(new_list,current_element);
+        ListResult result = listInsertLast(new_list,current_element);
         if(result != LIST_SUCCESS){
             listDestroy(new_list);
             return NULL;
@@ -151,7 +151,8 @@ ListResult listInsertBeforeCurrent(List list, ListElement element){
             list->list_size++;
             return LIST_SUCCESS;
         }
-        list->free_function(new_list_element);
+        list->free_function(new_list_element->element);
+        free(new_list_element);
         return LIST_INVALID_CURRENT;
     }
     elementsList ptr = list->list_elements;
@@ -170,7 +171,8 @@ ListResult listInsertBeforeCurrent(List list, ListElement element){
         }
         ptr = ptr->next;
     }
-    list->free_function(new_list_element);
+    list->free_function(new_list_element->element);
+    free(new_list_element);
     return LIST_INVALID_CURRENT;
 }
 
@@ -188,7 +190,8 @@ ListResult listInsertAfterCurrent(List list, ListElement element){
             list->list_size++;
             return LIST_SUCCESS;
         }
-        list->free_function(new_list_element);
+        list->free_function(new_list_element->element);
+        free(new_list_element);
         return LIST_INVALID_CURRENT;
     }
     new_list_element->next = list->current_element->next;
@@ -200,18 +203,24 @@ ListResult listInsertAfterCurrent(List list, ListElement element){
 /**======================listRemoveCurrent====================================*/
 ListResult listRemoveCurrent(List list){
     LIST_NULL_ARGUMENT_CHECK(list);
-    elementsList ptr = list->current_element;
+    elementsList ptr = list->list_elements;
     if(!list->current_element){
         return LIST_INVALID_CURRENT;
     }
+    if(ptr == list->current_element){
+        list->current_element = list->current_element->next;
+        list->list_elements = list->current_element;
+        list->free_function(ptr->element);
+        free(ptr);
+        list->list_size--;
+        return LIST_SUCCESS;
+    }
     while(ptr){
-        if(ptr == list->current_element){
-            if(list->current_element == list->list_elements){
-                list->list_elements = list->list_elements->next;
-            }
-            list->current_element = list->current_element->next;
-            list->free_function(ptr->element);
-            free(ptr);
+        if(ptr->next == list->current_element) {
+            ptr->next = list->current_element->next;
+            list->free_function(list->current_element->element);
+            free(list->current_element);
+            list->current_element = ptr->next;
             list->list_size--;
             return LIST_SUCCESS;
         }
@@ -245,25 +254,26 @@ ListElement listGetNext(List list){
 /**======================listSort=============================================*/
 ListResult listSort(List list, CompareListElements compareElement) {
     LIST_NULL_ARGUMENT_CHECK(list);
-    List sorted_list = listCreate(list->copy_function, list->free_function);
-    ListResult result;
-    if (!sorted_list) {
+    List temp_list = listCopy(list);
+    if (!temp_list){
         return LIST_OUT_OF_MEMORY;
     }
-    LIST_FOREACH(ListElement, list_element, list) {
-        if (list_element == list->list_elements->element) {
-            result = listInsertFirst(sorted_list, list_element);
+    listClear(list);
+    ListResult result;
+    LIST_FOREACH(ListElement, list_element, temp_list) {
+        if (list_element == temp_list->list_elements->element) {
+            result = listInsertFirst(list,list_element);
             if (result != LIST_SUCCESS) {
-                listDestroy(sorted_list);
+                listDestroy(temp_list);
                 return result;
             }
         } else {
             bool is_element_entered = false;
-            LIST_FOREACH(ListElement, element_to_compare_with, sorted_list) {
+            LIST_FOREACH(ListElement, element_to_compare_with, list) {
                 if (compareElement(list_element, element_to_compare_with) < 0) {
-                    result = listInsertBeforeCurrent(sorted_list, list_element);
+                    result = listInsertBeforeCurrent(list, list_element);
                     if (result != LIST_SUCCESS) {
-                        listDestroy(sorted_list);
+                        listDestroy(temp_list);
                         return result;
                     }
                     is_element_entered = true;
@@ -271,18 +281,16 @@ ListResult listSort(List list, CompareListElements compareElement) {
                 }
             }
             if (!is_element_entered) {
-                result = listInsertLast(sorted_list, list_element);
+                result = listInsertLast(list, list_element);
                 if (result != LIST_SUCCESS) {
-                    listDestroy(sorted_list);
+                    listDestroy(temp_list);
                     return result;
                 }
             }
         }
     }
-        listDestroy(list);
-        list = listCopy(sorted_list);
-        listDestroy(sorted_list);
-        return (!list) ? LIST_OUT_OF_MEMORY : LIST_SUCCESS;
+    listDestroy(temp_list);
+    return LIST_SUCCESS;
 }
 
 /**======================listFilter===========================================*/
@@ -308,7 +316,7 @@ List listFilter(List list, FilterListElement filterElement, ListFilterKey key) {
     ListResult listClear(List list) {
         LIST_NULL_ARGUMENT_CHECK(list);
         listGetFirst(list);
-        while (list->current_element) {
+        while (list->list_elements) {
             listRemoveCurrent(list);
         }
         return LIST_SUCCESS;
