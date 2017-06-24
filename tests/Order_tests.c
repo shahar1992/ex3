@@ -10,6 +10,7 @@ static bool testOrderCreate() {
     ASSERT_TEST(roomCreate(1,PRICE_MODULE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,
                            MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room) ==
                         ROOM_SUCCESS);
+    //
     //PEOPLE CHECK
     ASSERT_TEST(orderCreate(MIN_PLAYERS_FOR_ROOM-1,MIN_HOUR,10,UNKNOWN,room,
                             escaper,&order) == ORDER_INVALID_PARAMETER);
