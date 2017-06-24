@@ -7,21 +7,6 @@
 
 
 /**=========================Macros and Defines================================*/
-#define PARAMETER_CHECK(condition) \
-    if(!(condition)) {\
-        return ROOM_INVALID_PARAMETER; \
-    }
-#define NULL_CHECK(condition) \
-    if(!(condition)){ \
-        return ROOM_NULL_ARGUMENT; \
-    }
-
-#define MEMORY_CHECK_NULL(condition,ptr_to_destroy) {\
-    if (!(condition)) { \
-        roomDestroy(ptr_to_destroy); \
-    return ROOM_OUT_OF_MEMORY; \
-    } \
-}
 
 /**=========================ADT Room Struct===================================*/
 struct room_t {
@@ -46,7 +31,7 @@ RoomResult roomCreate(long id, int price, int num_ppl, int open_hour,
     if(!roominputCheck(id,price,num_ppl,open_hour,close_hour,difficulty)){
         return ROOM_INVALID_PARAMETER;
     }
-    *room = malloc(sizeof(**room));
+    *room = malloc(sizeof(*(*room)));
     if(!*room){
         return ROOM_OUT_OF_MEMORY;
     }

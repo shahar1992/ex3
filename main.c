@@ -9,6 +9,7 @@
 
 /**======================Macros and structs===================================*/
 #define MAX_LINE_SIZE 256
+#define ERROR_CHANNEL "myerr8.err"
 /**======================Static Functions Decleration ========================*/
 static MtmErrorCode getChannels(int args_c, char **args_v, FILE **input_c,
                                 FILE **output_c);
@@ -27,9 +28,9 @@ int main(int argc,  char** argv) {
     escapeTechnionCreate(&sys);
     FILE *input_c,*output_c;
     MtmErrorCode result;
-    //char* array[] = {"main","-i","test8.in","-o","myout8.out"};///////////
-   //result = getChannels(5, array, &input_c, &output_c);///////
-    result = getChannels(argc,argv,&input_c, &output_c);
+    char* array[] = {"main","-i","test1.in","-o","myout1.out"};///////////
+   result = getChannels(5, array, &input_c, &output_c);///////
+    //result = getChannels(argc,argv,&input_c, &output_c);
     if(result != MTM_SUCCESS){//Invalid command or open file problem
         mtmPrintErrorMessage(error_ch,result);
             escapeTechnionDestroy(sys);
