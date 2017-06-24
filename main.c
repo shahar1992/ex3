@@ -23,14 +23,16 @@ MtmErrorCode parserAnalyzeCommand(EscapeTechnion system,char* buffer,
 
 int main(int argc,  char** argv) {
     //FILE* error_ch=fopen(ERROR_CHANNEL,"w");
-   FILE* error_ch=stderr;
+    FILE* error_ch=stderr;
     EscapeTechnion sys;
     escapeTechnionCreate(&sys);
     FILE *input_c,*output_c;
     MtmErrorCode result;
-    char* array[] = {"main","-i","test1.in","-o","myout1.out"};///////////
-   result = getChannels(5, array, &input_c, &output_c);///////
-    //result = getChannels(argc,argv,&input_c, &output_c);
+
+    //char* array[] = {"main","-i","test8.in","-o","myout8.out"};
+   //result = getChannels(5, array, &input_c, &output_c);
+
+    result = getChannels(argc,argv,&input_c, &output_c);
     if(result != MTM_SUCCESS){//Invalid command or open file problem
         mtmPrintErrorMessage(error_ch,result);
             escapeTechnionDestroy(sys);
@@ -58,7 +60,7 @@ int main(int argc,  char** argv) {
     escapeTechnionDestroy(sys);
     fclose(output_c);
     fclose(input_c);
-  // fclose(error_ch);
+    //fclose(error_ch);
     return 0;
 }
 

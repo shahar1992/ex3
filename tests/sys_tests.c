@@ -1,8 +1,5 @@
-//
-// Created by Amir on 16/06/2017.
-//
 
-#include "list_mtm/test_utilities.h"
+#include "./test_utilities.h"
 #include "../EscapeTechnion.h"
 #include <string.h>
 
@@ -119,7 +116,6 @@ static bool testSysAddRoom(){
 
 static bool testSysRemoveRoom(){
     EscapeTechnion sys;
-    EscapeTechnionResult result;
     ASSERT_TEST(escapeTechnionCreate(&sys)==ESCAPE_TECHNION_SUCCESS);
     ASSERT_TEST(escapeTechnionAddCompany(
             sys,"eecompany1@",ELECTRICAL_ENGINEERING) ==
@@ -160,7 +156,6 @@ static bool testSysRemoveRoom(){
 
 static bool testAddClient(){
     EscapeTechnion sys;
-    EscapeTechnionResult result;
     ASSERT_TEST(escapeTechnionCreate(&sys) == ESCAPE_TECHNION_SUCCESS);
     //Test success
     ASSERT_TEST(escapeTechnionAddClient(
@@ -198,7 +193,6 @@ static bool testAddClient(){
 
 static bool testRemoveClient(){
     EscapeTechnion sys;
-    EscapeTechnionResult result;
     ASSERT_TEST(escapeTechnionCreate(&sys) == ESCAPE_TECHNION_SUCCESS);
     //make clients
     ASSERT_TEST(escapeTechnionAddClient(
@@ -225,7 +219,6 @@ static bool testRemoveClient(){
 
 static bool testAddOrder(){
     EscapeTechnion sys;
-    EscapeTechnionResult result;
     ASSERT_TEST(escapeTechnionCreate(&sys) == ESCAPE_TECHNION_SUCCESS);
     ASSERT_TEST(escapeTechnionAddCompany(
             sys,"eecompany1@",ELECTRICAL_ENGINEERING) ==
@@ -294,7 +287,6 @@ static bool testAddOrder(){
 
 static bool testRecommendedOrder(){
     EscapeTechnion sys;
-    EscapeTechnionResult result;
     ASSERT_TEST(escapeTechnionCreate(&sys) == ESCAPE_TECHNION_SUCCESS);
     ASSERT_TEST(escapeTechnionAddCompany(
             sys,"check12@gmail.com",ELECTRICAL_ENGINEERING) ==

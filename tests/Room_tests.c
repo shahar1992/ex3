@@ -1,8 +1,5 @@
-//
-// Created by Amir on 07/06/2017.
-//
 
-#include "list_mtm/test_utilities.h"
+#include "./test_utilities.h"
 #include "../Room.h"
 #include <string.h>
 

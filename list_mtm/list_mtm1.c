@@ -81,7 +81,7 @@ List listCopy(List list){
     new_list->current_element = new_list->list_elements;
     elementsList ptr = list->list_elements;
     while(ptr){
-        if(list->current_element = ptr){
+        if(list->current_element == ptr){
             break;
         }
         new_list->current_element = new_list->current_element->next;
@@ -279,12 +279,10 @@ ListResult listSort(List list, CompareListElements compareElement) {
             }
         }
     }
-    LIST_FOREACH(ListElement, element, sorted_list) {
         listDestroy(list);
         list = listCopy(sorted_list);
         listDestroy(sorted_list);
         return (!list) ? LIST_OUT_OF_MEMORY : LIST_SUCCESS;
-    }
 }
 
 /**======================listFilter===========================================*/
