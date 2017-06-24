@@ -75,7 +75,6 @@ static bool testSysAddRoom(){
 
 static bool testSysRemoveRoom(){
     EscapeTechnion sys;
-    EscapeTechnionResult result;
     ASSERT_TEST(escapeTechnionCreate(&sys)==ESCAPE_TECHNION_SUCCESS);
     ASSERT_TEST(escapeTechnionAddCompany(sys,"eecompany1@",ELECTRICAL_ENGINEERING)==ESCAPE_TECHNION_SUCCESS);
     ASSERT_TEST(escapeTechnionAddRoom(sys,"eecompany1@",1,4,1,0,24,1)==ESCAPE_TECHNION_SUCCESS);
@@ -101,7 +100,6 @@ static bool testSysRemoveRoom(){
 
 static bool testAddClient(){
     EscapeTechnion sys;
-    EscapeTechnionResult result;
     ASSERT_TEST(escapeTechnionCreate(&sys)==ESCAPE_TECHNION_SUCCESS);
     //Test success
     ASSERT_TEST(escapeTechnionAddClient(sys,"mynameis@gmail.com",MEDICINE,1)==ESCAPE_TECHNION_SUCCESS);
@@ -123,7 +121,6 @@ static bool testAddClient(){
 
 static bool testRemoveClient(){
     EscapeTechnion sys;
-    EscapeTechnionResult result;
     ASSERT_TEST(escapeTechnionCreate(&sys)==ESCAPE_TECHNION_SUCCESS);
     //make clients
     ASSERT_TEST(escapeTechnionAddClient(sys,"mynameis@gmail.com",MEDICINE,1)==ESCAPE_TECHNION_SUCCESS);
@@ -143,7 +140,6 @@ static bool testRemoveClient(){
 
 static bool testAddOrder(){
     EscapeTechnion sys;
-    EscapeTechnionResult result;
     ASSERT_TEST(escapeTechnionCreate(&sys)==ESCAPE_TECHNION_SUCCESS);
     ASSERT_TEST(escapeTechnionAddCompany(sys,"eecompany1@",ELECTRICAL_ENGINEERING)==ESCAPE_TECHNION_SUCCESS);
     ASSERT_TEST(escapeTechnionAddRoom(sys,"eecompany1@",1,4,1,0,24,1)==ESCAPE_TECHNION_SUCCESS);
@@ -182,7 +178,6 @@ static bool testAddOrder(){
 
 static bool testRecommendedOrder(){
     EscapeTechnion sys;
-    EscapeTechnionResult result;
     ASSERT_TEST(escapeTechnionCreate(&sys)==ESCAPE_TECHNION_SUCCESS);
     ASSERT_TEST(escapeTechnionAddCompany(sys,"check12@gmail.com",ELECTRICAL_ENGINEERING)==ESCAPE_TECHNION_SUCCESS);
     ASSERT_TEST(escapeTechnionAddRoom(sys,"check12@gmail.com",7,4,4,0,24,5));

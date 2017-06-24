@@ -71,7 +71,7 @@ static bool testCompanyGetFaculty(){
     Room room;
     roomCreate(1,PRICE_MODULE,MIN_PLAYERS_FOR_ROOM,MIN_HOUR,MAX_HOUR,MIN_DIFFICULTY_LEVEL,&room);
     companyAddRoom(company,room);
-    TechnionFaculty faculty;
+    ASSERT_TEST(companyGetFaculty(company)==ELECTRICAL_ENGINEERING);
     companyDestroy(company);
     return true;
 }

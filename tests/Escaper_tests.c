@@ -54,7 +54,6 @@ static bool testescaperGetMail() {
 }
 static bool testescaperGetFaculty() {
     Escaper escaper;
-    TechnionFaculty faculty;
     //logic tests
     escaperCreate("check12@gmail.com",FACULTY_NUM-1,MIN_SKILL_LEVEL,&escaper);
     ASSERT_TEST(escaperGetFaculty(escaper)==FACULTY_NUM-1);

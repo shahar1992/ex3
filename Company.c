@@ -78,11 +78,11 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
 //
 void companyDestroy(void* company){
     if(company != NULL) {
-        setDestroy(((Company) company)->rooms);
+        setDestroy(((Company)company)->rooms);
         if (((Company) company)->email != NULL) {
-            free(((Company) company)->email);
+            free(((Company)company)->email);
         }
-        free(company);
+        free(((Company)company));
     }
     return;
 }
@@ -98,7 +98,9 @@ void* companyCopy(void* company){
     if(!new_company) {
         return NULL;
     }
-    new_company->rooms = setCopy(((Company)company)->rooms);
+    SET_FOREACH(Room,cur_room,((Company)company)->rooms){
+        setAdd(new_company->rooms,cur_room);
+    }
     if(!new_company->rooms){
         companyDestroy(new_company);
         return NULL;
