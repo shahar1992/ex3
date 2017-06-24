@@ -4,7 +4,7 @@
 #include <string.h>
 
 static bool testescaperCreate() {
-    Escaper escaper;
+    Escaper escaper;//
     //skill_level checks
     ASSERT_TEST(escaperCreate("am@",FACULTY_NUM-1,MIN_SKILL_LEVEL-1,&escaper) ==
                         ESCAPER_INVALID_PARAMETER);
