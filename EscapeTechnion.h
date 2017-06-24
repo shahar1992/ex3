@@ -58,7 +58,6 @@ typedef enum {
     ESCAPE_TECHNION_ROOM_NOT_AVAILABLE,
     ESCAPE_TECHNION_RESERVATION_EXISTS,
     ESCAPE_TECHNION_NO_ROOMS_AVAILABLE,
-    COMPANY_ROOM_ALREADY_EXISTS,
     ESCAPE_TECHNION_SUCCESS
 } EscapeTechnionResult;
 
@@ -172,13 +171,6 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
 
 long escapeTechnionGetFacultyProfit(EscapeTechnion system,
                                     TechnionFaculty faculty);
-
-EscapeTechnionResult  escapeTechnionReportDay(EscapeTechnion system,
-                                              const FILE* output_c);
-
-EscapeTechnionResult escapeTechnionBestFaculties(EscapeTechnion system);
-
-EscapeTechnionResult escapeTechnionSortOrdersByDay(EscapeTechnion system);
 
 OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system);
 

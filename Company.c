@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "Company.h"
-#include "set.h"
 
 /**======================Macros and structs===================================*/
 #define FACULTY_NUM ((int)UNKNOWN)
@@ -20,7 +19,6 @@
         return COMPANY_OUT_OF_MEMORY; \
     } \
 }
-
 
 struct company_t{
     char* email;
@@ -57,7 +55,7 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
     if(!companyInputCheck(email,faculty)){
         return COMPANY_INVALID_PARAMETER;
     }
-    *company = malloc(sizeof(**company));
+    *company = malloc(sizeof(*(*company)));
     if(!*company){
         return COMPANY_OUT_OF_MEMORY;
     }
@@ -75,14 +73,14 @@ CompanyResult companyCreate(char *email, TechnionFaculty faculty,
     }
     return COMPANY_SUCCESS;
 }
-//
+
 void companyDestroy(void* company){
     if(company != NULL) {
         setDestroy(((Company)company)->rooms);
-        if (((Company) company)->email != NULL) {
+        if (((Company)company)->email != NULL){
             free(((Company)company)->email);
         }
-        free(((Company)company));
+        free(company);
     }
     return;
 }
@@ -98,8 +96,8 @@ void* companyCopy(void* company){
     if(!new_company) {
         return NULL;
     }
-    SET_FOREACH(Room,cur_room,((Company)company)->rooms){
-        setAdd(new_company->rooms,cur_room);
+    SET_FOREACH(Room,iterator,((Company)company)->rooms) {
+        setAdd(new_company->rooms,iterator);
     }
     if(!new_company->rooms){
         companyDestroy(new_company);

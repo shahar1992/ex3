@@ -137,12 +137,11 @@ EscapeTechnionResult escapeTechnionRemoveCompany(EscapeTechnion system,
     SET_FOREACH(Company,company,system->companies){//for each company
         char* company_email = NULL;
         convertFromCompanyResult(companyGetEmail(company,&company_email));
-        //get mail
         if(!company_email){
             return ESCAPE_TECHNION_OUT_OF_MEMORY;
         }
         if(strcmp(company_email,email) == 0){//if we found the company
-            free(company_email);//
+            free(company_email);
             EscapeTechnionResult result =
                     isCompanyHasReservation(system,company);
             if(result != ESCAPE_TECHNION_SUCCESS) {
@@ -281,6 +280,7 @@ EscapeTechnionResult escapeTechnionAddOrder(EscapeTechnion system, char* email,
     Room room;
     result = getRoom(system,faculty,id,&room);
     if(result != ESCAPE_TECHNION_SUCCESS){
+        escaperDestroy(escaper);
         return result;
     }
     Order order;
@@ -343,7 +343,7 @@ EscapeTechnionResult escapeTechnionRecommendedRoomOrder(EscapeTechnion system,
             escaper_faculty = escaperGetFaculty(client);
             //calculate barometer for current room
             if ((barometer < best_barometer)||
-                    ((barometer==best_barometer)&& isBetterMatch(checked_faculty,
+                    ((barometer==best_barometer)&&isBetterMatch(checked_faculty,
              recommended_faculty,escaper_faculty,
                             roomGetId(room),order_room_id))){//if it is better
                 best_barometer = barometer;//update best barometer
@@ -423,13 +423,7 @@ OrdersList escapeTechnionGetTodayOrdersList(EscapeTechnion system){
                                           &system->day);
     if(!filtered_list){
         return NULL;
-    }/*
-    if(listSort(filtered_list,orderCompareByRoomId) != LIST_SUCCESS ||
-            listSort(filtered_list,orderCompareByFaculty) != LIST_SUCCESS ||
-            listSort(filtered_list,orderCompare) != LIST_SUCCESS){
-        listDestroy(filtered_list);
-        return NULL;
-    }*/
+    }
     listSort(filtered_list,orderCompareByCritiria);
     OrdersList new_system_list = listFilter(
             system->orders,isOrderNotForDay,&system->day);
@@ -477,9 +471,6 @@ static EscapeTechnionResult isCompanyHasReservation(EscapeTechnion system,
         listDestroy(list);
         return ESCAPE_TECHNION_SUCCESS;
     }
-    /*else
-        return ESCAPE_TECHNION_RESERVATION_EXISTS;*/
-
     RoomSet rooms_set = companyGetRoomsSet(company);
     if(!rooms_set){
         listDestroy(list);
@@ -645,16 +636,8 @@ static EscapeTechnionResult convertFromRoomResult(RoomResult result){
             return ESCAPE_TECHNION_NULL_PARAMETER;
     }
 }
-/*
-static long calculate_total_profit(EscapeTechnion system){
-    assert(system);
-    long profit = 0;
-    for(int i = 0 ; i < FACULTY_NUM ; i++){
-        profit += system->faculty_profit[i];
-    }
-    return profit;
-}
-*/
+
+
 void escapeTechnionGetBestFaculties(EscapeTechnion system,
                                                     TechnionFaculty *faculties,
                                                     int best_faculties_num){
@@ -685,7 +668,6 @@ static EscapeTechnionResult removeClientOrders(EscapeTechnion system,
     assert(system && escaper);
     OrdersList new_list = listFilter(system->orders,orderNotBelongToClient,
                                      escaper);
-    //long new_list_size=listGetSize(new_list);
     if(!new_list){
         return ESCAPE_TECHNION_OUT_OF_MEMORY;
     }
@@ -748,7 +730,6 @@ static bool isRoomAvailable(EscapeTechnion system, long system_day, long hour,
         return false;
     }
     LIST_FOREACH(Order,cur_order,system->orders){
-        //Room current_room = orderGetRoom(cur_order);
         TechnionFaculty orders_faculty = orderGetFaculty(cur_order);
         if ((orderGetRoomId(cur_order)==id)&&(faculty==orders_faculty)){
             if((orderGetDay(cur_order)==system_day)&&
@@ -756,7 +737,7 @@ static bool isRoomAvailable(EscapeTechnion system, long system_day, long hour,
                 return false;
             }
         }
-    }//
+    }
     return true;
 }
 

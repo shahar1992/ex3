@@ -83,8 +83,9 @@ MtmErrorCode handleCompanyCommand(EscapeTechnion system,
     EscapeTechnionResult result;
     if(strcmp(subcomand,"add")==0){
         char *ptr;
-        long faculty=strtol(arg_Array[1],&ptr,10);
-        result=escapeTechnionAddCompany(system,arg_Array[0],faculty);
+        long faculty = strtol(arg_Array[1],&ptr,10);
+        result = escapeTechnionAddCompany(system,arg_Array[0],
+                                          (TechnionFaculty)faculty);
          return ConvertResult(result);
     }
     if(strcmp(subcomand,"remove")==0){
@@ -113,7 +114,7 @@ MtmErrorCode handleRoomCommand(EscapeTechnion system,
         char *ptr;
         long faculty=strtol(arg_Array[0],&ptr,10);
         long id=strtol(arg_Array[1],&ptr,10);
-        result=escapeTechnionRemoveRoom(system,faculty,id);
+        result=escapeTechnionRemoveRoom(system,(TechnionFaculty)faculty,id);
         return ConvertResult(result);
     }
     return MTM_INVALID_COMMAND_LINE_PARAMETERS;
@@ -126,7 +127,8 @@ MtmErrorCode handleEscaperCommand(EscapeTechnion system, char* sub_command,
         char *ptr;
         long faculty=strtol(arg_Array[1],&ptr,10);
         long skill_level=strtol(arg_Array[2],&ptr,10);
-        result=escapeTechnionAddClient(system,arg_Array[0],faculty,skill_level);
+        result=escapeTechnionAddClient(system,arg_Array[0],
+                                       (TechnionFaculty)faculty,skill_level);
         return ConvertResult(result);
     }
     if(strcmp(sub_command,"remove")==0){
@@ -142,7 +144,8 @@ MtmErrorCode handleEscaperCommand(EscapeTechnion system, char* sub_command,
         long hour=strtol(ptr,&(ptr),10);
         long num_ppl=strtol(arg_Array[4],&ptr,10);
         result = escapeTechnionAddOrder(system,arg_Array[0],
-                                        faculty,id,day,hour,num_ppl);
+                                        (TechnionFaculty)faculty,id,day,
+                                        hour,num_ppl);
         return ConvertResult(result);
     }if(strcmp(sub_command,"recommend")==0){
         char *ptr;
@@ -231,8 +234,6 @@ static MtmErrorCode reportBest(EscapeTechnion system, FILE* output_c){
 
 static MtmErrorCode ConvertResult(EscapeTechnionResult result){
     switch(result){
-        case ESCAPE_TECHNION_SUCCESS:
-            return MTM_SUCCESS;
         case ESCAPE_TECHNION_ROOM_NOT_AVAILABLE:
             return MTM_ROOM_NOT_AVAILABLE;
         case ESCAPE_TECHNION_NO_ROOMS_AVAILABLE:
@@ -257,7 +258,8 @@ static MtmErrorCode ConvertResult(EscapeTechnionResult result){
             return MTM_RESERVATION_EXISTS;
         case ESCAPE_TECHNION_OUT_OF_MEMORY:
             return MTM_OUT_OF_MEMORY;
+
         default:
-            return ESCAPE_TECHNION_SUCCESS;
+            return MTM_SUCCESS;
     }
 }
