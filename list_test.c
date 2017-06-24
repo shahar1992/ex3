@@ -224,6 +224,7 @@ static bool testListClear() {
 }
 
 static bool testListDestroy() {
+
     return true;
 }
 
